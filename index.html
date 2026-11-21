@@ -6,515 +6,175 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080d17">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>VYORA AI – Dein Gesundheitsdashboard</title>
-
+<title>VYORA AI</title>
 <style>
 :root {
-  --bg: #080d17;
-  --card: #142033;
-  --card2: #19283e;
-  --border: #293a52;
-  --text: #f5f8fc;
-  --muted: #94a8c1;
-  --green: #70efbd;
-  --blue: #87baff;
-  --purple: #b9a8ff;
+  --bg:#080d17; --card:#142033; --border:#293a52;
+  --text:#f5f8fc; --muted:#9aacc2; --green:#70efbd;
 }
-
-* { box-sizing: border-box; }
-
+* { box-sizing:border-box; }
 body {
-  margin: 0;
-  background:
-    radial-gradient(circle at top, #1b3446, transparent 420px),
-    var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  min-height: 100vh;
+  margin:0; min-height:100vh; color:var(--text);
+  font-family:system-ui,-apple-system,sans-serif;
+  background:radial-gradient(circle at top,#193343,transparent 420px),var(--bg);
 }
-
-button, input { font: inherit; }
-button { cursor: pointer; }
-button:disabled { opacity: .5; }
-.hidden { display: none !important; }
-
-.app {
-  max-width: 1050px;
-  margin: auto;
-  padding: 22px 18px 115px;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+button:disabled { opacity:.55; }
+.hidden { display:none!important; }
+.app { max-width:1050px; margin:auto; padding:20px 16px 115px; }
+header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+.logo { display:flex; align-items:center; gap:12px; }
 .logo-icon {
-  background: linear-gradient(135deg, #9dffda, #4aa7aa);
-  color: #06251c;
-  width: 44px;
-  height: 44px;
-  border-radius: 15px;
-  display: grid;
-  place-items: center;
-  font-size: 25px;
-  font-weight: 900;
+  width:44px; height:44px; border-radius:14px;
+  background:linear-gradient(135deg,#a0ffdb,#48a9a5);
+  display:grid; place-items:center; color:#08251d;
+  font-weight:900; font-size:25px;
 }
-
-.logo strong {
-  font-size: 22px;
-  letter-spacing: 2px;
-}
-
-.logo strong span { color: var(--green); }
-
-.logo small {
-  display: block;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 1px;
-}
-
+.logo strong { font-size:21px; letter-spacing:2px; }
+.logo strong span { color:var(--green); }
+.logo small { display:block; color:var(--muted); font-size:10px; letter-spacing:1px; }
 .avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #263b50;
-  border: 1px solid #426079;
-  color: var(--green);
-  display: grid;
-  place-items: center;
-  font-weight: bold;
+  border-radius:50%; width:42px; height:42px;
+  background:#263b50; display:grid; place-items:center;
+  color:var(--green); font-weight:bold;
 }
-
 .card {
-  background: linear-gradient(145deg, #18263b, #101b2c);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 23px;
-  margin-bottom: 16px;
+  background:linear-gradient(145deg,#19283d,#111b2c);
+  border:1px solid var(--border); border-radius:23px;
+  padding:22px; margin-bottom:16px;
 }
-
 .hero {
-  background:
-    radial-gradient(circle at top right, #286a6040, transparent 55%),
-    linear-gradient(145deg, #1b3544, #111e30);
-  padding: 28px;
+  background:radial-gradient(circle at top right,#286a6040,transparent 60%),
+  linear-gradient(145deg,#1b3544,#111e30);
 }
-
-.eyebrow {
-  color: var(--muted);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 700;
-}
-
-h1 {
-  font-size: clamp(28px, 5vw, 40px);
-  margin: 12px 0;
-  letter-spacing: -1px;
-}
-
-h2 {
-  font-size: 18px;
-  margin: 0 0 16px;
-}
-
-p {
-  line-height: 1.6;
-}
-
-.muted {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 16px;
-}
-
-.hero-content {
-  display: flex;
-  align-items: center;
-  gap: 26px;
-  margin-top: 28px;
-}
-
+h1 { font-size:clamp(28px,5vw,40px); letter-spacing:-1px; margin:12px 0; }
+h2 { font-size:18px; margin:0 0 15px; }
+p { line-height:1.55; }
+.muted { color:var(--muted); font-size:13px; }
+.eyebrow { color:var(--muted); font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:700; }
+.grid { display:grid; grid-template-columns:1.3fr 1fr; gap:16px; }
+.stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0; }
+.stat { min-height:140px; }
+.stat strong { display:block; font-size:27px; margin:12px 0 4px; }
+.stat small { color:var(--muted); font-size:12px; }
+.stat-icon { font-size:24px; }
+.hero-content { display:flex; align-items:center; gap:25px; margin-top:25px; }
 .score-ring {
-  width: 175px;
-  height: 175px;
-  position: relative;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
+  width:175px; height:175px; position:relative;
+  display:grid; place-items:center; flex-shrink:0;
 }
-
-.score-ring svg {
-  position: absolute;
-  inset: 0;
-  transform: rotate(-90deg);
-}
-
-.score-ring circle {
-  fill: none;
-  stroke-width: 11;
-}
-
-.ring-track { stroke: #344d56; }
-
+.score-ring svg { position:absolute; inset:0; transform:rotate(-90deg); }
+.score-ring circle { fill:none; stroke-width:11; }
+.ring-track { stroke:#344d56; }
 .ring-progress {
-  stroke: var(--green);
-  stroke-linecap: round;
-  stroke-dasharray: 452.39;
-  stroke-dashoffset: 452.39;
-  transition: stroke-dashoffset .8s ease;
+  stroke:var(--green); stroke-linecap:round;
+  stroke-dasharray:452.39; stroke-dashoffset:452.39;
+  transition:stroke-dashoffset .6s;
 }
-
-.score-center {
-  text-align: center;
-}
-
-.score-center strong {
-  display: block;
-  font-size: 56px;
-  line-height: 1;
-}
-
-.score-center small {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.score-info strong {
-  color: var(--green);
-  font-size: 22px;
-  display: block;
-  margin: 8px 0;
-}
-
-.score-info p {
-  color: #bbcad9;
-  font-size: 13px;
-}
-
-.status-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #73849a;
-}
-
-.dot.connected {
-  background: var(--green);
-  box-shadow: 0 0 14px var(--green);
-}
-
+.score-center { text-align:center; }
+.score-center strong { display:block; font-size:53px; line-height:1; }
+.score-center small { color:var(--muted); font-size:12px; }
+.score-info strong { display:block; color:var(--green); font-size:21px; margin:8px 0; }
+.score-info p { color:#b9c9d8; font-size:13px; }
 .btn {
-  border: 0;
-  border-radius: 13px;
-  padding: 13px 17px;
-  background: var(--green);
-  color: #09291e;
-  font-size: 13px;
-  font-weight: 800;
-  margin: 5px 5px 5px 0;
+  border:0; border-radius:13px; padding:13px 17px;
+  background:var(--green); color:#08281e;
+  font-size:13px; font-weight:800; margin:5px 5px 5px 0;
 }
-
-.btn.secondary {
-  background: #2a3c53;
-  color: white;
-}
-
-.btn.full {
-  width: 100%;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin: 16px 0;
-}
-
-.stat {
-  min-height: 155px;
-}
-
-.stat-icon {
-  font-size: 24px;
-}
-
-.stat strong {
-  display: block;
-  font-size: 28px;
-  margin: 12px 0 4px;
-}
-
-.stat small {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.chart {
-  height: 185px;
-  display: flex;
-  align-items: end;
-  gap: 12px;
-}
-
+.btn.secondary { background:#2a3c53; color:white; }
+.btn.full { width:100%; }
+.status-row { display:flex; align-items:center; gap:10px; margin:18px 0; }
+.dot { width:9px; height:9px; border-radius:50%; background:#73849a; }
+.dot.connected { background:var(--green); box-shadow:0 0 12px var(--green); }
+.chart { display:flex; align-items:end; gap:10px; height:185px; }
 .chart-column {
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: end;
-  gap: 7px;
-  min-width: 0;
+  flex:1; height:100%; display:flex; flex-direction:column;
+  justify-content:end; align-items:center; gap:7px; min-width:0;
 }
-
-.chart-value {
-  font-size: 11px;
-  color: #c6d8e8;
-}
-
+.chart-value { font-size:11px; }
 .chart-track {
-  height: 125px;
-  width: min(100%, 44px);
-  background: #26374a;
-  border-radius: 9px;
-  overflow: hidden;
-  display: flex;
-  align-items: end;
+  height:125px; width:min(100%,44px); border-radius:9px;
+  background:#26374a; display:flex; align-items:end; overflow:hidden;
 }
-
-.chart-bar {
-  width: 100%;
-  background: linear-gradient(to top, #319d9d, #7bf0bd);
-  border-radius: 9px;
-  transition: height .6s;
-}
-
-.chart-label {
-  font-size: 10px;
-  color: var(--muted);
-}
-
-.insight {
-  display: flex;
-  gap: 15px;
-  align-items: start;
-}
-
-.insight-icon {
-  background: #29433f;
-  color: var(--green);
-  padding: 13px;
-  border-radius: 13px;
-  font-size: 22px;
-}
-
-.insight p {
-  color: #b7c9d9;
-  font-size: 13px;
-  margin-bottom: 0;
-}
-
+.chart-bar { width:100%; border-radius:9px; background:linear-gradient(#7bf0bd,#319d9d); }
+.chart-label { font-size:10px; color:var(--muted); }
 .notice {
-  background: #1a2b3e;
-  border: 1px solid var(--border);
-  padding: 16px;
-  border-radius: 14px;
-  color: #b8c9da;
-  font-size: 13px;
-  line-height: 1.6;
+  background:#1a2b3e; border:1px solid var(--border);
+  padding:15px; border-radius:14px; color:#b8c9da;
+  font-size:13px; line-height:1.6;
 }
-
-.sleep-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px;
-  margin: 9px 0;
-  border: 1px solid var(--border);
-  border-radius: 13px;
-}
-
-.sleep-item strong {
-  color: var(--green);
-  font-size: 21px;
-}
-
-.view { display: none; }
-.view.active { display: block; }
-
+.message { color:#ffd17c; font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; }
+.view { display:none; }
+.view.active { display:block; }
 .bottom-nav {
-  position: fixed;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 5px;
-  padding: 7px;
-  background: #18273aef;
-  backdrop-filter: blur(18px);
-  border: 1px solid #34475e;
-  border-radius: 20px;
-  z-index: 10;
+  position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
+  display:flex; gap:4px; padding:7px; border-radius:20px;
+  background:#18273af5; backdrop-filter:blur(18px);
+  border:1px solid #34475e; z-index:10;
 }
-
 .bottom-nav button {
-  background: transparent;
-  border: 0;
-  border-radius: 14px;
-  color: #a1b4cb;
-  min-width: 80px;
-  padding: 10px 16px;
-  font-size: 11px;
+  background:none; border:0; border-radius:13px;
+  color:#a1b4cb; padding:9px 13px; min-width:74px; font-size:11px;
 }
-
-.bottom-nav button span {
-  display: block;
-  font-size: 23px;
-  margin-bottom: 3px;
+.bottom-nav button span { display:block; font-size:22px; margin-bottom:4px; }
+.bottom-nav button.active { background:#29473f; color:var(--green); }
+.auth { max-width:440px; margin:60px auto; }
+input,select {
+  width:100%; padding:14px; margin:7px 0 13px;
+  background:#0b1624; border:1px solid #40516a;
+  color:white; border-radius:12px;
 }
-
-.bottom-nav button.active {
-  background: #29473f;
-  color: var(--green);
+label { display:block; font-size:12px; color:var(--muted); }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.nutrition-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.nutrition-stat {
+  background:#1d3045; padding:15px 9px;
+  border-radius:15px; text-align:center;
 }
-
-.auth {
-  max-width: 440px;
-  margin: 60px auto;
+.nutrition-stat strong { display:block; font-size:24px; }
+.nutrition-stat small { color:var(--muted); font-size:11px; }
+.meal-row {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; border:1px solid var(--border);
+  border-radius:14px; padding:13px; margin:9px 0;
 }
-
-.auth input {
-  display: block;
-  width: 100%;
-  padding: 15px;
-  margin: 12px 0;
-  background: #0b1624;
-  color: white;
-  border: 1px solid #40516a;
-  border-radius: 13px;
+.meal-row strong { display:block; overflow-wrap:anywhere; }
+.meal-row small { color:var(--muted); font-size:11px; }
+.meal-row button {
+  border:0; background:#49303b; color:#ffb7c3;
+  padding:9px 12px; border-radius:10px;
 }
-
-.message {
-  color: #ffd17c;
-  font-size: 13px;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-footer {
-  text-align: center;
-  margin: 35px 0;
-  font-size: 12px;
-}
-
-footer a {
-  color: var(--muted);
-  margin: 0 8px;
-}
-
-@media (max-width: 760px) {
-  .grid { grid-template-columns: 1fr; }
-
-  .app {
-    padding: 18px 15px 115px;
-  }
-
-  .hero {
-    padding: 22px;
-  }
-
-  .hero-content {
-    gap: 15px;
-  }
-
-  .score-ring {
-    width: 140px;
-    height: 140px;
-  }
-
-  .score-center strong {
-    font-size: 46px;
-  }
-
-  .score-info strong {
-    font-size: 18px;
-  }
-
-  .stats {
-    gap: 8px;
-  }
-
-  .stat {
-    padding: 14px;
-    min-height: 145px;
-  }
-
-  .stat strong {
-    font-size: 23px;
-  }
-
+footer { text-align:center; margin:35px 0; font-size:12px; }
+footer a { color:var(--muted); margin:0 7px; }
+@media(max-width:760px) {
+  .grid { grid-template-columns:1fr; }
+  .app { padding:17px 14px 115px; }
+  .hero { padding:21px; }
+  .hero-content { gap:15px; }
+  .score-ring { width:135px; height:135px; }
+  .score-center strong { font-size:43px; }
+  .score-info strong { font-size:18px; }
+  .stats { gap:8px; }
+  .stat { padding:13px; }
+  .stat strong { font-size:22px; }
+  .nutrition-summary { grid-template-columns:repeat(2,1fr); }
   .bottom-nav {
-    bottom: 0;
-    left: 0;
-    transform: none;
-    width: 100%;
-    border-radius: 20px 20px 0 0;
-    justify-content: space-around;
-    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    bottom:0; left:0; transform:none; width:100%;
+    border-radius:20px 20px 0 0; justify-content:space-around;
+    padding-bottom:max(8px,env(safe-area-inset-bottom));
   }
-
-  .bottom-nav button {
-    min-width: 0;
-    flex: 1;
-    padding: 9px 5px;
-  }
+  .bottom-nav button { min-width:0; flex:1; padding:9px 2px; }
 }
-
-@media (max-width: 380px) {
-  .score-ring {
-    width: 120px;
-    height: 120px;
-  }
-
-  .score-center strong {
-    font-size: 39px;
-  }
-
-  .score-info p {
-    font-size: 11px;
-  }
+@media(max-width:380px) {
+  .score-ring { width:115px; height:115px; }
+  .score-center strong { font-size:36px; }
+  .form-grid { gap:8px; }
 }
 </style>
 </head>
-
 <body>
-
 <div class="app">
-
 <header>
   <div class="logo">
     <div class="logo-icon">V</div>
@@ -523,860 +183,665 @@ footer a {
       <small>YOUR HEALTH, IN FOCUS</small>
     </div>
   </div>
-
   <div class="avatar hidden" id="avatar">V</div>
 </header>
 
 <section id="authCard" class="card auth hidden">
   <div class="eyebrow">Willkommen zurück</div>
-
   <h1>Deine Gesundheit.<br>Dein Überblick.</h1>
-
-  <p class="muted">
-    Melde dich an, um deine persönlichen Gesundheitsdaten zu sehen.
-  </p>
-
+  <p class="muted">Melde dich an, um deine Daten zu sehen.</p>
   <form id="loginForm">
-    <input
-      id="email"
-      type="email"
-      placeholder="E-Mail-Adresse"
-      autocomplete="email"
-      required
-    >
-
-    <input
-      id="password"
-      type="password"
-      placeholder="Passwort"
-      autocomplete="current-password"
-      minlength="6"
-      required
-    >
-
-    <button class="btn full" type="submit">
-      Anmelden
-    </button>
+    <input id="email" type="email" placeholder="E-Mail-Adresse" autocomplete="email" required>
+    <input id="password" type="password" placeholder="Passwort" autocomplete="current-password" minlength="6" required>
+    <button class="btn full" type="submit">Anmelden</button>
   </form>
-
-  <button id="registerButton" class="btn secondary full">
-    Neues Konto erstellen
-  </button>
+  <button id="registerButton" class="btn secondary full">Neues Konto erstellen</button>
 </section>
 
 <div id="dashboard" class="hidden">
 
 <section id="homeView" class="view active">
-
   <div class="grid">
-
     <div class="card hero">
       <div class="eyebrow">Dein Gesundheitsüberblick</div>
-
       <h1>Guten <span id="greeting">Tag</span> ✨</h1>
-
-      <p class="muted">
-        Ein klarer Blick auf deinen Schlaf und deine Erholung.
-      </p>
-
+      <p class="muted">Deine Gesundheit auf einen Blick.</p>
       <div class="hero-content">
-
         <div class="score-ring">
           <svg viewBox="0 0 180 180" width="100%" height="100%">
-            <circle
-              class="ring-track"
-              cx="90" cy="90" r="72"
-            />
-            <circle
-              id="scoreCircle"
-              class="ring-progress"
-              cx="90" cy="90" r="72"
-            />
+            <circle class="ring-track" cx="90" cy="90" r="72"/>
+            <circle id="scoreCircle" class="ring-progress" cx="90" cy="90" r="72"/>
           </svg>
-
           <div class="score-center">
             <strong id="mainScore">–</strong>
             <small>Schlafscore</small>
           </div>
         </div>
-
         <div class="score-info">
-          <div class="eyebrow" id="scoreDate">
-            Letzte Messung
-          </div>
-
-          <strong id="scoreRating">
-            Noch keine Daten
-          </strong>
-
-          <p id="scoreDescription">
-            Deine Schlafdaten werden geladen.
-          </p>
+          <div class="eyebrow" id="scoreDate">Letzte Messung</div>
+          <strong id="scoreRating">Noch keine Daten</strong>
+          <p>Dein zuletzt erfasster Oura-Schlafscore.</p>
         </div>
-
       </div>
     </div>
 
     <div class="card">
       <h2>◉ Dein Oura Ring</h2>
-
       <div class="status-row">
         <div id="ouraDot" class="dot"></div>
-        <span id="ouraStatus">
-          Verbindung wird geprüft ...
-        </span>
+        <span id="ouraStatus">Verbindung wird geprüft ...</span>
       </div>
-
-      <p class="muted">
-        Deine Schlafdaten werden über deine bestehende
-        Oura-Verbindung geladen.
-      </p>
-
-      <button id="ouraButton" class="btn secondary hidden">
-        Oura Ring verbinden
-      </button>
-
-      <button id="sleepButton" class="btn hidden">
-        Daten aktualisieren ↻
-      </button>
-
+      <p class="muted">Deine Schlafdaten werden sicher über deine Oura-Verbindung abgerufen.</p>
+      <button id="ouraButton" class="btn secondary hidden">Oura verbinden</button>
+      <button id="sleepButton" class="btn hidden">Schlafdaten aktualisieren ↻</button>
       <p id="ouraMessage" class="message"></p>
-
-      <div class="notice">
-        ✦ Hier erscheinen nur echte Messwerte.
-        Fehlende Gesundheitsdaten werden nicht geschätzt.
-      </div>
     </div>
-
   </div>
 
   <div class="stats">
-
     <div class="card stat">
       <div class="stat-icon">☾</div>
       <small>Schlaf</small>
       <strong id="miniSleep">–</strong>
-      <small>Oura Schlafscore</small>
+      <small>Oura Score</small>
     </div>
-
     <div class="card stat">
       <div class="stat-icon">♡</div>
       <small>Herzfrequenz</small>
       <strong>–</strong>
       <small>Noch keine Daten</small>
     </div>
-
     <div class="card stat">
       <div class="stat-icon">⚡</div>
       <small>Aktivität</small>
       <strong>–</strong>
       <small>Noch keine Daten</small>
     </div>
-
   </div>
 
   <div class="grid">
-
     <div class="card">
       <h2>Dein Schlafverlauf</h2>
       <p class="muted">Letzte 7 Tage</p>
       <div id="homeChart" class="chart"></div>
     </div>
-
     <div class="card">
-      <h2>✦ Deine Schlaf-Einschätzung</h2>
-
-      <div class="insight">
-        <div class="insight-icon">✦</div>
-        <div>
-          <strong id="insightTitle">
-            Bereit für deinen Überblick
-          </strong>
-
-          <p id="insightText">
-            Sobald deine Schlafdaten geladen sind,
-            erscheint hier eine einfache Einordnung.
-          </p>
-        </div>
-      </div>
-
-      <p class="muted">
-        Diese Einschätzung basiert auf deinem Schlafscore.
-        Sie ist noch keine KI-Analyse.
-      </p>
+      <h2>🥗 Deine Ernährung heute</h2>
+      <p class="muted">Bereits eingetragene Kalorien</p>
+      <h1><span id="homeCalories">0</span> <small style="font-size:15px">kcal</small></h1>
+      <p id="homeNutritionInfo" class="muted">Noch keine Mahlzeiten eingetragen.</p>
+      <button class="btn" id="goNutrition">Mahlzeit eintragen +</button>
     </div>
+  </div>
+</section>
 
+<section id="nutritionView" class="view">
+  <div class="eyebrow">Dein Ernährungstagebuch</div>
+  <h1>Ernährung 🥗</h1>
+  <p class="muted">Alle Mahlzeiten und Nährwerte an einem Ort.</p>
+
+  <div class="card">
+    <label for="nutritionDate">Datum auswählen</label>
+    <input id="nutritionDate" type="date">
+    <h2>Deine Tagesbilanz</h2>
+    <div class="nutrition-summary">
+      <div class="nutrition-stat">
+        <strong id="totalCalories">0</strong><small>kcal</small>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="totalProtein">0</strong><small>Eiweiß (g)</small>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="totalCarbs">0</strong><small>Kohlenhydrate (g)</small>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="totalFat">0</strong><small>Fett (g)</small>
+      </div>
+    </div>
+    <p class="muted">Die Werte ergeben sich aus deinen gespeicherten Angaben.</p>
   </div>
 
+  <div class="card">
+    <h2>+ Mahlzeit hinzufügen</h2>
+    <form id="nutritionForm">
+      <label for="mealType">Mahlzeit</label>
+      <select id="mealType" required>
+        <option value="breakfast">Frühstück</option>
+        <option value="lunch">Mittagessen</option>
+        <option value="dinner">Abendessen</option>
+        <option value="snack">Snack</option>
+      </select>
+
+      <label for="foodName">Lebensmittel / Gericht</label>
+      <input id="foodName" maxlength="200" placeholder="z. B. Haferflocken mit Banane" required>
+
+      <div class="form-grid">
+        <div>
+          <label for="calories">Kalorien (kcal)</label>
+          <input id="calories" type="number" min="0" max="999999" step="0.01" placeholder="0" required>
+        </div>
+        <div>
+          <label for="protein">Eiweiß (g)</label>
+          <input id="protein" type="number" min="0" max="999999" step="0.01" value="0" required>
+        </div>
+        <div>
+          <label for="carbs">Kohlenhydrate (g)</label>
+          <input id="carbs" type="number" min="0" max="999999" step="0.01" value="0" required>
+        </div>
+        <div>
+          <label for="fat">Fett (g)</label>
+          <input id="fat" type="number" min="0" max="999999" step="0.01" value="0" required>
+        </div>
+      </div>
+      <button id="saveMeal" class="btn full" type="submit">Mahlzeit speichern</button>
+    </form>
+    <p class="muted">Nährwerte werden momentan manuell eingetragen. Eine Lebensmitteldatenbank ergänzen wir später.</p>
+    <p id="nutritionMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="card">
+    <h2>Gespeicherte Mahlzeiten</h2>
+    <div id="nutritionList" class="muted">Einträge werden geladen ...</div>
+  </div>
 </section>
 
 <section id="sleepView" class="view">
   <div class="eyebrow">Deine Schlafgesundheit</div>
   <h1>Dein Schlaf ☾</h1>
-
   <div class="card">
-    <h2>Schlafscores im Verlauf</h2>
+    <h2>Schlafscore-Verlauf</h2>
     <div id="sleepChart" class="chart"></div>
   </div>
-
   <div class="card">
     <h2>Deine letzten Messungen</h2>
-    <div id="sleepList" class="muted">
-      Noch keine Daten geladen.
-    </div>
+    <div id="sleepList" class="muted">Noch keine Daten geladen.</div>
   </div>
 </section>
 
-<section id="trendsView" class="view">
-  <div class="eyebrow">Deine Entwicklung</div>
-  <h1>Gesundheitstrends ▥</h1>
-
+<section id="moreView" class="view">
+  <div class="eyebrow">VYORA AI</div>
+  <h1>Mehr entdecken ✦</h1>
   <div class="card">
-    <h2>Schlafscore-Trend</h2>
-    <div id="trendsChart" class="chart"></div>
+    <h2>🏋️ Training</h2>
+    <p class="muted">Trainingspläne, Übungen, Sätze und Fortschritt bauen wir als Nächstes.</p>
   </div>
-
-  <div class="notice">
-    Weitere Trends für Herzfrequenz, Aktivität und Erholung
-    ergänzen wir, sobald diese Daten angebunden sind.
-  </div>
-</section>
-
-<section id="coachView" class="view">
-  <div class="eyebrow">Dein persönlicher Begleiter</div>
-  <h1>VYORA KI-Coach ✦</h1>
-
   <div class="card">
-    <div class="insight">
-      <div class="insight-icon">✦</div>
-
-      <div>
-        <strong>Dein zukünftiger Gesundheitscoach</strong>
-
-        <p>
-          Hier wird VYORA später deine Schlaf-,
-          Aktivitäts- und Erholungsdaten gemeinsam
-          betrachten und verständlich erklären.
-        </p>
-      </div>
-    </div>
+    <h2>♡ Gesundheitstrends</h2>
+    <p class="muted">Schlaf, Ernährung und weitere Gesundheitswerte werden hier später gemeinsam ausgewertet.</p>
   </div>
-
-  <div class="notice">
-    Der KI-Coach ist noch nicht aktiviert.
-    Gesundheitsinformationen ersetzen keine ärztliche Diagnose.
+  <div class="card">
+    <h2>✦ KI-Coach</h2>
+    <p class="muted">Dein persönlicher KI-Coach ist noch nicht aktiviert.</p>
   </div>
 </section>
 
-<div style="text-align:center;margin:28px 0">
-  <button id="logoutButton" class="btn secondary">
-    Abmelden
-  </button>
+<div style="text-align:center;margin:25px 0">
+  <button id="logoutButton" class="btn secondary">Abmelden</button>
 </div>
 
 <nav class="bottom-nav" aria-label="Hauptnavigation">
-  <button class="active" data-view="homeView">
-    <span>⌂</span>Home
-  </button>
-
-  <button data-view="sleepView">
-    <span>☾</span>Schlaf
-  </button>
-
-  <button data-view="trendsView">
-    <span>▥</span>Trends
-  </button>
-
-  <button data-view="coachView">
-    <span>✦</span>KI-Coach
-  </button>
+  <button class="active" data-view="homeView"><span>⌂</span>Home</button>
+  <button data-view="nutritionView"><span>🥗</span>Ernährung</button>
+  <button data-view="sleepView"><span>☾</span>Schlaf</button>
+  <button data-view="moreView"><span>✦</span>Mehr</button>
 </nav>
 
 </div>
 
 <p id="message" class="message" role="status"></p>
-
 <footer>
   <a href="datenschutz.html">Datenschutz</a>
   <a href="impressum.html">Impressum</a>
   <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a>
 </footer>
-
 </div>
 
 <script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { createClient } from
-  "https://esm.sh/@supabase/supabase-js@2";
-
-const SUPABASE_URL =
-  "https://uukjvrmxrxbhueqarjpp.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP";
-
-const OURA_FUNCTION =
-  SUPABASE_URL + "/functions/v1/oura-connect";
-
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
+const SUPABASE_URL = "https://uukjvrmxrxbhueqarjpp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP";
+const OURA_FUNCTION = SUPABASE_URL + "/functions/v1/oura-connect";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 
 let currentUserId = null;
 let refreshCounter = 0;
-let latestSleep = [];
+let sleepData = [];
+let nutritionData = [];
 let loadingSleep = false;
 
-function showMessage(text) {
-  $("message").textContent = text || "";
+const mealNames = {
+  breakfast:"Frühstück", lunch:"Mittagessen",
+  dinner:"Abendessen", snack:"Snack"
+};
+
+function localDate() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+$("nutritionDate").value = localDate();
+
+function message(text) { $("message").textContent = text || ""; }
+function nutritionMessage(text) { $("nutritionMessage").textContent = text || ""; }
+function ouraMessage(text) { $("ouraMessage").textContent = text || ""; }
+
+function switchView(id) {
+  document.querySelectorAll(".view").forEach(view =>
+    view.classList.toggle("active",view.id===id)
+  );
+  document.querySelectorAll(".bottom-nav button").forEach(button =>
+    button.classList.toggle("active",button.dataset.view===id)
+  );
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function showOuraMessage(text) {
-  $("ouraMessage").textContent = text || "";
-}
+document.querySelectorAll(".bottom-nav button").forEach(button =>
+  button.addEventListener("click",()=>switchView(button.dataset.view))
+);
+$("goNutrition").addEventListener("click",()=>switchView("nutritionView"));
 
 function setConnected(connected) {
-  $("ouraDot").classList.toggle(
-    "connected",
-    connected
-  );
-
+  $("ouraDot").classList.toggle("connected",connected);
   $("ouraStatus").textContent = connected
-    ? "✓ Oura Ring verbunden"
-    : "Oura Ring nicht verbunden";
-
+    ? "✓ Oura Ring verbunden" : "Oura Ring nicht verbunden";
   $("ouraButton").classList.remove("hidden");
-
   $("ouraButton").textContent = connected
-    ? "Erneut verbinden"
-    : "Oura Ring verbinden";
-
-  $("sleepButton").classList.toggle(
-    "hidden",
-    !connected
-  );
+    ? "Erneut verbinden" : "Oura Ring verbinden";
+  $("sleepButton").classList.toggle("hidden",!connected);
 }
 
 async function authenticatedRequest(action) {
-  const { data, error } =
-    await supabase.auth.getSession();
-
-  if (error || !data.session) {
-    throw new Error("Bitte erneut anmelden.");
-  }
+  const {data,error} = await supabase.auth.getSession();
+  if(error || !data.session) throw new Error("Bitte erneut anmelden.");
 
   const response = await fetch(
-    OURA_FUNCTION + "?action=" + encodeURIComponent(action),
-    {
-      method: "POST",
-      headers: {
-        Authorization:
-          "Bearer " + data.session.access_token,
-        apikey: SUPABASE_KEY,
-        "Content-Type": "application/json"
+    OURA_FUNCTION+"?action="+encodeURIComponent(action),{
+      method:"POST",
+      headers:{
+        Authorization:"Bearer "+data.session.access_token,
+        apikey:SUPABASE_KEY,
+        "Content-Type":"application/json"
       },
-      body: JSON.stringify({})
+      body:JSON.stringify({})
     }
   );
 
-  let result;
-
-  try {
-    result = await response.json();
-  } catch {
-    throw new Error("Ungültige Serverantwort.");
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      result.error ||
-      "Serverfehler HTTP " + response.status
-    );
-  }
-
+  const result = await response.json();
+  if(!response.ok) throw new Error(result.error || "HTTP "+response.status);
   return result;
 }
 
 function formatDate(day) {
-  if (!day) return "–";
-
-  const date = new Date(day + "T12:00:00");
-
-  return Number.isNaN(date.getTime())
-    ? day
-    : date.toLocaleDateString("de-DE", {
-        day: "2-digit",
-        month: "short"
-      });
+  if(!day) return "–";
+  const d = new Date(day+"T12:00:00");
+  return isNaN(d.getTime()) ? day :
+    d.toLocaleDateString("de-DE",{day:"2-digit",month:"short"});
 }
 
-function scoreRating(score) {
-  if (score >= 85) return "Sehr gut";
-  if (score >= 70) return "Gut erholt";
-  if (score >= 60) return "Ausbaufähig";
-  return "Erholung beachten";
-}
-
-function renderChart(targetId, entries) {
-  const container = $(targetId);
-  container.replaceChildren();
-
-  if (!entries.length) {
-    container.textContent =
-      "Noch keine Schlafdaten verfügbar.";
+function renderChart(id) {
+  const box = $(id);
+  box.replaceChildren();
+  if(!sleepData.length) {
+    box.textContent = "Noch keine Schlafdaten verfügbar.";
     return;
   }
-
-  entries.slice(-7).forEach(item => {
+  sleepData.slice(-7).forEach(item=>{
     const column = document.createElement("div");
     column.className = "chart-column";
-
     const value = document.createElement("span");
     value.className = "chart-value";
     value.textContent = item.score;
-
     const track = document.createElement("div");
     track.className = "chart-track";
-
     const bar = document.createElement("div");
     bar.className = "chart-bar";
-    bar.style.height = item.score + "%";
-
-    track.appendChild(bar);
-
+    bar.style.height = item.score+"%";
+    track.append(bar);
     const label = document.createElement("span");
     label.className = "chart-label";
     label.textContent = formatDate(item.day);
-
-    column.append(value, track, label);
-    container.appendChild(column);
+    column.append(value,track,label);
+    box.append(column);
   });
 }
 
 function renderSleep() {
-  for (const id of [
-    "homeChart",
-    "sleepChart",
-    "trendsChart"
-  ]) {
-    renderChart(id, latestSleep);
-  }
-
+  renderChart("homeChart");
+  renderChart("sleepChart");
   const list = $("sleepList");
   list.replaceChildren();
-
-  if (!latestSleep.length) {
-    list.textContent =
-      "Keine Schlafdaten für die letzten 7 Tage.";
-    return;
-  }
-
-  latestSleep.slice().reverse().forEach(item => {
+  sleepData.slice().reverse().forEach(item=>{
     const row = document.createElement("div");
-    row.className = "sleep-item";
-
+    row.className = "meal-row";
     const date = document.createElement("span");
     date.textContent = formatDate(item.day);
-
     const score = document.createElement("strong");
     score.textContent = item.score;
-
-    row.append(date, score);
-    list.appendChild(row);
+    row.append(date,score);
+    list.append(row);
   });
 
-  const latest = latestSleep[latestSleep.length - 1];
-
+  if(!sleepData.length) {
+    list.textContent = "Keine Schlafscores für die letzten 7 Tage.";
+    return;
+  }
+  const latest = sleepData[sleepData.length-1];
   $("mainScore").textContent = latest.score;
   $("miniSleep").textContent = latest.score;
-
-  $("scoreDate").textContent =
-    formatDate(latest.day);
-
-  $("scoreRating").textContent =
-    scoreRating(latest.score);
-
-  $("scoreDescription").textContent =
-    "Dein zuletzt von Oura erfasster Schlafscore.";
-
+  $("scoreDate").textContent = formatDate(latest.day);
+  $("scoreRating").textContent = latest.score>=85
+    ? "Sehr gut" : latest.score>=70 ? "Gut erholt"
+    : latest.score>=60 ? "Ausbaufähig" : "Erholung beachten";
   $("scoreCircle").style.strokeDashoffset =
-    452.39 * (1 - latest.score / 100);
-
-  $("insightTitle").textContent =
-    scoreRating(latest.score);
-
-  $("insightText").textContent =
-    latest.score >= 85
-      ? "Dein letzter Schlafscore liegt im hohen Bereich. Beobachte auch den Verlauf über mehrere Nächte."
-      : latest.score >= 70
-      ? "Dein letzter Schlafscore liegt im guten Bereich. Achte auch auf deinen längerfristigen Trend."
-      : "Dein letzter Schlafscore ist niedriger. Beobachte den Verlauf und achte darauf, wie du dich fühlst.";
+    452.39*(1-latest.score/100);
 }
 
 async function loadSleep() {
-  if (loadingSleep) return;
-
-  const userId = currentUserId;
-
+  if(loadingSleep) return;
   loadingSleep = true;
+  const userId = currentUserId;
   $("sleepButton").disabled = true;
-
-  showOuraMessage("Schlafdaten werden geladen ...");
-
+  ouraMessage("Schlafdaten werden geladen ...");
   try {
-    const result =
-      await authenticatedRequest("daily");
-
-    if (currentUserId !== userId) return;
-
-    const items = Array.isArray(result.data)
-      ? result.data
-      : [];
-
-    latestSleep = items
-      .filter(item =>
-        typeof item.day === "string" &&
-        item.score !== null &&
-        item.score !== undefined &&
-        Number.isFinite(Number(item.score)) &&
-        Number(item.score) >= 0 &&
-        Number(item.score) <= 100
-      )
-      .map(item => ({
-        day: item.day,
-        score: Number(item.score)
-      }))
-      .sort((a, b) =>
-        a.day.localeCompare(b.day)
-      );
-
+    const result = await authenticatedRequest("daily");
+    if(currentUserId!==userId) return;
+    sleepData = (Array.isArray(result.data)?result.data:[])
+      .filter(x=>typeof x.day==="string" &&
+        x.score!==null && x.score!==undefined &&
+        Number.isFinite(Number(x.score)) &&
+        Number(x.score)>=0 && Number(x.score)<=100)
+      .map(x=>({day:x.day,score:Number(x.score)}))
+      .sort((a,b)=>a.day.localeCompare(b.day));
     renderSleep();
-
-    showOuraMessage(
-      latestSleep.length
-        ? "✓ Schlafdaten aktualisiert."
-        : "Keine Schlafscores für die letzten 7 Tage."
-    );
-
-  } catch (error) {
-    if (currentUserId === userId) {
-      showOuraMessage(
-        "Schlafdaten konnten nicht geladen werden: " +
-        error.message
-      );
-    }
+    ouraMessage("✓ Schlafdaten aktualisiert.");
+  } catch(e) {
+    if(currentUserId===userId) ouraMessage("Fehler: "+e.message);
   } finally {
     loadingSleep = false;
     $("sleepButton").disabled = false;
   }
 }
 
-async function refreshUI() {
-  const counter = ++refreshCounter;
+function number(value) {
+  return Number(value||0).toLocaleString("de-DE",{
+    maximumFractionDigits:1
+  });
+}
 
-  const { data, error } =
-    await supabase.auth.getUser();
-
-  if (counter !== refreshCounter) return;
-
-  const user = data?.user;
-
-  $("authCard").classList.toggle(
-    "hidden",
-    !!user
+function renderNutrition() {
+  const sum = field => nutritionData.reduce(
+    (total,item)=>total+Number(item[field]||0),0
   );
+  $("totalCalories").textContent = number(sum("calories"));
+  $("totalProtein").textContent = number(sum("protein"));
+  $("totalCarbs").textContent = number(sum("carbs"));
+  $("totalFat").textContent = number(sum("fat"));
 
-  $("dashboard").classList.toggle(
-    "hidden",
-    !user
-  );
-
-  $("avatar").classList.toggle(
-    "hidden",
-    !user
-  );
-
-  if (error &&
-      error.name !== "AuthSessionMissingError") {
-    showMessage(error.message);
+  if($("nutritionDate").value===localDate()) {
+    $("homeCalories").textContent = number(sum("calories"));
+    $("homeNutritionInfo").textContent =
+      nutritionData.length+" Mahlzeit(en) heute eingetragen.";
   }
 
-  if (!user) {
-    currentUserId = null;
-    latestSleep = [];
+  const list = $("nutritionList");
+  list.replaceChildren();
+
+  if(!nutritionData.length) {
+    list.textContent = "Für dieses Datum sind noch keine Mahlzeiten gespeichert.";
     return;
   }
 
-  $("avatar").textContent =
-    (user.email || "V").charAt(0).toUpperCase();
+  nutritionData.forEach(item=>{
+    const row = document.createElement("div");
+    row.className = "meal-row";
 
-  const userChanged = currentUserId !== user.id;
+    const info = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = item.food_name;
+
+    const details = document.createElement("small");
+    details.textContent =
+      mealNames[item.meal_type]+" · "+
+      number(item.calories)+" kcal · "+
+      "E "+number(item.protein)+" g · "+
+      "KH "+number(item.carbs)+" g · "+
+      "F "+number(item.fat)+" g";
+
+    info.append(title,details);
+
+    const del = document.createElement("button");
+    del.textContent = "Löschen";
+    del.setAttribute("aria-label","Mahlzeit löschen: "+item.food_name);
+    del.addEventListener("click",()=>deleteMeal(item.id));
+
+    row.append(info,del);
+    list.append(row);
+  });
+}
+
+async function loadNutrition() {
+  if(!currentUserId) return;
+  const userId = currentUserId;
+  const date = $("nutritionDate").value;
+  nutritionMessage("Mahlzeiten werden geladen ...");
+
+  const {data,error} = await supabase
+    .from("nutrition_entries")
+    .select("id,meal_type,food_name,calories,protein,carbs,fat,entry_date,created_at")
+    .eq("user_id",userId)
+    .eq("entry_date",date)
+    .order("created_at",{ascending:false});
+
+  if(currentUserId!==userId || $("nutritionDate").value!==date) return;
+
+  if(error) {
+    nutritionMessage("Laden fehlgeschlagen: "+error.message);
+    return;
+  }
+  nutritionData = data||[];
+  renderNutrition();
+  nutritionMessage("");
+}
+
+$("nutritionDate").addEventListener("change",loadNutrition);
+
+$("nutritionForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const button = $("saveMeal");
+  button.disabled = true;
+  nutritionMessage("Mahlzeit wird gespeichert ...");
+
+  try {
+    const {data:{user},error:userError} = await supabase.auth.getUser();
+    if(userError || !user) throw new Error("Bitte erneut anmelden.");
+
+    const fields = ["calories","protein","carbs","fat"];
+    const values = {};
+    for(const field of fields) {
+      const value = Number($(field).value);
+      if(!Number.isFinite(value) || value<0 || value>999999)
+        throw new Error("Bitte gültige Nährwerte eingeben.");
+      values[field] = value;
+    }
+
+    const foodName = $("foodName").value.trim();
+    if(!foodName || foodName.length>200)
+      throw new Error("Bitte einen gültigen Namen eingeben.");
+
+    const {error} = await supabase.from("nutrition_entries").insert({
+      user_id:user.id,
+      meal_type:$("mealType").value,
+      food_name:foodName,
+      entry_date:$("nutritionDate").value,
+      ...values
+    });
+
+    if(error) throw error;
+
+    $("nutritionForm").reset();
+    nutritionMessage("✓ Mahlzeit gespeichert.");
+    await loadNutrition();
+    nutritionMessage("✓ Mahlzeit gespeichert.");
+  } catch(e) {
+    nutritionMessage("Speichern fehlgeschlagen: "+e.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+async function deleteMeal(id) {
+  if(!confirm("Diese Mahlzeit wirklich löschen?")) return;
+  nutritionMessage("Eintrag wird gelöscht ...");
+
+  const {error} = await supabase
+    .from("nutrition_entries")
+    .delete()
+    .eq("id",id)
+    .eq("user_id",currentUserId);
+
+  if(error) {
+    nutritionMessage("Löschen fehlgeschlagen: "+error.message);
+    return;
+  }
+  await loadNutrition();
+  nutritionMessage("✓ Eintrag gelöscht.");
+}
+
+async function refreshUI() {
+  const counter = ++refreshCounter;
+  const {data,error} = await supabase.auth.getUser();
+  if(counter!==refreshCounter) return;
+
+  const user = data?.user;
+  $("authCard").classList.toggle("hidden",!!user);
+  $("dashboard").classList.toggle("hidden",!user);
+  $("avatar").classList.toggle("hidden",!user);
+
+  if(error && error.name!=="AuthSessionMissingError")
+    message(error.message);
+
+  if(!user) {
+    currentUserId = null;
+    sleepData = [];
+    nutritionData = [];
+    return;
+  }
+
+  const changed = currentUserId!==user.id;
   currentUserId = user.id;
+  $("avatar").textContent = (user.email||"V")[0].toUpperCase();
 
-  if (userChanged) {
-    latestSleep = [];
-
+  if(changed) {
+    sleepData = [];
+    nutritionData = [];
     $("mainScore").textContent = "–";
     $("miniSleep").textContent = "–";
     $("scoreCircle").style.strokeDashoffset = 452.39;
     $("scoreRating").textContent = "Noch keine Daten";
-    $("scoreDate").textContent = "Letzte Messung";
-
-    $("insightTitle").textContent =
-      "Bereit für deinen Überblick";
-
-    $("insightText").textContent =
-      "Deine Schlafdaten werden geladen.";
-
-    for (const id of [
-      "homeChart",
-      "sleepChart",
-      "trendsChart"
-    ]) {
-      renderChart(id, []);
-    }
-
-    $("sleepList").textContent =
-      "Noch keine Daten geladen.";
+    $("homeCalories").textContent = "0";
+    $("homeNutritionInfo").textContent = "Noch keine Mahlzeiten eingetragen.";
+    renderSleep();
+    renderNutrition();
   }
 
-  const params =
-    new URLSearchParams(location.search);
-
+  const params = new URLSearchParams(location.search);
   const ouraResult = params.get("oura");
-
-  if (ouraResult) {
-    showOuraMessage(
-      ouraResult === "connected"
-        ? "Oura-Autorisierung erfolgreich."
-        : "Oura-Freigabe abgebrochen."
-    );
-
-    const cleanUrl = new URL(location.href);
-    cleanUrl.searchParams.delete("oura");
-
-    history.replaceState(
-      {},
-      "",
-      cleanUrl.toString()
-    );
+  if(ouraResult) {
+    ouraMessage(ouraResult==="connected"
+      ? "Oura-Autorisierung erfolgreich."
+      : "Oura-Freigabe abgebrochen.");
+    const clean = new URL(location.href);
+    clean.searchParams.delete("oura");
+    history.replaceState({},"",clean.toString());
   }
 
-  $("ouraStatus").textContent =
-    "Verbindung wird geprüft ...";
-
+  $("ouraStatus").textContent = "Verbindung wird geprüft ...";
   $("ouraButton").classList.add("hidden");
   $("sleepButton").classList.add("hidden");
 
+  if(changed) loadNutrition();
+
   try {
-    const result =
-      await authenticatedRequest("status");
-
-    if (
-      counter !== refreshCounter ||
-      currentUserId !== user.id
-    ) {
-      return;
-    }
-
-    const connected = result.connected === true;
-
+    const result = await authenticatedRequest("status");
+    if(counter!==refreshCounter || currentUserId!==user.id) return;
+    const connected = result.connected===true;
     setConnected(connected);
-
-    if (
-      connected &&
-      (userChanged || !latestSleep.length)
-    ) {
-      await loadSleep();
-    }
-
-  } catch (error) {
-    if (counter !== refreshCounter) return;
-
-    $("ouraStatus").textContent =
-      "Status konnte nicht geprüft werden.";
-
+    if(connected && (changed || !sleepData.length)) await loadSleep();
+  } catch(e) {
+    if(counter!==refreshCounter) return;
+    $("ouraStatus").textContent = "Status konnte nicht geprüft werden.";
     $("ouraButton").classList.remove("hidden");
-
-    showOuraMessage(
-      "Statusabfrage fehlgeschlagen: " +
-      error.message
-    );
+    ouraMessage("Statusabfrage fehlgeschlagen: "+e.message);
   }
 }
 
-$("loginForm").addEventListener(
-  "submit",
-  async event => {
-    event.preventDefault();
-
-    const { error } =
-      await supabase.auth.signInWithPassword({
-        email: $("email").value.trim(),
-        password: $("password").value
-      });
-
-    if (error) {
-      showMessage(
-        "Anmeldung fehlgeschlagen: " +
-        error.message
-      );
-      return;
-    }
-
-    showMessage("");
-    await refreshUI();
-  }
-);
-
-$("registerButton").addEventListener(
-  "click",
-  async () => {
-    const email = $("email").value.trim();
-    const password = $("password").value;
-
-    if (!email || password.length < 6) {
-      showMessage(
-        "Bitte E-Mail und Passwort mit mindestens 6 Zeichen eingeben."
-      );
-      return;
-    }
-
-    const { error } =
-      await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo:
-            "https://woozy1x1.github.io/fitlife-ai/"
-        }
-      });
-
-    showMessage(
-      error
-        ? "Registrierung fehlgeschlagen: " +
-          error.message
-        : "Registrierung gestartet. Bitte prüfe deine E-Mails."
-    );
-
-    await refreshUI();
-  }
-);
-
-$("logoutButton").addEventListener(
-  "click",
-  async () => {
-    const { error } =
-      await supabase.auth.signOut();
-
-    if (error) {
-      showMessage(error.message);
-      return;
-    }
-
-    currentUserId = null;
-    showMessage("Erfolgreich abgemeldet.");
-
-    await refreshUI();
-  }
-);
-
-$("ouraButton").addEventListener(
-  "click",
-  async () => {
-    const button = $("ouraButton");
-    button.disabled = true;
-
-    try {
-      showOuraMessage(
-        "Oura-Verbindung wird gestartet ..."
-      );
-
-      const result =
-        await authenticatedRequest("start");
-
-      const target =
-        result.url || result.authorization_url;
-
-      if (!target) {
-        throw new Error(
-          "Keine Oura-Weiterleitungsadresse erhalten."
-        );
-      }
-
-      const url = new URL(target);
-
-      if (
-        url.protocol !== "https:" ||
-        url.hostname !== "cloud.ouraring.com"
-      ) {
-        throw new Error(
-          "Unerwartete Oura-Adresse."
-        );
-      }
-
-      location.assign(url.href);
-
-    } catch (error) {
-      showOuraMessage(error.message);
-    } finally {
-      button.disabled = false;
-    }
-  }
-);
-
-$("sleepButton").addEventListener(
-  "click",
-  loadSleep
-);
-
-document.querySelectorAll(
-  ".bottom-nav button"
-).forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(
-      ".bottom-nav button"
-    ).forEach(item => {
-      item.classList.toggle(
-        "active",
-        item === button
-      );
-    });
-
-    document.querySelectorAll(
-      ".view"
-    ).forEach(view => {
-      view.classList.toggle(
-        "active",
-        view.id === button.dataset.view
-      );
-    });
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
+$("loginForm").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const {error} = await supabase.auth.signInWithPassword({
+    email:$("email").value.trim(),
+    password:$("password").value
   });
+  if(error) return message("Anmeldung fehlgeschlagen: "+error.message);
+  message("");
+  await refreshUI();
 });
+
+$("registerButton").addEventListener("click",async()=>{
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if(!email || password.length<6)
+    return message("Bitte E-Mail und Passwort mit mindestens 6 Zeichen eingeben.");
+
+  const {error} = await supabase.auth.signUp({
+    email,password,
+    options:{emailRedirectTo:"https://woozy1x1.github.io/fitlife-ai/"}
+  });
+  message(error
+    ? "Registrierung fehlgeschlagen: "+error.message
+    : "Registrierung gestartet. Bitte prüfe deine E-Mails.");
+  await refreshUI();
+});
+
+$("logoutButton").addEventListener("click",async()=>{
+  const {error} = await supabase.auth.signOut();
+  if(error) return message(error.message);
+  currentUserId = null;
+  message("Erfolgreich abgemeldet.");
+  await refreshUI();
+});
+
+$("ouraButton").addEventListener("click",async()=>{
+  const button = $("ouraButton");
+  button.disabled = true;
+  try {
+    const result = await authenticatedRequest("start");
+    const target = result.url||result.authorization_url;
+    if(!target) throw new Error("Keine Weiterleitungsadresse erhalten.");
+    const url = new URL(target);
+    if(url.protocol!=="https:" || url.hostname!=="cloud.ouraring.com")
+      throw new Error("Unerwartete Oura-Adresse.");
+    location.assign(url.href);
+  } catch(e) {
+    ouraMessage(e.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("sleepButton").addEventListener("click",loadSleep);
 
 const hour = new Date().getHours();
-
 $("greeting").textContent =
-  hour < 11
-    ? "Morgen"
-    : hour < 18
-    ? "Tag"
-    : "Abend";
+  hour<11?"Morgen":hour<18?"Tag":"Abend";
 
-supabase.auth.onAuthStateChange(() => {
-  setTimeout(refreshUI, 0);
+supabase.auth.onAuthStateChange(()=>{
+  setTimeout(refreshUI,0);
 });
-
 refreshUI();
-
 </script>
 </body>
 </html>
