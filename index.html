@@ -198,6 +198,14 @@ label{display:block;font-size:12px;color:var(--muted)}
 .insight{background:#1a2b3e;border-left:3px solid var(--green);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:13px;color:#cfdbe8;line-height:1.5}
 .plan-ex{color:var(--muted);font-size:11px;display:block;margin-top:3px}
 #hrChart svg{width:100%;height:150px;display:block}
+.auth.consent{max-width:620px}
+.consent-list{padding-left:20px;color:#cfdbe8;font-size:14px;line-height:1.6}
+.consent-list li{margin:6px 0}
+label.check{display:flex;gap:12px;align-items:flex-start;color:#dfe8f1;font-size:14px;line-height:1.55;margin:14px 0}
+label.check input{width:22px;height:22px;margin:2px 0 0;flex-shrink:0;accent-color:var(--green)}
+.auth a,.card a{color:var(--green)}
+.small-note{font-size:12px;margin-top:12px}
+.btn.danger{background:#7a2f3b;color:#ffe3e8}
 .section-divider{
   height:1px;background:var(--border);margin:22px 0
 }
@@ -262,6 +270,15 @@ footer a{color:var(--muted);margin:0 7px}
     Neues Konto erstellen
   </button>
 
+  <p class="muted small-note">
+    Mit der Registrierung akzeptierst du die
+    <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a>.
+    Wie wir mit deinen Daten umgehen, steht in der
+    <a href="datenschutz.html">Datenschutzerklärung</a>.
+    Deine Einwilligung für Gesundheitsdaten fragen wir nach der
+    ersten Anmeldung gesondert ab.
+  </p>
+
   <div id="socialLogin" class="hidden">
     <div class="or-line"><span>oder</span></div>
     <button id="googleLogin" class="btn social full hidden" type="button">
@@ -271,6 +288,54 @@ footer a{color:var(--muted);margin:0 7px}
       <span class="social-icon"></span> Mit Apple anmelden
     </button>
   </div>
+</section>
+
+<section id="consentCard" class="card auth consent hidden">
+  <div class="eyebrow">Bevor es losgeht</div>
+  <h1>Deine Einwilligung</h1>
+  <p>
+    VYORA AI ist eine Gesundheits-App. Damit sie funktioniert, verarbeiten
+    wir <strong>Gesundheitsdaten</strong> von dir. Das sind besonders
+    geschützte Daten, deshalb brauchen wir deine ausdrückliche Einwilligung.
+  </p>
+  <ul class="consent-list">
+    <li><strong>Welche Daten:</strong> Mahlzeiten und Nährwerte, Trainings,
+      Gewicht, Blutdruck, Puls und Notizen, die du selbst einträgst. Wenn du
+      einen Oura Ring verbindest, außerdem Schlaf-, Erholungs-, Aktivitäts-,
+      Herzfrequenz- und Workout-Daten aus deinem Oura-Konto.</li>
+    <li><strong>Wozu:</strong> nur um dir diese Werte anzuzeigen und für dich
+      auszuwerten. Keine Werbung, kein Verkauf, keine Weitergabe an Dritte,
+      keine KI-Auswertung durch externe Anbieter.</li>
+    <li><strong>Wo:</strong> in unserer Datenbank bei Supabase in der EU
+      (Irland). Nur du hast Zugriff auf deine Einträge.</li>
+    <li><strong>Widerruf:</strong> jederzeit unter „Mehr → Datenschutz &amp;
+      Konto“. Dabei werden dein Konto und alle deine Daten gelöscht.</li>
+  </ul>
+
+  <form id="consentForm">
+    <label class="check">
+      <input type="checkbox" id="consentHealth" required>
+      <span>Ich willige ausdrücklich ein, dass VYORA AI meine
+      Gesundheitsdaten wie oben und in der
+      <a href="datenschutz.html" target="_blank" rel="noopener">Datenschutzerklärung</a>
+      beschrieben verarbeitet (Art. 9 Abs. 2 lit. a DSGVO). Mir ist bekannt,
+      dass ich diese Einwilligung jederzeit mit Wirkung für die Zukunft
+      widerrufen kann.</span>
+    </label>
+    <label class="check">
+      <input type="checkbox" id="consentTerms" required>
+      <span>Ich bin mindestens 16 Jahre alt und akzeptiere die
+      <a href="nutzungsbedingungen.html" target="_blank" rel="noopener">Nutzungsbedingungen</a>.
+      Mir ist bewusst, dass VYORA AI keine ärztliche Beratung ersetzt.</span>
+    </label>
+    <button id="consentButton" class="btn full" type="submit">
+      Einwilligen und fortfahren
+    </button>
+  </form>
+  <button id="consentDecline" class="btn secondary full" type="button">
+    Nicht einwilligen und abmelden
+  </button>
+  <p id="consentMessage" class="message" role="status"></p>
 </section>
 
 <div id="dashboard" class="hidden">
@@ -436,6 +501,10 @@ footer a{color:var(--muted);margin:0 7px}
     <p class="muted">
       Datenquelle: Open Food Facts. Die Angaben stammen teilweise
       von Nutzern und können unvollständig oder fehlerhaft sein.
+      Beim Suchen werden dein Suchbegriff und deine IP-Adresse an
+      Open Food Facts (Frankreich) übertragen, Produktbilder werden
+      von dort geladen. Es werden keine Gesundheits- oder Kontodaten
+      gesendet.
     </p>
   </div>
 
@@ -749,6 +818,50 @@ footer a{color:var(--muted);margin:0 7px}
       Dein persönlicher KI-Coach ist noch nicht aktiviert.
     </p>
   </div>
+
+  <div class="card" id="privacyCard">
+    <h2>🔒 Datenschutz &amp; Konto</h2>
+    <p class="muted" id="consentStatus">Einwilligung wird geprüft ...</p>
+
+    <h3>Meine Daten herunterladen</h3>
+    <p class="muted">
+      Du bekommst alle in VYORA gespeicherten Daten zu deinem Konto als
+      Datei (JSON): Mahlzeiten, Trainings, Pläne, Gesundheitswerte und
+      Einwilligungen.
+    </p>
+    <button id="exportButton" class="btn secondary full" type="button">
+      Daten exportieren ⬇
+    </button>
+
+    <div class="section-divider"></div>
+
+    <h3>Einwilligung widerrufen &amp; Konto löschen</h3>
+    <p class="muted">
+      Ohne deine Einwilligung dürfen wir deine Gesundheitsdaten nicht weiter
+      verarbeiten. Ein Widerruf löscht deshalb dein Konto und
+      <strong>alle</strong> gespeicherten Daten endgültig, einschließlich der
+      Oura-Verbindung. Das lässt sich nicht rückgängig machen.
+      Exportiere deine Daten vorher, wenn du sie behalten möchtest.
+    </p>
+    <label for="deleteConfirm">Zum Bestätigen <strong>LÖSCHEN</strong> eingeben</label>
+    <input id="deleteConfirm" autocomplete="off" placeholder="LÖSCHEN">
+    <button id="deleteButton" class="btn danger full" type="button" disabled>
+      Einwilligung widerrufen und Konto löschen
+    </button>
+    <p class="muted">
+      Tipp: Entferne VYORA danach auch in deinem Oura-Konto bei den
+      verbundenen Apps und, falls du dich mit Google angemeldet hast, unter
+      <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener">myaccount.google.com/connections</a>.
+    </p>
+    <p id="privacyMessage" class="message" role="status"></p>
+
+    <div class="section-divider"></div>
+    <p class="muted">
+      <a href="datenschutz.html">Datenschutzerklärung</a> ·
+      <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a> ·
+      <a href="impressum.html">Impressum</a>
+    </p>
+  </div>
 </section>
 
 <div style="text-align:center;margin:25px 0">
@@ -786,8 +899,10 @@ footer a{color:var(--muted);margin:0 7px}
 </div>
 
 <script type="module">
+// Supabase-Bibliothek liegt fest im eigenen Repository
+// (kein Nachladen von fremden Servern, Version fixiert).
 import { createClient } from
-  "https://esm.sh/@supabase/supabase-js@2";
+  "./vendor/supabase-js-2.119.2.js";
 
 const SUPABASE_URL =
   "https://uukjvrmxrxbhueqarjpp.supabase.co";
@@ -2995,6 +3110,207 @@ $("appleLogin").addEventListener("click",() => socialLogin("apple"));
 setupSocialLogin();
 
 // -----------------------------------
+// Einwilligung (Art. 9 Abs. 2 lit. a DSGVO),
+// Datenexport und Konto löschen
+// -----------------------------------
+
+// Bei inhaltlichen Änderungen des Einwilligungstextes die Version
+// erhöhen – dann wird die Einwilligung erneut abgefragt.
+const CONSENT_VERSION = "2026-11-21";
+
+let consentConfirmedFor = null;
+let consentInfo = null;
+
+function consentMessage(text) {
+  $("consentMessage").textContent = text || "";
+}
+
+function privacyMessage(text) {
+  $("privacyMessage").textContent = text || "";
+}
+
+async function loadConsent(userId) {
+  const {data,error} = await supabase
+    .from("user_consents")
+    .select("consent_type,version,granted,created_at")
+    .eq("user_id",userId)
+    .eq("consent_type","health_data")
+    .order("created_at",{ascending:false})
+    .limit(1);
+
+  if(error) throw error;
+  return data && data[0] ? data[0] : null;
+}
+
+function consentValid(row) {
+  return !!row && row.granted===true && row.version===CONSENT_VERSION;
+}
+
+function renderConsentStatus() {
+  $("consentStatus").textContent = consentInfo
+    ? "Einwilligung zur Verarbeitung deiner Gesundheitsdaten erteilt am "+
+      new Date(consentInfo.created_at).toLocaleString("de-DE")+
+      " (Version "+consentInfo.version+")."
+    : "Keine gültige Einwilligung gefunden.";
+}
+
+function showConsentGate(show) {
+  $("consentCard").classList.toggle("hidden",!show);
+  if(show) {
+    $("dashboard").classList.add("hidden");
+    $("consentForm").reset();
+  }
+}
+
+$("consentForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  if(!$("consentHealth").checked || !$("consentTerms").checked) {
+    consentMessage("Bitte bestätige beide Punkte.");
+    return;
+  }
+
+  $("consentButton").disabled = true;
+  consentMessage("Einwilligung wird gespeichert ...");
+
+  try {
+    const {data:{user},error:userError} = await supabase.auth.getUser();
+    if(userError || !user) throw new Error("Bitte erneut anmelden.");
+
+    const {error} = await supabase
+      .from("user_consents")
+      .insert([
+        { user_id:user.id, consent_type:"health_data",
+          version:CONSENT_VERSION, granted:true },
+        { user_id:user.id, consent_type:"terms",
+          version:CONSENT_VERSION, granted:true }
+      ]);
+
+    if(error) throw error;
+
+    consentMessage("");
+    await refreshUI();
+  } catch(error) {
+    consentMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    $("consentButton").disabled = false;
+  }
+});
+
+$("consentDecline").addEventListener("click",async () => {
+  await supabase.auth.signOut();
+  consentConfirmedFor = null;
+  showConsentGate(false);
+  message("Du bist abgemeldet. Ohne Einwilligung können wir keine "+
+    "Gesundheitsdaten für dich speichern.");
+  await refreshUI();
+});
+
+// Datenexport (Art. 15 und 20 DSGVO)
+$("exportButton").addEventListener("click",async () => {
+  if(!currentUserId) return;
+
+  const button = $("exportButton");
+  button.disabled = true;
+  privacyMessage("Export wird erstellt ...");
+
+  try {
+    const userId = currentUserId;
+    const {data:{user}} = await supabase.auth.getUser();
+
+    const tables = [
+      ["mahlzeiten","nutrition_entries"],
+      ["trainings","workout_entries"],
+      ["trainingsplaene","workout_plans"],
+      ["gesundheitswerte","health_entries"],
+      ["einwilligungen","user_consents"],
+      ["oura_verbindung","oura_connections"]
+    ];
+
+    const result = {
+      export_erstellt_am:new Date().toISOString(),
+      app:"VYORA AI",
+      konto:{
+        id:user?.id ?? userId,
+        email:user?.email ?? null,
+        angemeldet_ueber:user?.app_metadata?.providers ?? null,
+        erstellt_am:user?.created_at ?? null
+      },
+      hinweis:"Oura-Rohdaten werden nicht dauerhaft gespeichert, sondern "+
+        "bei Bedarf live aus deinem Oura-Konto abgerufen. Die "+
+        "Zugangsschlüssel zu Oura liegen verschlüsselt auf dem Server "+
+        "und werden aus Sicherheitsgründen nicht exportiert."
+    };
+
+    for(const [name,table] of tables) {
+      try {
+        const {data,error} = await supabase
+          .from(table)
+          .select("*")
+          .eq("user_id",userId);
+        result[name] = error ? {fehler:error.message} : (data||[]);
+      } catch(error) {
+        result[name] = {fehler:String(error?.message || error)};
+      }
+    }
+
+    const blob = new Blob(
+      [JSON.stringify(result,null,2)],
+      {type:"application/json"}
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "vyora-datenexport-"+localDate()+".json";
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url),5000);
+
+    privacyMessage("✓ Export heruntergeladen.");
+  } catch(error) {
+    privacyMessage("Export fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+// Widerruf + Konto löschen (Art. 7 Abs. 3 und Art. 17 DSGVO)
+$("deleteConfirm").addEventListener("input",() => {
+  $("deleteButton").disabled =
+    $("deleteConfirm").value.trim()!=="LÖSCHEN";
+});
+
+$("deleteButton").addEventListener("click",async () => {
+  if($("deleteConfirm").value.trim()!=="LÖSCHEN") return;
+  if(!confirm(
+    "Wirklich endgültig löschen? Dein Konto und alle Daten werden "+
+    "unwiderruflich entfernt."
+  )) return;
+
+  $("deleteButton").disabled = true;
+  privacyMessage("Konto wird gelöscht ...");
+
+  const {error} = await supabase.rpc("delete_my_account");
+
+  if(error) {
+    privacyMessage("Löschen fehlgeschlagen: "+error.message+
+      ". Bitte schreib an die E-Mail-Adresse im Impressum.");
+    $("deleteButton").disabled = false;
+    return;
+  }
+
+  // Das Konto existiert nicht mehr – lokale Sitzung entfernen.
+  await supabase.auth.signOut({scope:"local"}).catch(() => {});
+  consentConfirmedFor = null;
+  consentInfo = null;
+  $("deleteConfirm").value = "";
+  privacyMessage("");
+  message("✓ Dein Konto und alle deine Daten wurden gelöscht.");
+  await refreshUI();
+});
+
+// -----------------------------------
 // Anmeldung und Oura
 // -----------------------------------
 
@@ -3013,9 +3329,10 @@ async function refreshUI() {
     !!user
   );
 
+  // Dashboard erst zeigen, wenn die Einwilligung bestätigt ist.
   $("dashboard").classList.toggle(
     "hidden",
-    !user
+    !user || consentConfirmedFor!==user.id
   );
 
   $("avatar").classList.toggle(
@@ -3038,8 +3355,46 @@ async function refreshUI() {
     ++foodSearchCounter;
     resetTrainingAndHealth();
     resetTrackerAndPlans();
+    consentConfirmedFor = null;
+    consentInfo = null;
+    showConsentGate(false);
     return;
   }
+
+  // Ohne gültige Einwilligung werden KEINE Gesundheitsdaten
+  // geladen oder abgerufen (auch nicht von Oura).
+  if(consentConfirmedFor!==user.id) {
+    let row = null;
+    try {
+      row = await loadConsent(user.id);
+    } catch(error) {
+      if(counter!==refreshCounter) return;
+      showConsentGate(true);
+      consentMessage("Einwilligung konnte nicht geprüft werden: "+
+        error.message);
+      return;
+    }
+
+    if(counter!==refreshCounter) return;
+
+    if(!consentValid(row)) {
+      currentUserId = null;
+      sleepData = [];
+      nutritionData = [];
+      ++nutritionLoadCounter;
+      resetTrainingAndHealth();
+      resetTrackerAndPlans();
+      showConsentGate(true);
+      return;
+    }
+
+    consentConfirmedFor = user.id;
+    consentInfo = row;
+  }
+
+  showConsentGate(false);
+  $("dashboard").classList.remove("hidden");
+  renderConsentStatus();
 
   const changed =
     currentUserId!==user.id;
