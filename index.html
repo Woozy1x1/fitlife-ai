@@ -179,6 +179,25 @@ label{display:block;font-size:12px;color:var(--muted)}
 }
 .nutrition-summary.three{grid-template-columns:repeat(3,1fr)}
 .meal-row .row-actions{display:flex;gap:6px;flex-shrink:0}
+.or-line{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:14px 0 6px}
+.or-line::before,.or-line::after{content:"";flex:1;height:1px;background:var(--border)}
+.btn.social{background:#f5f8fc;color:#111;display:flex;align-items:center;justify-content:center;gap:9px}
+.social-icon{font-weight:900;font-size:16px}
+.tracker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.kv{background:#1d3045;border-radius:14px;padding:12px 10px}
+.kv strong{display:block;font-size:20px}
+.kv small{color:var(--muted);font-size:11px}
+.phase-bar{display:flex;height:16px;border-radius:9px;overflow:hidden;margin:10px 0 6px;background:#26374a}
+.phase-bar span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:#b8c9da}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.contrib{display:grid;grid-template-columns:120px 1fr 34px;align-items:center;gap:8px;font-size:12px;margin:6px 0}
+.contrib .track{height:7px;border-radius:5px;background:#26374a;overflow:hidden}
+.contrib .fill{height:100%;background:linear-gradient(90deg,#319d9d,#7bf0bd)}
+.insight{background:#1a2b3e;border-left:3px solid var(--green);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:13px;color:#cfdbe8;line-height:1.5}
+.plan-ex{color:var(--muted);font-size:11px;display:block;margin-top:3px}
+#hrChart svg{width:100%;height:150px;display:block}
 .section-divider{
   height:1px;background:var(--border);margin:22px 0
 }
@@ -197,6 +216,9 @@ footer a{color:var(--muted);margin:0 7px}
   .stat strong{font-size:22px}
   .nutrition-summary{grid-template-columns:repeat(2,1fr)}
   .nutrition-summary.three{grid-template-columns:repeat(3,1fr)}
+  .tracker-grid{grid-template-columns:repeat(2,1fr)}
+  .kv-grid{grid-template-columns:repeat(2,1fr)}
+  .contrib{grid-template-columns:105px 1fr 30px}
   .bottom-nav button{font-size:10px}
   .bottom-nav{
     bottom:0;left:0;transform:none;width:100%;
@@ -239,6 +261,16 @@ footer a{color:var(--muted);margin:0 7px}
   <button id="registerButton" class="btn secondary full">
     Neues Konto erstellen
   </button>
+
+  <div id="socialLogin" class="hidden">
+    <div class="or-line"><span>oder</span></div>
+    <button id="googleLogin" class="btn social full hidden" type="button">
+      <span class="social-icon">G</span> Mit Google anmelden
+    </button>
+    <button id="appleLogin" class="btn social full hidden" type="button">
+      <span class="social-icon"></span> Mit Apple anmelden
+    </button>
+  </div>
 </section>
 
 <div id="dashboard" class="hidden">
@@ -307,6 +339,26 @@ footer a{color:var(--muted);margin:0 7px}
       <strong id="homeTraining">–</strong>
       <small id="homeTrainingInfo">Noch nichts eingetragen</small>
     </div>
+  </div>
+
+  <div class="card hidden" id="trackerCard">
+    <div class="eyebrow" id="trackerCardSource">Von deinem Tracker</div>
+    <h2>⌚ Heute auf einen Blick</h2>
+    <div class="tracker-grid">
+      <div class="nutrition-stat">
+        <strong id="trkHr">–</strong><small id="trkHrInfo">Aktuelle HF</small>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="trkReadiness">–</strong><small>Erholung</small>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="trkSteps">–</strong><small>Schritte</small>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="trkKcal">–</strong><small>Aktive kcal</small>
+      </div>
+    </div>
+    <p class="muted" id="trkLastNight"></p>
   </div>
 
   <div class="grid">
@@ -528,6 +580,32 @@ footer a{color:var(--muted);margin:0 7px}
   </div>
 
   <div class="card">
+    <h2>📋 Trainingspläne</h2>
+    <p class="muted">
+      Starte einen Plan: Alle Übungen werden für das gewählte Datum
+      eingetragen. Danach kannst du Werte anpassen oder löschen.
+    </p>
+    <div id="planList" class="muted">Pläne werden geladen ...</div>
+    <div class="section-divider"></div>
+    <h3>Training des gewählten Tages als Plan speichern</h3>
+    <form id="planForm">
+      <label for="planName">Name des Plans</label>
+      <input id="planName" maxlength="80"
+        placeholder="z. B. Mein Ganzkörper-Tag" required>
+      <button id="savePlan" class="btn secondary full" type="submit">
+        Eingetragene Übungen als Plan speichern
+      </button>
+    </form>
+    <p id="planMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="card hidden" id="trackerWorkoutCard">
+    <h2>⌚ Vom Tracker erkannte Workouts</h2>
+    <p class="muted" id="trackerWorkoutSource"></p>
+    <div id="trackerWorkouts"></div>
+  </div>
+
+  <div class="card">
     <h2>Eingetragene Übungen</h2>
     <div id="workoutList" class="muted">
       Einträge werden geladen ...
@@ -626,6 +704,21 @@ footer a{color:var(--muted);margin:0 7px}
 
   <div class="eyebrow">Deine Schlafgesundheit</div>
   <h1>Schlaf ☾</h1>
+
+  <div class="card">
+    <h2>☾ Schlafanalyse</h2>
+    <p class="muted" id="sleepSource">
+      Verbinde einen Tracker (z. B. Oura Ring), um deine Schlafanalyse zu sehen.
+    </p>
+    <div id="sleepAnalysis"></div>
+  </div>
+
+  <div class="card">
+    <h2>♡ Herzfrequenz (letzte 24 Stunden)</h2>
+    <p class="muted" id="hrSource">Noch keine Herzfrequenzdaten.</p>
+    <div id="hrChart"></div>
+  </div>
+
   <div class="card">
     <h2>Schlafscore-Verlauf</h2>
     <div id="sleepChart" class="chart"></div>
@@ -971,12 +1064,19 @@ async function loadSleep() {
       )
       .map(x => ({
         day:x.day,
-        score:Number(x.score)
+        score:Number(x.score),
+        contributors:
+          x.contributors && typeof x.contributors==="object"
+            ? x.contributors : null
       }))
       .sort((a,b) => a.day.localeCompare(b.day));
 
     renderSleep();
     ouraMessage("✓ Schlafdaten aktualisiert.");
+
+    // Detaildaten erst NACH "daily" laden (nicht gleichzeitig),
+    // damit sich zwei Token-Erneuerungen nicht in die Quere kommen.
+    await loadTrackerDetails(userId);
 
   } catch(e) {
     if(currentUserId===userId) {
@@ -2038,10 +2138,7 @@ function renderHealth() {
   $("latestPulseDate").textContent = p
     ? formatDate(p.entry_date)+" · Schläge/min" : "Noch keine Daten";
 
-  $("homePulse").textContent = p ? p.pulse : "–";
-  $("homePulseInfo").textContent = p
-    ? "Letzter Eintrag · "+formatDate(p.entry_date)
-    : "Noch keine Daten";
+  updateHomePulse();
 
   renderWeightChart();
 
@@ -2214,6 +2311,690 @@ function resetTrainingAndHealth() {
 renderExerciseSuggestions([]);
 
 // -----------------------------------
+// Tracker (aktuell: Oura Ring)
+// Jeder Tracker liefert dieselbe Struktur,
+// damit später weitere Geräte dazukommen können.
+// -----------------------------------
+
+const TRACKERS = {
+  oura: { name:"Oura Ring", action:"details" }
+};
+
+let trackerData = null;     // { source, sleep, readiness, activity, heartrate, workouts }
+let trackerCounter = 0;
+
+const HR_SOURCES = {
+  awake:"wach", rest:"Ruhe", sleep:"Schlaf",
+  session:"Session", live:"live", workout:"Training"
+};
+
+function hm(seconds) {
+  const s = Number(seconds);
+  if(!Number.isFinite(s) || s<=0) return "–";
+  const total = Math.round(s/60);
+  const h = Math.floor(total/60);
+  const m = total%60;
+  return h+" h "+String(m).padStart(2,"0")+" min";
+}
+
+function clock(iso) {
+  if(!iso) return "–";
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? "–"
+    : d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
+}
+
+function pct(part,total) {
+  return total>0 ? Math.round(part/total*100) : 0;
+}
+
+async function loadTrackerDetails(userId) {
+  const requestId = ++trackerCounter;
+
+  try {
+    const result = await authenticatedRequest(TRACKERS.oura.action);
+    if(currentUserId!==userId || requestId!==trackerCounter) return;
+
+    trackerData = {
+      source:TRACKERS.oura.name,
+      sleep:Array.isArray(result.sleep) ? result.sleep : [],
+      readiness:Array.isArray(result.readiness) ? result.readiness : [],
+      activity:Array.isArray(result.activity) ? result.activity : [],
+      heartrate:result.heartrate || {latest:null,points:[]},
+      workouts:Array.isArray(result.workouts) ? result.workouts : []
+    };
+  } catch(error) {
+    if(currentUserId!==userId || requestId!==trackerCounter) return;
+    trackerData = null;
+    ouraMessage("Detaildaten konnten nicht geladen werden: "+error.message);
+  }
+
+  renderTracker();
+}
+
+// Hauptschlaf pro Nacht: der längste Schlaf eines Tages
+function mainSleeps() {
+  if(!trackerData) return [];
+  const byDay = new Map();
+  trackerData.sleep.forEach(s => {
+    if(!s.day || !Number(s.total_sleep_duration)) return;
+    if(s.type==="rest" || s.type==="deleted") return;
+    const cur = byDay.get(s.day);
+    if(!cur || Number(s.total_sleep_duration)>Number(cur.total_sleep_duration)) {
+      byDay.set(s.day,s);
+    }
+  });
+  return [...byDay.values()].sort((a,b)=>a.day.localeCompare(b.day));
+}
+
+function latestOf(list) {
+  return list.length ? [...list].sort((a,b)=>
+    String(a.day).localeCompare(String(b.day))).pop() : null;
+}
+
+// Minuten seit 18:00 Uhr – so liegen Einschlafzeiten
+// vor und nach Mitternacht richtig nebeneinander.
+function bedtimeMinutes(iso) {
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return null;
+  return ((d.getHours()*60+d.getMinutes()) - 18*60 + 1440) % 1440;
+}
+
+function minutesToClock(m) {
+  const t = (Math.round(m) + 18*60) % 1440;
+  return String(Math.floor(t/60)).padStart(2,"0")+":"+
+    String(t%60).padStart(2,"0");
+}
+
+function kv(value,label) {
+  const box = document.createElement("div");
+  box.className = "kv";
+  const s = document.createElement("strong");
+  s.textContent = value;
+  const l = document.createElement("small");
+  l.textContent = label;
+  box.append(s,l);
+  return box;
+}
+
+const CONTRIBUTOR_NAMES = {
+  total_sleep:"Gesamtschlaf", efficiency:"Effizienz",
+  restfulness:"Ruhe im Schlaf", rem_sleep:"REM-Schlaf",
+  deep_sleep:"Tiefschlaf", latency:"Einschlafdauer",
+  timing:"Schlafzeitpunkt"
+};
+
+function renderSleepAnalysis() {
+  const box = $("sleepAnalysis");
+  box.replaceChildren();
+
+  const nights = mainSleeps();
+  const last = nights[nights.length-1];
+
+  if(!last) {
+    $("sleepSource").textContent = trackerData
+      ? "Für die letzten 14 Tage liegen noch keine detaillierten Schlafdaten vor."
+      : "Verbinde einen Tracker (z. B. Oura Ring), um deine Schlafanalyse zu sehen.";
+    return;
+  }
+
+  $("sleepSource").textContent =
+    "Quelle: "+trackerData.source+" · Nacht zum "+formatDate(last.day);
+
+  // Kennzahlen der letzten Nacht
+  const grid = document.createElement("div");
+  grid.className = "kv-grid";
+  grid.append(
+    kv(hm(last.total_sleep_duration),"Schlafdauer"),
+    kv(hm(last.time_in_bed),"Zeit im Bett"),
+    kv(last.efficiency!=null ? last.efficiency+" %" : "–","Schlafeffizienz"),
+    kv(last.latency!=null ? Math.round(last.latency/60)+" min" : "–","Einschlafdauer"),
+    kv(clock(last.bedtime_start)+" – "+clock(last.bedtime_end),"Im Bett"),
+    kv(last.lowest_heart_rate!=null ? last.lowest_heart_rate+" bpm" : "–","Niedrigste HF"),
+    kv(last.average_hrv!=null ? Math.round(last.average_hrv)+" ms" : "–","Ø HRV"),
+    kv(last.average_breath!=null ? number(last.average_breath)+" /min" : "–","Ø Atemfrequenz"),
+    kv(last.average_heart_rate!=null ? Math.round(last.average_heart_rate)+" bpm" : "–","Ø HF im Schlaf")
+  );
+  box.append(grid);
+
+  // Schlafphasen
+  const phases = [
+    ["Tiefschlaf",Number(last.deep_sleep_duration)||0,"#4a6cf7"],
+    ["REM",Number(last.rem_sleep_duration)||0,"#a46cf0"],
+    ["Leichtschlaf",Number(last.light_sleep_duration)||0,"#4fb7c9"],
+    ["Wach",Number(last.awake_time)||0,"#e7a35a"]
+  ];
+  const total = phases.reduce((t,p)=>t+p[1],0);
+
+  if(total>0) {
+    const h = document.createElement("h3");
+    h.textContent = "Schlafphasen";
+    const bar = document.createElement("div");
+    bar.className = "phase-bar";
+    const legend = document.createElement("div");
+    legend.className = "legend";
+
+    phases.forEach(([name,sec,color]) => {
+      const part = document.createElement("span");
+      part.style.width = (sec/total*100)+"%";
+      part.style.background = color;
+      part.title = name;
+      bar.append(part);
+
+      const item = document.createElement("span");
+      const dot = document.createElement("i");
+      dot.style.background = color;
+      item.append(dot, document.createTextNode(
+        name+" "+hm(sec)+" ("+pct(sec,total)+" %)"
+      ));
+      legend.append(item);
+    });
+
+    box.append(h,bar,legend);
+  }
+
+  // Oura-Bewertung der einzelnen Faktoren (1–100)
+  const latestScore = sleepData.length
+    ? sleepData[sleepData.length-1] : null;
+
+  if(latestScore && latestScore.contributors) {
+    const h = document.createElement("h3");
+    h.style.marginTop = "18px";
+    h.textContent = "Was deinen Schlafscore ("+latestScore.score+") beeinflusst";
+    box.append(h);
+
+    Object.entries(CONTRIBUTOR_NAMES).forEach(([key,label]) => {
+      const v = Number(latestScore.contributors[key]);
+      if(!Number.isFinite(v)) return;
+
+      const row = document.createElement("div");
+      row.className = "contrib";
+      const name = document.createElement("span");
+      name.textContent = label;
+      const track = document.createElement("div");
+      track.className = "track";
+      const fill = document.createElement("div");
+      fill.className = "fill";
+      fill.style.width = Math.max(0,Math.min(100,v))+"%";
+      track.append(fill);
+      const val = document.createElement("span");
+      val.textContent = v;
+      row.append(name,track,val);
+      box.append(row);
+    });
+  }
+
+  // 14-Tage-Auswertung
+  if(nights.length>=3) {
+    const avg = arr => arr.reduce((t,x)=>t+x,0)/arr.length;
+    const durations = nights.map(n=>Number(n.total_sleep_duration));
+    const beds = nights.map(n=>bedtimeMinutes(n.bedtime_start))
+      .filter(x=>x!==null);
+    const effs = nights.map(n=>Number(n.efficiency))
+      .filter(Number.isFinite);
+    const lats = nights.map(n=>Number(n.latency))
+      .filter(Number.isFinite);
+    const deepShare = nights.map(n =>
+      pct(Number(n.deep_sleep_duration)||0, Number(n.total_sleep_duration)||0));
+
+    const avgBed = beds.length ? avg(beds) : null;
+    const spread = beds.length>1
+      ? Math.sqrt(avg(beds.map(b=>(b-avgBed)**2))) : 0;
+
+    const h = document.createElement("h3");
+    h.style.marginTop = "18px";
+    h.textContent = "Deine letzten "+nights.length+" Nächte";
+    const grid2 = document.createElement("div");
+    grid2.className = "kv-grid";
+    grid2.append(
+      kv(hm(avg(durations)),"Ø Schlafdauer"),
+      kv(avgBed!==null ? minutesToClock(avgBed)+" Uhr" : "–","Ø Zubettgehen"),
+      kv("± "+Math.round(spread)+" min","Schwankung Zubettgehen"),
+      kv(effs.length ? Math.round(avg(effs))+" %" : "–","Ø Effizienz"),
+      kv(lats.length ? Math.round(avg(lats)/60)+" min" : "–","Ø Einschlafdauer"),
+      kv(Math.round(avg(deepShare))+" %","Ø Tiefschlaf-Anteil")
+    );
+    box.append(h,grid2);
+
+    // Hinweise – beschreibend, keine Diagnose
+    const tips = [];
+    const avgH = avg(durations)/3600;
+    if(avgH<7) {
+      tips.push("Du schläfst im Schnitt "+hm(avg(durations))+
+        ". Für Erwachsene werden meist 7–9 Stunden Schlaf empfohlen.");
+    } else if(avgH>9.5) {
+      tips.push("Du schläfst im Schnitt mehr als 9,5 Stunden.");
+    }
+    if(spread>60) {
+      tips.push("Deine Zubettgehzeiten schwanken um etwa "+
+        Math.round(spread)+" Minuten. Regelmäßige Schlafenszeiten "+
+        "helfen vielen Menschen, schneller einzuschlafen.");
+    }
+    if(lats.length && avg(lats)/60>30) {
+      tips.push("Du brauchst im Schnitt länger als 30 Minuten zum Einschlafen.");
+    }
+    if(effs.length && avg(effs)<85) {
+      tips.push("Deine Schlafeffizienz liegt im Schnitt unter 85 %. "+
+        "Du verbringst also relativ viel Zeit wach im Bett.");
+    }
+    if(!tips.length) {
+      tips.push("Deine Schlafwerte der letzten Nächte wirken ausgeglichen. Weiter so!");
+    }
+
+    tips.forEach(text => {
+      const p = document.createElement("div");
+      p.className = "insight";
+      p.textContent = text;
+      box.append(p);
+    });
+
+    const note = document.createElement("p");
+    note.className = "muted";
+    note.textContent = "Diese Auswertung beschreibt deine Trackerdaten und "+
+      "ist keine medizinische Diagnose. Bei anhaltenden Schlafproblemen "+
+      "sprich bitte mit deiner Ärztin oder deinem Arzt.";
+    box.append(note);
+  }
+}
+
+function renderHrChart() {
+  const box = $("hrChart");
+  box.replaceChildren();
+
+  const points = trackerData?.heartrate?.points || [];
+  if(points.length<2) {
+    $("hrSource").textContent = trackerData
+      ? "Dein Tracker hat in den letzten 24 Stunden keine Herzfrequenz übertragen."
+      : "Noch keine Herzfrequenzdaten.";
+    return;
+  }
+
+  const bpms = points.map(p=>p.bpm);
+  const times = points.map(p=>new Date(p.timestamp).getTime());
+  const min = Math.min(...bpms)-5, max = Math.max(...bpms)+5;
+  const t0 = Math.min(...times), t1 = Math.max(...times);
+  const W = 600, H = 150, P = 24;
+
+  const x = t => P+(t1===t0 ? 0 : (t-t0)/(t1-t0)*(W-2*P));
+  const y = b => H-P-(b-min)/(max-min)*(H-2*P);
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS,"svg");
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);
+  svg.setAttribute("preserveAspectRatio","none");
+  svg.setAttribute("role","img");
+  svg.setAttribute("aria-label","Herzfrequenz der letzten 24 Stunden");
+
+  const line = document.createElementNS(NS,"polyline");
+  line.setAttribute("points",
+    points.map((p,i)=>x(times[i]).toFixed(1)+","+y(p.bpm).toFixed(1)).join(" "));
+  line.setAttribute("fill","none");
+  line.setAttribute("stroke","#70efbd");
+  line.setAttribute("stroke-width","2");
+  line.setAttribute("vector-effect","non-scaling-stroke");
+  svg.append(line);
+
+  [[Math.max(...bpms),"max"],[Math.min(...bpms),"min"]].forEach(([b]) => {
+    const t = document.createElementNS(NS,"text");
+    t.setAttribute("x","2");
+    t.setAttribute("y",String(y(b)+4));
+    t.setAttribute("fill","#9aacc2");
+    t.setAttribute("font-size","11");
+    t.textContent = b;
+    svg.append(t);
+  });
+
+  box.append(svg);
+
+  const latest = trackerData.heartrate.latest;
+  $("hrSource").textContent = "Quelle: "+trackerData.source+
+    " · "+points.length+" Messpunkte · zuletzt "+
+    latest.bpm+" bpm um "+clock(latest.timestamp)+" Uhr";
+}
+
+function renderTrackerWorkouts() {
+  const card = $("trackerWorkoutCard");
+  const list = $("trackerWorkouts");
+  list.replaceChildren();
+
+  const items = (trackerData?.workouts || [])
+    .slice().sort((a,b)=>String(b.start_datetime).localeCompare(String(a.start_datetime)))
+    .slice(0,10);
+
+  card.classList.toggle("hidden",!items.length);
+  if(!items.length) return;
+
+  $("trackerWorkoutSource").textContent =
+    "Quelle: "+trackerData.source+" · letzte 14 Tage";
+
+  items.forEach(w => {
+    const row = document.createElement("div");
+    row.className = "meal-row";
+    const info = document.createElement("div");
+    const title = document.createElement("strong");
+    const name = String(w.activity||"Workout").replace(/_/g," ");
+    title.textContent = name.charAt(0).toUpperCase()+name.slice(1);
+    const details = document.createElement("small");
+    const mins = (new Date(w.end_datetime)-new Date(w.start_datetime))/60000;
+    details.textContent = formatDate(w.day)+" · "+
+      (Number.isFinite(mins) && mins>0 ? Math.round(mins)+" min" : "–")+
+      (w.calories ? " · "+Math.round(w.calories)+" kcal" : "")+
+      (w.distance ? " · "+number(w.distance/1000)+" km" : "");
+    info.append(title,details);
+    row.append(info);
+    list.append(row);
+  });
+}
+
+function updateHomePulse() {
+  const manual = latestWith("pulse");
+  const live = trackerData?.heartrate?.latest;
+
+  if(live) {
+    $("homePulse").textContent = live.bpm;
+    $("homePulseInfo").textContent = trackerData.source.split(" ")[0]+
+      " · "+clock(live.timestamp);
+  } else if(manual) {
+    $("homePulse").textContent = manual.pulse;
+    $("homePulseInfo").textContent =
+      "Letzter Eintrag · "+formatDate(manual.entry_date);
+  } else {
+    $("homePulse").textContent = "–";
+    $("homePulseInfo").textContent = "Noch keine Daten";
+  }
+}
+
+function renderTracker() {
+  const has = !!trackerData;
+  $("trackerCard").classList.toggle("hidden",!has);
+
+  if(has) {
+    const today = localDate();
+    const r = latestOf(trackerData.readiness);
+    const a = trackerData.activity.find(x=>x.day===today) ||
+      latestOf(trackerData.activity);
+    const live = trackerData.heartrate.latest;
+    const last = mainSleeps().pop();
+
+    $("trackerCardSource").textContent = "Von deinem "+trackerData.source;
+    $("trkHr").textContent = live ? live.bpm : "–";
+    $("trkHrInfo").textContent = live
+      ? "HF · "+clock(live.timestamp)+
+        (HR_SOURCES[live.source] ? " · "+HR_SOURCES[live.source] : "")
+      : "Aktuelle HF";
+    $("trkReadiness").textContent = r && r.score!=null ? r.score : "–";
+    $("trkSteps").textContent = a && a.steps!=null
+      ? Number(a.steps).toLocaleString("de-DE") : "–";
+    $("trkKcal").textContent = a && a.active_calories!=null
+      ? Math.round(a.active_calories) : "–";
+    $("trkLastNight").textContent = last
+      ? "Letzte Nacht: "+hm(last.total_sleep_duration)+" Schlaf · "+
+        "Effizienz "+(last.efficiency ?? "–")+" %"
+      : "";
+  }
+
+  renderSleepAnalysis();
+  renderHrChart();
+  renderTrackerWorkouts();
+  updateHomePulse();
+}
+
+// -----------------------------------
+// Trainingspläne
+// -----------------------------------
+
+const BUILTIN_PLANS = [
+  { id:"builtin-a", name:"Anfänger Ganzkörper A (Calisthenics)", builtin:true,
+    exercises:[
+      {exercise:"Kniebeugen",sets:3,reps:12,weight_kg:null},
+      {exercise:"Liegestütze",sets:3,reps:8,weight_kg:null},
+      {exercise:"Australian Pull-ups",sets:3,reps:8,weight_kg:null},
+      {exercise:"Plank (Sekunden)",sets:3,reps:30,weight_kg:null}
+    ]},
+  { id:"builtin-b", name:"Anfänger Ganzkörper B (Calisthenics)", builtin:true,
+    exercises:[
+      {exercise:"Ausfallschritte",sets:3,reps:10,weight_kg:null},
+      {exercise:"Pike Push-ups",sets:3,reps:6,weight_kg:null},
+      {exercise:"Dips",sets:3,reps:6,weight_kg:null},
+      {exercise:"Beinheben",sets:3,reps:10,weight_kg:null}
+    ]},
+  { id:"builtin-c", name:"Push & Pull kurz", builtin:true,
+    exercises:[
+      {exercise:"Liegestütze",sets:4,reps:10,weight_kg:null},
+      {exercise:"Klimmzüge",sets:4,reps:4,weight_kg:null},
+      {exercise:"Dips",sets:3,reps:8,weight_kg:null},
+      {exercise:"Rudern",sets:3,reps:10,weight_kg:null}
+    ]}
+];
+
+let planData = [];
+let planLoadCounter = 0;
+
+function planMessage(text) {
+  $("planMessage").textContent = text || "";
+}
+
+function cleanPlanExercises(list) {
+  return (Array.isArray(list) ? list : [])
+    .filter(x => x && typeof x.exercise==="string" && x.exercise.trim())
+    .slice(0,30)
+    .map(x => ({
+      exercise:String(x.exercise).trim().slice(0,120),
+      sets:Math.min(100,Math.max(1,Math.round(Number(x.sets)||1))),
+      reps:Math.min(1000,Math.max(1,Math.round(Number(x.reps)||1))),
+      weight_kg:x.weight_kg===null || x.weight_kg===undefined ||
+        !Number.isFinite(Number(x.weight_kg))
+        ? null : Math.min(1000,Math.max(0,Number(x.weight_kg)))
+    }));
+}
+
+function renderPlans() {
+  const list = $("planList");
+  list.replaceChildren();
+
+  [...planData, ...BUILTIN_PLANS].forEach(plan => {
+    const exercises = cleanPlanExercises(plan.exercises);
+    if(!exercises.length) return;
+
+    const row = document.createElement("div");
+    row.className = "meal-row";
+
+    const info = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = plan.name;
+    const tag = document.createElement("small");
+    tag.textContent = plan.builtin ? "Vorlage" : "Eigener Plan";
+    const ex = document.createElement("span");
+    ex.className = "plan-ex";
+    ex.textContent = exercises.map(e =>
+      e.exercise+" "+e.sets+"×"+e.reps).join(" · ");
+    info.append(title,tag,ex);
+
+    const actions = document.createElement("div");
+    actions.className = "row-actions";
+
+    const start = document.createElement("button");
+    start.type = "button";
+    start.textContent = "Starten";
+    start.style.background = "#29473f";
+    start.style.color = "var(--green)";
+    start.setAttribute("aria-label","Plan starten: "+plan.name);
+    start.addEventListener("click",() => startPlan(plan.name,exercises));
+    actions.append(start);
+
+    if(!plan.builtin) {
+      actions.append(deleteButton(
+        "Plan löschen: "+plan.name,
+        () => deletePlan(plan.id)
+      ));
+    }
+
+    row.append(info,actions);
+    list.append(row);
+  });
+}
+
+async function loadPlans() {
+  if(!currentUserId) return;
+  const requestId = ++planLoadCounter;
+  const userId = currentUserId;
+
+  const {data,error} = await supabase
+    .from("workout_plans")
+    .select("id,name,exercises,created_at")
+    .eq("user_id",userId)
+    .order("created_at",{ascending:false});
+
+  if(currentUserId!==userId || requestId!==planLoadCounter) return;
+
+  if(error) {
+    planMessage("Pläne konnten nicht geladen werden: "+error.message);
+    planData = [];
+  } else {
+    planData = data || [];
+  }
+  renderPlans();
+}
+
+async function startPlan(name,exercises) {
+  const date = $("trainingDate").value;
+  if(!confirm(
+    exercises.length+" Übungen aus „"+name+"“ für den "+
+    formatDate(date)+" eintragen?"
+  )) return;
+
+  planMessage("Plan wird eingetragen ...");
+
+  const {error} = await supabase
+    .from("workout_entries")
+    .insert(exercises.map(e => ({
+      user_id:currentUserId,
+      entry_date:date,
+      exercise:e.exercise,
+      sets:e.sets,
+      reps:e.reps,
+      weight_kg:e.weight_kg,
+      notes:("Plan: "+name).slice(0,500)
+    })));
+
+  if(error) {
+    planMessage("Eintragen fehlgeschlagen: "+error.message);
+    return;
+  }
+
+  await loadTraining();
+  loadExerciseSuggestions();
+  planMessage("✓ Plan eingetragen. Passe die Werte bei Bedarf an.");
+}
+
+$("planForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const name = $("planName").value.trim();
+  const exercises = cleanPlanExercises(workoutData);
+
+  if(!name) {
+    planMessage("Bitte einen Namen eingeben.");
+    return;
+  }
+  if(!exercises.length) {
+    planMessage("Trage zuerst Übungen für das gewählte Datum ein.");
+    return;
+  }
+
+  $("savePlan").disabled = true;
+  planMessage("Plan wird gespeichert ...");
+
+  const {error} = await supabase
+    .from("workout_plans")
+    .insert({ user_id:currentUserId, name:name.slice(0,80), exercises });
+
+  $("savePlan").disabled = false;
+
+  if(error) {
+    planMessage("Speichern fehlgeschlagen: "+error.message);
+    return;
+  }
+
+  $("planName").value = "";
+  await loadPlans();
+  planMessage("✓ Plan „"+name+"“ gespeichert.");
+});
+
+async function deletePlan(id) {
+  if(!confirm("Diesen Plan wirklich löschen?")) return;
+
+  const {error} = await supabase
+    .from("workout_plans")
+    .delete()
+    .eq("id",id)
+    .eq("user_id",currentUserId);
+
+  if(error) {
+    planMessage("Löschen fehlgeschlagen: "+error.message);
+    return;
+  }
+
+  await loadPlans();
+  planMessage("✓ Plan gelöscht.");
+}
+
+function resetTrackerAndPlans() {
+  trackerData = null;
+  ++trackerCounter;
+  planData = [];
+  ++planLoadCounter;
+  planMessage("");
+  renderTracker();
+  renderPlans();
+}
+
+renderPlans();
+
+// -----------------------------------
+// Anmeldung mit Google / Apple
+// Die Knöpfe erscheinen nur, wenn der Anbieter
+// in Supabase (Authentication → Providers) aktiviert ist.
+// -----------------------------------
+
+const APP_URL = "https://woozy1x1.github.io/fitlife-ai/";
+
+async function setupSocialLogin() {
+  try {
+    const response = await fetch(SUPABASE_URL+"/auth/v1/settings",{
+      headers:{apikey:SUPABASE_KEY}
+    });
+    if(!response.ok) return;
+
+    const settings = await response.json();
+    const external = settings.external || {};
+
+    $("googleLogin").classList.toggle("hidden",external.google!==true);
+    $("appleLogin").classList.toggle("hidden",external.apple!==true);
+    $("socialLogin").classList.toggle(
+      "hidden",
+      external.google!==true && external.apple!==true
+    );
+  } catch(error) {
+    // Ohne Verbindung bleiben nur E-Mail und Passwort.
+  }
+}
+
+async function socialLogin(provider) {
+  message("Weiterleitung zur Anmeldung ...");
+  const {error} = await supabase.auth.signInWithOAuth({
+    provider,
+    options:{ redirectTo:APP_URL }
+  });
+  if(error) message("Anmeldung fehlgeschlagen: "+error.message);
+}
+
+$("googleLogin").addEventListener("click",() => socialLogin("google"));
+$("appleLogin").addEventListener("click",() => socialLogin("apple"));
+
+setupSocialLogin();
+
+// -----------------------------------
 // Anmeldung und Oura
 // -----------------------------------
 
@@ -2256,6 +3037,7 @@ async function refreshUI() {
     ++nutritionLoadCounter;
     ++foodSearchCounter;
     resetTrainingAndHealth();
+    resetTrackerAndPlans();
     return;
   }
 
@@ -2290,6 +3072,7 @@ async function refreshUI() {
     renderSleep();
     renderNutrition();
     resetTrainingAndHealth();
+    resetTrackerAndPlans();
   }
 
   const params =
@@ -2334,6 +3117,7 @@ async function refreshUI() {
     loadTraining();
     loadHealth();
     loadExerciseSuggestions();
+    loadPlans();
   }
 
   try {
@@ -2449,6 +3233,7 @@ $("logoutButton").addEventListener(
     ++nutritionLoadCounter;
     ++foodSearchCounter;
     resetTrainingAndHealth();
+    resetTrackerAndPlans();
 
     message("Erfolgreich abgemeldet.");
     await refreshUI();
