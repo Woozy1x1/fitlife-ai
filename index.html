@@ -5,8 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VYORA AI – Dein Gesundheitsdashboard</title>
+
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -15,9 +17,23 @@
       font-family: Arial, sans-serif;
       padding: 24px;
     }
-    main { max-width: 480px; margin: 50px auto; }
-    h1 { color: #4ade80; font-size: 38px; margin-bottom: 8px; }
-    .subtitle { color: #94a3b8; margin-bottom: 30px; }
+
+    main {
+      max-width: 480px;
+      margin: 50px auto;
+    }
+
+    h1 {
+      color: #4ade80;
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 30px;
+    }
+
     .card {
       background: #172338;
       border: 1px solid #30415a;
@@ -25,6 +41,7 @@
       padding: 26px;
       margin-bottom: 18px;
     }
+
     input, button {
       width: 100%;
       padding: 14px;
@@ -32,11 +49,13 @@
       border-radius: 10px;
       font-size: 15px;
     }
+
     input {
       background: #0b1220;
       border: 1px solid #475569;
       color: white;
     }
+
     button {
       border: none;
       background: #4ade80;
@@ -44,235 +63,579 @@
       font-weight: bold;
       cursor: pointer;
     }
-    button:disabled { opacity: .6; cursor: wait; }
-    .secondary { background: #334155; color: white; }
-    .hidden { display: none; }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .secondary {
+      background: #334155;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .success {
+      color: #4ade80;
+    }
+
+    .muted {
+      color: #94a3b8;
+    }
+
     #message {
       color: #facc15;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       margin-top: 16px;
     }
-    footer { text-align: center; margin-top: 30px; }
-    footer a { color: #94a3b8; margin: 0 7px; }
+
+    #sleepResult {
+      margin-top: 16px;
+      padding: 12px;
+      background: #0b1220;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 13px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    footer a {
+      color: #94a3b8;
+      margin: 0 7px;
+    }
   </style>
 </head>
+
 <body>
 <main>
+
   <h1>VYORA AI</h1>
-  <p class="subtitle">Dein intelligenter Begleiter für Schlaf, Fitness und Gesundheit.</p>
+
+  <p class="subtitle">
+    Dein intelligenter Begleiter für Schlaf,
+    Fitness und Gesundheit.
+  </p>
 
   <section id="authCard" class="card">
     <h2>Willkommen</h2>
-    <p>Melde dich an oder erstelle dein kostenloses Konto.</p>
+
+    <p>
+      Melde dich an oder erstelle dein kostenloses Konto.
+    </p>
 
     <form id="loginForm">
-      <input id="email" type="email" placeholder="E-Mail-Adresse"
-             autocomplete="email" required>
-      <input id="password" type="password" placeholder="Passwort"
-             autocomplete="current-password" minlength="6" required>
-      <button type="submit">Anmelden</button>
+      <input
+        id="email"
+        type="email"
+        placeholder="E-Mail-Adresse"
+        autocomplete="email"
+        required
+      >
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Passwort"
+        autocomplete="current-password"
+        minlength="6"
+        required
+      >
+
+      <button type="submit">
+        Anmelden
+      </button>
     </form>
 
-    <button id="registerButton" class="secondary">
+    <button
+      id="registerButton"
+      class="secondary"
+    >
       Neues Konto erstellen
     </button>
   </section>
 
   <section id="dashboard" class="card hidden">
+
     <h2>Dein Dashboard</h2>
+
     <p>Angemeldet als:</p>
     <p id="userEmail"></p>
 
     <h3>Oura Ring</h3>
-    <p>Verbinde deinen Ring, um später deine persönlichen Schlaf- und Gesundheitsdaten zu sehen.</p>
 
-    <button id="ouraButton">Oura Ring verbinden</button>
-    <button id="logoutButton" class="secondary">Abmelden</button>
+    <p id="ouraStatus" class="muted">
+      Verbindungsstatus noch nicht geprüft.
+    </p>
+
+    <button id="ouraButton">
+      Oura Ring verbinden
+    </button>
+
+    <button
+      id="sleepButton"
+      class="secondary hidden"
+    >
+      Schlafdaten abrufen
+    </button>
+
+    <div
+      id="sleepResult"
+      class="hidden"
+      role="status"
+    ></div>
+
+    <button
+      id="logoutButton"
+      class="secondary"
+    >
+      Abmelden
+    </button>
+
   </section>
 
-  <p id="message" role="status" aria-live="polite"></p>
+  <p
+    id="message"
+    role="status"
+    aria-live="polite"
+  ></p>
 
   <footer>
     <a href="datenschutz.html">Datenschutz</a>
     <a href="impressum.html">Impressum</a>
-    <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a>
+    <a href="nutzungsbedingungen.html">
+      Nutzungsbedingungen
+    </a>
   </footer>
+
 </main>
 
 <script type="module">
+
   import { createClient } from
     "https://esm.sh/@supabase/supabase-js@2";
 
   const SUPABASE_URL =
     "https://uukjvrmxrxbhueqarjpp.supabase.co";
 
-  // HIER DEINEN OEFFENTLICHEN PUBLISHABLE KEY EINFUEGEN
-  const SUPABASE_KEY = "sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP";
+  const SUPABASE_KEY =
+    "sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP";
 
   const OURA_FUNCTION =
     SUPABASE_URL + "/functions/v1/oura-connect";
 
-  const message = document.getElementById("message");
-  const authCard = document.getElementById("authCard");
-  const dashboard = document.getElementById("dashboard");
-  const userEmail = document.getElementById("userEmail");
+  const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-  const showMessage = (text) => {
+  const message =
+    document.getElementById("message");
+
+  const authCard =
+    document.getElementById("authCard");
+
+  const dashboard =
+    document.getElementById("dashboard");
+
+  const userEmail =
+    document.getElementById("userEmail");
+
+  const ouraButton =
+    document.getElementById("ouraButton");
+
+  const ouraStatus =
+    document.getElementById("ouraStatus");
+
+  const sleepButton =
+    document.getElementById("sleepButton");
+
+  const sleepResult =
+    document.getElementById("sleepResult");
+
+  let connectedUserId = null;
+
+  function showMessage(text) {
     message.textContent = text;
-  };
+  }
 
-  const configured =
-    SUPABASE_KEY !== "HIER_PUBLISHABLE_KEY_EINFUEGEN";
+  function showOuraConnected() {
+    ouraStatus.textContent =
+      "✓ Oura Ring verbunden";
 
-  let supabase = null;
+    ouraStatus.className = "success";
 
-  if (configured) {
-    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-  } else {
-    showMessage("sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP");
+    ouraButton.textContent =
+      "Oura Ring erneut verbinden";
+
+    sleepButton.classList.remove("hidden");
+  }
+
+  function showOuraNotConfirmed() {
+    ouraStatus.textContent =
+      "Oura-Verbindung noch nicht bestätigt.";
+
+    ouraStatus.className = "muted";
+
+    ouraButton.textContent =
+      "Oura Ring verbinden";
+
+    sleepButton.classList.add("hidden");
   }
 
   async function refreshUI() {
-    if (!supabase) return;
+    const { data, error } =
+      await supabase.auth.getUser();
 
-    const { data, error } = await supabase.auth.getUser();
+    const user = data?.user;
 
-    if (error && error.name !== "AuthSessionMissingError") {
+    if (
+      error &&
+      error.name !== "AuthSessionMissingError"
+    ) {
       showMessage(error.message);
     }
 
-    const user = data?.user;
-    authCard.classList.toggle("hidden", !!user);
-    dashboard.classList.toggle("hidden", !user);
-    userEmail.textContent = user?.email || "";
+    authCard.classList.toggle(
+      "hidden",
+      !!user
+    );
+
+    dashboard.classList.toggle(
+      "hidden",
+      !user
+    );
+
+    userEmail.textContent =
+      user?.email || "";
+
+    if (!user) {
+      connectedUserId = null;
+      showOuraNotConfirmed();
+      return;
+    }
+
+    const params =
+      new URLSearchParams(window.location.search);
+
+    const ouraResult =
+      params.get("oura");
+
+    if (ouraResult === "connected") {
+      connectedUserId = user.id;
+      showOuraConnected();
+
+      showMessage(
+        "Oura-Autorisierung erfolgreich abgeschlossen."
+      );
+
+      // Entfernt nur den einmaligen Callback-Parameter.
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete("oura");
+
+      window.history.replaceState(
+        {},
+        "",
+        cleanUrl.toString()
+      );
+
+    } else if (ouraResult === "denied") {
+      showOuraNotConfirmed();
+
+      showMessage(
+        "Die Oura-Freigabe wurde abgebrochen."
+      );
+
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete("oura");
+
+      window.history.replaceState(
+        {},
+        "",
+        cleanUrl.toString()
+      );
+
+    } else if (connectedUserId === user.id) {
+      showOuraConnected();
+
+    } else {
+      showOuraNotConfirmed();
+    }
+  }
+
+  async function authenticatedRequest(action) {
+    const { data, error } =
+      await supabase.auth.getSession();
+
+    if (error || !data.session) {
+      throw new Error(
+        "Bitte erneut anmelden."
+      );
+    }
+
+    const response = await fetch(
+      OURA_FUNCTION +
+      "?action=" +
+      encodeURIComponent(action),
+      {
+        method: "POST",
+        headers: {
+          Authorization:
+            "Bearer " +
+            data.session.access_token,
+
+          apikey: SUPABASE_KEY,
+
+          "Content-Type":
+            "application/json"
+        },
+
+        body: JSON.stringify({})
+      }
+    );
+
+    let result;
+
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error(
+        "Ungültige Antwort vom Server."
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        result.error ||
+        "Serverfehler (HTTP " +
+        response.status +
+        ")"
+      );
+    }
+
+    return result;
   }
 
   document.getElementById("loginForm")
-    .addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!supabase) return;
+    .addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+        const email =
+          document.getElementById("email")
+            .value.trim();
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email, password
-      });
+        const password =
+          document.getElementById("password")
+            .value;
 
-      if (error) {
-        showMessage("Anmeldung fehlgeschlagen: " + error.message);
-        return;
-      }
+        const { error } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
 
-      showMessage("Erfolgreich angemeldet.");
-      await refreshUI();
-    });
-
-  document.getElementById("registerButton")
-    .addEventListener("click", async () => {
-      if (!supabase) return;
-
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      if (!email || password.length < 6) {
-        showMessage("Bitte E-Mail und ein Passwort mit mindestens 6 Zeichen eingeben.");
-        return;
-      }
-
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo:
-            "https://woozy1x1.github.io/fitlife-ai/"
-        }
-      });
-
-      showMessage(error
-        ? "Registrierung fehlgeschlagen: " + error.message
-        : "Registrierung gestartet. Bitte prüfe deine E-Mails und bestätige dein Konto, falls erforderlich."
-      );
-
-      await refreshUI();
-    });
-
-  document.getElementById("logoutButton")
-    .addEventListener("click", async () => {
-      if (!supabase) return;
-      const { error } = await supabase.auth.signOut();
-
-      if (error) {
-        showMessage(error.message);
-        return;
-      }
-
-      showMessage("Erfolgreich abgemeldet.");
-      await refreshUI();
-    });
-
-  document.getElementById("ouraButton")
-    .addEventListener("click", async () => {
-      if (!supabase) return;
-
-      const button = document.getElementById("ouraButton");
-      button.disabled = true;
-
-      try {
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error || !data.session) {
-          throw new Error("Bitte erneut anmelden.");
+        if (error) {
+          showMessage(
+            "Anmeldung fehlgeschlagen: " +
+            error.message
+          );
+          return;
         }
 
-        // Erwartete Schnittstelle: POST ?action=start
-        // mit Bearer-JWT, Antwort { url: "https://..." }.
-        // Muss mit dem Backend-Code abgeglichen werden.
-        const response = await fetch(
-          OURA_FUNCTION + "?action=start",
-          {
-            method: "POST",
-            headers: {
-              "Authorization":
-                "Bearer " + data.session.access_token,
-              "apikey": SUPABASE_KEY,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({})
-          }
+        showMessage(
+          "Erfolgreich angemeldet."
         );
 
-        if (!response.ok) {
+        await refreshUI();
+      }
+    );
+
+  document.getElementById("registerButton")
+    .addEventListener(
+      "click",
+      async () => {
+        const email =
+          document.getElementById("email")
+            .value.trim();
+
+        const password =
+          document.getElementById("password")
+            .value;
+
+        if (!email || password.length < 6) {
+          showMessage(
+            "Bitte E-Mail und Passwort mit mindestens 6 Zeichen eingeben."
+          );
+          return;
+        }
+
+        const { error } =
+          await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo:
+                "https://woozy1x1.github.io/fitlife-ai/"
+            }
+          });
+
+        showMessage(
+          error
+            ? "Registrierung fehlgeschlagen: " +
+              error.message
+            : "Registrierung gestartet. Bitte prüfe deine E-Mails."
+        );
+
+        await refreshUI();
+      }
+    );
+
+  document.getElementById("logoutButton")
+    .addEventListener(
+      "click",
+      async () => {
+        const { error } =
+          await supabase.auth.signOut();
+
+        if (error) {
+          showMessage(error.message);
+          return;
+        }
+
+        connectedUserId = null;
+        showOuraNotConfirmed();
+
+        showMessage(
+          "Erfolgreich abgemeldet."
+        );
+
+        await refreshUI();
+      }
+    );
+
+  ouraButton.addEventListener(
+    "click",
+    async () => {
+      ouraButton.disabled = true;
+
+      try {
+        showMessage(
+          "Oura-Verbindung wird gestartet ..."
+        );
+
+        const result =
+          await authenticatedRequest("start");
+
+        const target =
+          result.url ||
+          result.authorization_url;
+
+        if (!target) {
           throw new Error(
-            "Oura-Verbindung konnte nicht gestartet werden (HTTP " +
-            response.status + ")."
+            "Keine Oura-Weiterleitungsadresse erhalten."
           );
         }
 
-        const result = await response.json();
-        const url = new URL(result.url);
+        const url = new URL(target);
 
-        if (url.protocol !== "https:" ||
-            url.hostname !== "cloud.ouraring.com") {
-          throw new Error("Unerwartete Oura-Weiterleitungsadresse.");
+        if (
+          url.protocol !== "https:" ||
+          url.hostname !== "cloud.ouraring.com"
+        ) {
+          throw new Error(
+            "Unerwartete Oura-Weiterleitungsadresse."
+          );
         }
 
         window.location.assign(url.href);
+
       } catch (error) {
         showMessage(error.message);
+
       } finally {
-        button.disabled = false;
+        ouraButton.disabled = false;
       }
-    });
+    }
+  );
 
-  if (supabase) {
-    supabase.auth.onAuthStateChange(() => {
-      refreshUI();
-    });
+  sleepButton.addEventListener(
+    "click",
+    async () => {
+      sleepButton.disabled = true;
 
+      sleepResult.classList.remove(
+        "hidden"
+      );
+
+      sleepResult.textContent =
+        "Schlafdaten werden geladen ...";
+
+      try {
+        const result =
+          await authenticatedRequest("daily");
+
+        const entries =
+          Array.isArray(result.data)
+            ? result.data
+            : [];
+
+        if (entries.length === 0) {
+          sleepResult.textContent =
+            "Noch keine Schlafdaten für die letzten 7 Tage verfügbar.";
+        } else {
+          const lines = entries.map(item => {
+            const date =
+              item.day || "Unbekanntes Datum";
+
+            const score =
+              item.score ?? "Kein Wert";
+
+            return (
+              date +
+              " – Schlafscore: " +
+              score
+            );
+          });
+
+          sleepResult.textContent =
+            lines.join("\n");
+        }
+
+        showMessage(
+          "Oura-Schlafdaten wurden abgefragt."
+        );
+
+      } catch (error) {
+        sleepResult.textContent =
+          "Fehler: " + error.message;
+
+        showMessage(
+          "Schlafdaten konnten nicht geladen werden."
+        );
+
+      } finally {
+        sleepButton.disabled = false;
+      }
+    }
+  );
+
+  supabase.auth.onAuthStateChange(() => {
     refreshUI();
-  }
+  });
+
+  refreshUI();
+
 </script>
 </body>
 </html>
+
