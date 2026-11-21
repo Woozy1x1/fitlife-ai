@@ -3,173 +3,209 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#080d17">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>VYORA AI</title>
+<title>VYORA AI – Deine Gesundheit</title>
 <style>
-:root {
-  --bg:#080d17; --card:#142033; --border:#293a52;
-  --text:#f5f8fc; --muted:#9aacc2; --green:#70efbd;
+:root{
+  --bg:#080d17;--card:#142033;--border:#293a52;
+  --text:#f5f8fc;--muted:#9aacc2;--green:#70efbd;
 }
-* { box-sizing:border-box; }
-body {
-  margin:0; min-height:100vh; color:var(--text);
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:var(--text);
   font-family:system-ui,-apple-system,sans-serif;
-  background:radial-gradient(circle at top,#193343,transparent 420px),var(--bg);
+  background:radial-gradient(circle at top,#193343,transparent 420px),var(--bg)
 }
-button,input,select { font:inherit; }
-button { cursor:pointer; }
-button:disabled { opacity:.55; }
-.hidden { display:none!important; }
-.app { max-width:1050px; margin:auto; padding:20px 16px 115px; }
-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
-.logo { display:flex; align-items:center; gap:12px; }
-.logo-icon {
-  width:44px; height:44px; border-radius:14px;
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+.hidden{display:none!important}
+.app{max-width:1050px;margin:auto;padding:20px 16px 115px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{
+  width:44px;height:44px;border-radius:14px;
   background:linear-gradient(135deg,#a0ffdb,#48a9a5);
-  display:grid; place-items:center; color:#08251d;
-  font-weight:900; font-size:25px;
+  display:grid;place-items:center;color:#08251d;font-weight:900;font-size:25px
 }
-.logo strong { font-size:21px; letter-spacing:2px; }
-.logo strong span { color:var(--green); }
-.logo small { display:block; color:var(--muted); font-size:10px; letter-spacing:1px; }
-.avatar {
-  border-radius:50%; width:42px; height:42px;
-  background:#263b50; display:grid; place-items:center;
-  color:var(--green); font-weight:bold;
+.logo strong{font-size:21px;letter-spacing:2px}
+.logo strong span{color:var(--green)}
+.logo small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px}
+.avatar{
+  border-radius:50%;width:42px;height:42px;
+  background:#263b50;display:grid;place-items:center;
+  color:var(--green);font-weight:bold
 }
-.card {
+.card{
   background:linear-gradient(145deg,#19283d,#111b2c);
-  border:1px solid var(--border); border-radius:23px;
-  padding:22px; margin-bottom:16px;
+  border:1px solid var(--border);border-radius:23px;
+  padding:22px;margin-bottom:16px
 }
-.hero {
+.hero{
   background:radial-gradient(circle at top right,#286a6040,transparent 60%),
-  linear-gradient(145deg,#1b3544,#111e30);
+  linear-gradient(145deg,#1b3544,#111e30)
 }
-h1 { font-size:clamp(28px,5vw,40px); letter-spacing:-1px; margin:12px 0; }
-h2 { font-size:18px; margin:0 0 15px; }
-p { line-height:1.55; }
-.muted { color:var(--muted); font-size:13px; }
-.eyebrow { color:var(--muted); font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:700; }
-.grid { display:grid; grid-template-columns:1.3fr 1fr; gap:16px; }
-.stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0; }
-.stat { min-height:140px; }
-.stat strong { display:block; font-size:27px; margin:12px 0 4px; }
-.stat small { color:var(--muted); font-size:12px; }
-.stat-icon { font-size:24px; }
-.hero-content { display:flex; align-items:center; gap:25px; margin-top:25px; }
-.score-ring {
-  width:175px; height:175px; position:relative;
-  display:grid; place-items:center; flex-shrink:0;
+h1{font-size:clamp(28px,5vw,40px);letter-spacing:-1px;margin:12px 0}
+h2{font-size:18px;margin:0 0 15px}
+h3{font-size:15px;margin:0 0 10px}
+p{line-height:1.55}
+.muted{color:var(--muted);font-size:13px}
+.eyebrow{
+  color:var(--muted);font-size:11px;letter-spacing:2px;
+  text-transform:uppercase;font-weight:700
 }
-.score-ring svg { position:absolute; inset:0; transform:rotate(-90deg); }
-.score-ring circle { fill:none; stroke-width:11; }
-.ring-track { stroke:#344d56; }
-.ring-progress {
-  stroke:var(--green); stroke-linecap:round;
-  stroke-dasharray:452.39; stroke-dashoffset:452.39;
-  transition:stroke-dashoffset .6s;
+.grid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.stat{min-height:140px}
+.stat strong{display:block;font-size:27px;margin:12px 0 4px}
+.stat small{color:var(--muted);font-size:12px}
+.stat-icon{font-size:24px}
+.hero-content{display:flex;align-items:center;gap:25px;margin-top:25px}
+.score-ring{
+  width:175px;height:175px;position:relative;
+  display:grid;place-items:center;flex-shrink:0
 }
-.score-center { text-align:center; }
-.score-center strong { display:block; font-size:53px; line-height:1; }
-.score-center small { color:var(--muted); font-size:12px; }
-.score-info strong { display:block; color:var(--green); font-size:21px; margin:8px 0; }
-.score-info p { color:#b9c9d8; font-size:13px; }
-.btn {
-  border:0; border-radius:13px; padding:13px 17px;
-  background:var(--green); color:#08281e;
-  font-size:13px; font-weight:800; margin:5px 5px 5px 0;
+.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.score-ring circle{fill:none;stroke-width:11}
+.ring-track{stroke:#344d56}
+.ring-progress{
+  stroke:var(--green);stroke-linecap:round;
+  stroke-dasharray:452.39;stroke-dashoffset:452.39;
+  transition:stroke-dashoffset .6s
 }
-.btn.secondary { background:#2a3c53; color:white; }
-.btn.full { width:100%; }
-.status-row { display:flex; align-items:center; gap:10px; margin:18px 0; }
-.dot { width:9px; height:9px; border-radius:50%; background:#73849a; }
-.dot.connected { background:var(--green); box-shadow:0 0 12px var(--green); }
-.chart { display:flex; align-items:end; gap:10px; height:185px; }
-.chart-column {
-  flex:1; height:100%; display:flex; flex-direction:column;
-  justify-content:end; align-items:center; gap:7px; min-width:0;
+.score-center{text-align:center}
+.score-center strong{display:block;font-size:53px;line-height:1}
+.score-center small{color:var(--muted);font-size:12px}
+.score-info strong{display:block;color:var(--green);font-size:21px;margin:8px 0}
+.score-info p{color:#b9c9d8;font-size:13px}
+.btn{
+  border:0;border-radius:13px;padding:13px 17px;
+  background:var(--green);color:#08281e;
+  font-size:13px;font-weight:800;margin:5px 5px 5px 0
 }
-.chart-value { font-size:11px; }
-.chart-track {
-  height:125px; width:min(100%,44px); border-radius:9px;
-  background:#26374a; display:flex; align-items:end; overflow:hidden;
+.btn.secondary{background:#2a3c53;color:white}
+.btn.full{width:100%}
+.status-row{display:flex;align-items:center;gap:10px;margin:18px 0}
+.dot{width:9px;height:9px;border-radius:50%;background:#73849a}
+.dot.connected{background:var(--green);box-shadow:0 0 12px var(--green)}
+.chart{display:flex;align-items:end;gap:10px;min-height:185px}
+.chart-column{
+  flex:1;height:185px;display:flex;flex-direction:column;
+  justify-content:end;align-items:center;gap:7px;min-width:0
 }
-.chart-bar { width:100%; border-radius:9px; background:linear-gradient(#7bf0bd,#319d9d); }
-.chart-label { font-size:10px; color:var(--muted); }
-.notice {
-  background:#1a2b3e; border:1px solid var(--border);
-  padding:15px; border-radius:14px; color:#b8c9da;
-  font-size:13px; line-height:1.6;
+.chart-value{font-size:11px}
+.chart-track{
+  height:125px;width:min(100%,44px);border-radius:9px;
+  background:#26374a;display:flex;align-items:end;overflow:hidden
 }
-.message { color:#ffd17c; font-size:13px; white-space:pre-wrap; overflow-wrap:anywhere; }
-.view { display:none; }
-.view.active { display:block; }
-.bottom-nav {
-  position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
-  display:flex; gap:4px; padding:7px; border-radius:20px;
-  background:#18273af5; backdrop-filter:blur(18px);
-  border:1px solid #34475e; z-index:10;
+.chart-bar{
+  width:100%;border-radius:9px;
+  background:linear-gradient(#7bf0bd,#319d9d)
 }
-.bottom-nav button {
-  background:none; border:0; border-radius:13px;
-  color:#a1b4cb; padding:9px 13px; min-width:74px; font-size:11px;
+.chart-label{font-size:10px;color:var(--muted)}
+.notice{
+  background:#1a2b3e;border:1px solid var(--border);
+  padding:15px;border-radius:14px;color:#b8c9da;
+  font-size:13px;line-height:1.6
 }
-.bottom-nav button span { display:block; font-size:22px; margin-bottom:4px; }
-.bottom-nav button.active { background:#29473f; color:var(--green); }
-.auth { max-width:440px; margin:60px auto; }
-input,select {
-  width:100%; padding:14px; margin:7px 0 13px;
-  background:#0b1624; border:1px solid #40516a;
-  color:white; border-radius:12px;
+.message{
+  color:#ffd17c;font-size:13px;
+  white-space:pre-wrap;overflow-wrap:anywhere
 }
-label { display:block; font-size:12px; color:var(--muted); }
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.nutrition-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-.nutrition-stat {
-  background:#1d3045; padding:15px 9px;
-  border-radius:15px; text-align:center;
+.view{display:none}
+.view.active{display:block}
+.bottom-nav{
+  position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+  display:flex;gap:4px;padding:7px;border-radius:20px;
+  background:#18273af5;backdrop-filter:blur(18px);
+  border:1px solid #34475e;z-index:10
 }
-.nutrition-stat strong { display:block; font-size:24px; }
-.nutrition-stat small { color:var(--muted); font-size:11px; }
-.meal-row {
-  display:flex; align-items:center; justify-content:space-between;
-  gap:12px; border:1px solid var(--border);
-  border-radius:14px; padding:13px; margin:9px 0;
+.bottom-nav button{
+  background:none;border:0;border-radius:13px;
+  color:#a1b4cb;padding:9px 13px;min-width:74px;font-size:11px
 }
-.meal-row strong { display:block; overflow-wrap:anywhere; }
-.meal-row small { color:var(--muted); font-size:11px; }
-.meal-row button {
-  border:0; background:#49303b; color:#ffb7c3;
-  padding:9px 12px; border-radius:10px;
+.bottom-nav button span{display:block;font-size:22px;margin-bottom:4px}
+.bottom-nav button.active{background:#29473f;color:var(--green)}
+.auth{max-width:440px;margin:60px auto}
+input,select{
+  width:100%;padding:14px;margin:7px 0 13px;
+  background:#0b1624;border:1px solid #40516a;
+  color:white;border-radius:12px
 }
-footer { text-align:center; margin:35px 0; font-size:12px; }
-footer a { color:var(--muted); margin:0 7px; }
-@media(max-width:760px) {
-  .grid { grid-template-columns:1fr; }
-  .app { padding:17px 14px 115px; }
-  .hero { padding:21px; }
-  .hero-content { gap:15px; }
-  .score-ring { width:135px; height:135px; }
-  .score-center strong { font-size:43px; }
-  .score-info strong { font-size:18px; }
-  .stats { gap:8px; }
-  .stat { padding:13px; }
-  .stat strong { font-size:22px; }
-  .nutrition-summary { grid-template-columns:repeat(2,1fr); }
-  .bottom-nav {
-    bottom:0; left:0; transform:none; width:100%;
-    border-radius:20px 20px 0 0; justify-content:space-around;
-    padding-bottom:max(8px,env(safe-area-inset-bottom));
+label{display:block;font-size:12px;color:var(--muted)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nutrition-summary{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:10px
+}
+.nutrition-stat{
+  background:#1d3045;padding:15px 9px;
+  border-radius:15px;text-align:center
+}
+.nutrition-stat strong{display:block;font-size:24px}
+.nutrition-stat small{color:var(--muted);font-size:11px}
+.meal-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;border:1px solid var(--border);
+  border-radius:14px;padding:13px;margin:9px 0
+}
+.meal-row strong{display:block;overflow-wrap:anywhere}
+.meal-row small{color:var(--muted);font-size:11px}
+.meal-row button{
+  border:0;background:#49303b;color:#ffb7c3;
+  padding:9px 12px;border-radius:10px
+}
+.search-result{
+  display:flex;align-items:center;gap:12px;
+  border:1px solid var(--border);
+  border-radius:14px;padding:12px;margin:8px 0;
+  background:#15263a
+}
+.search-result img{
+  width:52px;height:52px;object-fit:contain;
+  border-radius:9px;background:#fff
+}
+.search-info{flex:1;min-width:0}
+.search-info strong{display:block;font-size:13px;overflow-wrap:anywhere}
+.search-info small{color:var(--muted);font-size:11px}
+.search-result button{
+  border:0;background:#29473f;color:var(--green);
+  padding:10px;border-radius:10px;font-weight:bold
+}
+.pill{
+  display:inline-block;padding:5px 9px;
+  border-radius:30px;background:#29473f;
+  color:var(--green);font-size:11px
+}
+.section-divider{
+  height:1px;background:var(--border);margin:22px 0
+}
+footer{text-align:center;margin:35px 0;font-size:12px}
+footer a{color:var(--muted);margin:0 7px}
+@media(max-width:760px){
+  .grid{grid-template-columns:1fr}
+  .app{padding:17px 14px 115px}
+  .hero{padding:21px}
+  .hero-content{gap:15px}
+  .score-ring{width:135px;height:135px}
+  .score-center strong{font-size:43px}
+  .score-info strong{font-size:18px}
+  .stats{gap:8px}
+  .stat{padding:13px}
+  .stat strong{font-size:22px}
+  .nutrition-summary{grid-template-columns:repeat(2,1fr)}
+  .bottom-nav{
+    bottom:0;left:0;transform:none;width:100%;
+    border-radius:20px 20px 0 0;justify-content:space-around;
+    padding-bottom:max(8px,env(safe-area-inset-bottom))
   }
-  .bottom-nav button { min-width:0; flex:1; padding:9px 2px; }
+  .bottom-nav button{min-width:0;flex:1;padding:9px 2px}
 }
-@media(max-width:380px) {
-  .score-ring { width:115px; height:115px; }
-  .score-center strong { font-size:36px; }
-  .form-grid { gap:8px; }
+@media(max-width:380px){
+  .score-ring{width:115px;height:115px}
+  .score-center strong{font-size:36px}
+  .form-grid{gap:8px}
 }
 </style>
 </head>
@@ -191,11 +227,15 @@ footer a { color:var(--muted); margin:0 7px; }
   <h1>Deine Gesundheit.<br>Dein Überblick.</h1>
   <p class="muted">Melde dich an, um deine Daten zu sehen.</p>
   <form id="loginForm">
-    <input id="email" type="email" placeholder="E-Mail-Adresse" autocomplete="email" required>
-    <input id="password" type="password" placeholder="Passwort" autocomplete="current-password" minlength="6" required>
+    <input id="email" type="email" placeholder="E-Mail-Adresse"
+      autocomplete="email" required>
+    <input id="password" type="password" placeholder="Passwort"
+      autocomplete="current-password" minlength="6" required>
     <button class="btn full" type="submit">Anmelden</button>
   </form>
-  <button id="registerButton" class="btn secondary full">Neues Konto erstellen</button>
+  <button id="registerButton" class="btn secondary full">
+    Neues Konto erstellen
+  </button>
 </section>
 
 <div id="dashboard" class="hidden">
@@ -210,7 +250,8 @@ footer a { color:var(--muted); margin:0 7px; }
         <div class="score-ring">
           <svg viewBox="0 0 180 180" width="100%" height="100%">
             <circle class="ring-track" cx="90" cy="90" r="72"/>
-            <circle id="scoreCircle" class="ring-progress" cx="90" cy="90" r="72"/>
+            <circle id="scoreCircle" class="ring-progress"
+              cx="90" cy="90" r="72"/>
           </svg>
           <div class="score-center">
             <strong id="mainScore">–</strong>
@@ -231,9 +272,15 @@ footer a { color:var(--muted); margin:0 7px; }
         <div id="ouraDot" class="dot"></div>
         <span id="ouraStatus">Verbindung wird geprüft ...</span>
       </div>
-      <p class="muted">Deine Schlafdaten werden sicher über deine Oura-Verbindung abgerufen.</p>
-      <button id="ouraButton" class="btn secondary hidden">Oura verbinden</button>
-      <button id="sleepButton" class="btn hidden">Schlafdaten aktualisieren ↻</button>
+      <p class="muted">
+        Deine Schlafdaten werden über deine Oura-Verbindung abgerufen.
+      </p>
+      <button id="ouraButton" class="btn secondary hidden">
+        Oura verbinden
+      </button>
+      <button id="sleepButton" class="btn hidden">
+        Schlafdaten aktualisieren ↻
+      </button>
       <p id="ouraMessage" class="message"></p>
     </div>
   </div>
@@ -268,9 +315,16 @@ footer a { color:var(--muted); margin:0 7px; }
     <div class="card">
       <h2>🥗 Deine Ernährung heute</h2>
       <p class="muted">Bereits eingetragene Kalorien</p>
-      <h1><span id="homeCalories">0</span> <small style="font-size:15px">kcal</small></h1>
-      <p id="homeNutritionInfo" class="muted">Noch keine Mahlzeiten eingetragen.</p>
-      <button class="btn" id="goNutrition">Mahlzeit eintragen +</button>
+      <h1>
+        <span id="homeCalories">0</span>
+        <small style="font-size:15px">kcal</small>
+      </h1>
+      <p id="homeNutritionInfo" class="muted">
+        Noch keine Mahlzeiten eingetragen.
+      </p>
+      <button class="btn" id="goNutrition">
+        Mahlzeit eintragen +
+      </button>
     </div>
   </div>
 </section>
@@ -278,7 +332,9 @@ footer a { color:var(--muted); margin:0 7px; }
 <section id="nutritionView" class="view">
   <div class="eyebrow">Dein Ernährungstagebuch</div>
   <h1>Ernährung 🥗</h1>
-  <p class="muted">Alle Mahlzeiten und Nährwerte an einem Ort.</p>
+  <p class="muted">
+    Lebensmittel suchen, Mengen wählen und Nährwerte übernehmen.
+  </p>
 
   <div class="card">
     <label for="nutritionDate">Datum auswählen</label>
@@ -298,11 +354,42 @@ footer a { color:var(--muted); margin:0 7px; }
         <strong id="totalFat">0</strong><small>Fett (g)</small>
       </div>
     </div>
-    <p class="muted">Die Werte ergeben sich aus deinen gespeicherten Angaben.</p>
+    <p class="muted">
+      Die Tageswerte ergeben sich aus deinen gespeicherten Mahlzeiten.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Neu in VYORA AI</div>
+    <h2>🔎 Lebensmittel suchen</h2>
+    <p class="muted">
+      Suche zum Beispiel nach Haferflocken, Skyr oder Milch.
+    </p>
+
+    <form id="foodSearchForm">
+      <label for="foodSearch">Lebensmittel oder Marke</label>
+      <input id="foodSearch" type="search"
+        placeholder="z. B. Haferflocken" minlength="2" required>
+      <button id="foodSearchButton" class="btn full" type="submit">
+        Lebensmittel suchen
+      </button>
+    </form>
+
+    <p id="foodSearchMessage" class="message" role="status"></p>
+    <div id="foodSearchResults"></div>
+
+    <p class="muted">
+      Datenquelle: Open Food Facts. Die Angaben stammen teilweise
+      von Nutzern und können unvollständig oder fehlerhaft sein.
+    </p>
   </div>
 
   <div class="card">
     <h2>+ Mahlzeit hinzufügen</h2>
+    <p id="selectedFoodInfo" class="muted">
+      Wähle ein Suchergebnis oder gib deine Werte selbst ein.
+    </p>
+
     <form id="nutritionForm">
       <label for="mealType">Mahlzeit</label>
       <select id="mealType" required>
@@ -313,35 +400,61 @@ footer a { color:var(--muted); margin:0 7px; }
       </select>
 
       <label for="foodName">Lebensmittel / Gericht</label>
-      <input id="foodName" maxlength="200" placeholder="z. B. Haferflocken mit Banane" required>
+      <input id="foodName" maxlength="200"
+        placeholder="z. B. Haferflocken" required>
+
+      <label for="foodAmount">Menge in Gramm</label>
+      <input id="foodAmount" type="number"
+        min="1" max="100000" step="0.1" value="100" required>
+
+      <p class="muted" id="amountHint">
+        Bei ausgewählten Lebensmitteln werden die Nährwerte
+        automatisch für diese Menge berechnet.
+      </p>
 
       <div class="form-grid">
         <div>
           <label for="calories">Kalorien (kcal)</label>
-          <input id="calories" type="number" min="0" max="999999" step="0.01" placeholder="0" required>
+          <input id="calories" type="number" min="0"
+            max="999999" step="0.01" placeholder="0" required>
         </div>
         <div>
           <label for="protein">Eiweiß (g)</label>
-          <input id="protein" type="number" min="0" max="999999" step="0.01" value="0" required>
+          <input id="protein" type="number" min="0"
+            max="999999" step="0.01" value="0" required>
         </div>
         <div>
           <label for="carbs">Kohlenhydrate (g)</label>
-          <input id="carbs" type="number" min="0" max="999999" step="0.01" value="0" required>
+          <input id="carbs" type="number" min="0"
+            max="999999" step="0.01" value="0" required>
         </div>
         <div>
           <label for="fat">Fett (g)</label>
-          <input id="fat" type="number" min="0" max="999999" step="0.01" value="0" required>
+          <input id="fat" type="number" min="0"
+            max="999999" step="0.01" value="0" required>
         </div>
       </div>
-      <button id="saveMeal" class="btn full" type="submit">Mahlzeit speichern</button>
+
+      <button id="saveMeal" class="btn full" type="submit">
+        Mahlzeit speichern
+      </button>
+      <button id="clearFood" class="btn secondary full" type="button">
+        Eingaben zurücksetzen
+      </button>
     </form>
-    <p class="muted">Nährwerte werden momentan manuell eingetragen. Eine Lebensmitteldatenbank ergänzen wir später.</p>
+
+    <p class="muted">
+      Kontrolliere die Angaben vor dem Speichern.
+      Manuelle Korrekturen sind jederzeit möglich.
+    </p>
     <p id="nutritionMessage" class="message" role="status"></p>
   </div>
 
   <div class="card">
     <h2>Gespeicherte Mahlzeiten</h2>
-    <div id="nutritionList" class="muted">Einträge werden geladen ...</div>
+    <div id="nutritionList" class="muted">
+      Einträge werden geladen ...
+    </div>
   </div>
 </section>
 
@@ -354,41 +467,64 @@ footer a { color:var(--muted); margin:0 7px; }
   </div>
   <div class="card">
     <h2>Deine letzten Messungen</h2>
-    <div id="sleepList" class="muted">Noch keine Daten geladen.</div>
+    <div id="sleepList" class="muted">
+      Noch keine Daten geladen.
+    </div>
   </div>
 </section>
 
 <section id="moreView" class="view">
   <div class="eyebrow">VYORA AI</div>
   <h1>Mehr entdecken ✦</h1>
+
   <div class="card">
     <h2>🏋️ Training</h2>
-    <p class="muted">Trainingspläne, Übungen, Sätze und Fortschritt bauen wir als Nächstes.</p>
+    <p class="muted">
+      Trainingspläne, Übungen, Sätze und Fortschritte
+      folgen als nächster großer Bereich.
+    </p>
   </div>
+
   <div class="card">
     <h2>♡ Gesundheitstrends</h2>
-    <p class="muted">Schlaf, Ernährung und weitere Gesundheitswerte werden hier später gemeinsam ausgewertet.</p>
+    <p class="muted">
+      Schlaf, Ernährung und weitere Gesundheitswerte
+      werden hier später gemeinsam ausgewertet.
+    </p>
   </div>
+
   <div class="card">
     <h2>✦ KI-Coach</h2>
-    <p class="muted">Dein persönlicher KI-Coach ist noch nicht aktiviert.</p>
+    <p class="muted">
+      Dein persönlicher KI-Coach ist noch nicht aktiviert.
+    </p>
   </div>
 </section>
 
 <div style="text-align:center;margin:25px 0">
-  <button id="logoutButton" class="btn secondary">Abmelden</button>
+  <button id="logoutButton" class="btn secondary">
+    Abmelden
+  </button>
 </div>
 
 <nav class="bottom-nav" aria-label="Hauptnavigation">
-  <button class="active" data-view="homeView"><span>⌂</span>Home</button>
-  <button data-view="nutritionView"><span>🥗</span>Ernährung</button>
-  <button data-view="sleepView"><span>☾</span>Schlaf</button>
-  <button data-view="moreView"><span>✦</span>Mehr</button>
+  <button class="active" data-view="homeView">
+    <span>⌂</span>Home
+  </button>
+  <button data-view="nutritionView">
+    <span>🥗</span>Ernährung
+  </button>
+  <button data-view="sleepView">
+    <span>☾</span>Schlaf
+  </button>
+  <button data-view="moreView">
+    <span>✦</span>Mehr
+  </button>
 </nav>
-
 </div>
 
 <p id="message" class="message" role="status"></p>
+
 <footer>
   <a href="datenschutz.html">Datenschutz</a>
   <a href="impressum.html">Impressum</a>
@@ -397,12 +533,23 @@ footer a { color:var(--muted); margin:0 7px; }
 </div>
 
 <script type="module">
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from
+  "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL = "https://uukjvrmxrxbhueqarjpp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP";
-const OURA_FUNCTION = SUPABASE_URL + "/functions/v1/oura-connect";
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL =
+  "https://uukjvrmxrxbhueqarjpp.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP";
+
+const OURA_FUNCTION =
+  SUPABASE_URL + "/functions/v1/oura-connect";
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
 const $ = id => document.getElementById(id);
 
 let currentUserId = null;
@@ -410,10 +557,15 @@ let refreshCounter = 0;
 let sleepData = [];
 let nutritionData = [];
 let loadingSleep = false;
+let selectedFood = null;
+let foodSearchCounter = 0;
+let nutritionLoadCounter = 0;
 
 const mealNames = {
-  breakfast:"Frühstück", lunch:"Mittagessen",
-  dinner:"Abendessen", snack:"Snack"
+  breakfast:"Frühstück",
+  lunch:"Mittagessen",
+  dinner:"Abendessen",
+  snack:"Snack"
 };
 
 function localDate() {
@@ -423,46 +575,86 @@ function localDate() {
   const day = String(d.getDate()).padStart(2,"0");
   return `${y}-${m}-${day}`;
 }
+
 $("nutritionDate").value = localDate();
 
-function message(text) { $("message").textContent = text || ""; }
-function nutritionMessage(text) { $("nutritionMessage").textContent = text || ""; }
-function ouraMessage(text) { $("ouraMessage").textContent = text || ""; }
+function message(text) {
+  $("message").textContent = text || "";
+}
+
+function nutritionMessage(text) {
+  $("nutritionMessage").textContent = text || "";
+}
+
+function ouraMessage(text) {
+  $("ouraMessage").textContent = text || "";
+}
+
+function foodMessage(text) {
+  $("foodSearchMessage").textContent = text || "";
+}
 
 function switchView(id) {
-  document.querySelectorAll(".view").forEach(view =>
-    view.classList.toggle("active",view.id===id)
-  );
-  document.querySelectorAll(".bottom-nav button").forEach(button =>
-    button.classList.toggle("active",button.dataset.view===id)
-  );
+  document.querySelectorAll(".view").forEach(view => {
+    view.classList.toggle("active",view.id===id);
+  });
+
+  document.querySelectorAll(".bottom-nav button")
+    .forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.view===id
+      );
+    });
+
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-document.querySelectorAll(".bottom-nav button").forEach(button =>
-  button.addEventListener("click",()=>switchView(button.dataset.view))
-);
-$("goNutrition").addEventListener("click",()=>switchView("nutritionView"));
+document.querySelectorAll(".bottom-nav button")
+  .forEach(button => {
+    button.addEventListener("click",() => {
+      switchView(button.dataset.view);
+    });
+  });
+
+$("goNutrition").addEventListener("click",() => {
+  switchView("nutritionView");
+});
 
 function setConnected(connected) {
   $("ouraDot").classList.toggle("connected",connected);
+
   $("ouraStatus").textContent = connected
-    ? "✓ Oura Ring verbunden" : "Oura Ring nicht verbunden";
+    ? "✓ Oura Ring verbunden"
+    : "Oura Ring nicht verbunden";
+
   $("ouraButton").classList.remove("hidden");
+
   $("ouraButton").textContent = connected
-    ? "Erneut verbinden" : "Oura Ring verbinden";
-  $("sleepButton").classList.toggle("hidden",!connected);
+    ? "Erneut verbinden"
+    : "Oura Ring verbinden";
+
+  $("sleepButton").classList.toggle(
+    "hidden",
+    !connected
+  );
 }
 
 async function authenticatedRequest(action) {
-  const {data,error} = await supabase.auth.getSession();
-  if(error || !data.session) throw new Error("Bitte erneut anmelden.");
+  const {data,error} =
+    await supabase.auth.getSession();
+
+  if(error || !data.session) {
+    throw new Error("Bitte erneut anmelden.");
+  }
 
   const response = await fetch(
-    OURA_FUNCTION+"?action="+encodeURIComponent(action),{
+    OURA_FUNCTION+"?action="+encodeURIComponent(action),
+    {
       method:"POST",
       headers:{
-        Authorization:"Bearer "+data.session.access_token,
+        Authorization:
+          "Bearer "+data.session.access_token,
         apikey:SUPABASE_KEY,
         "Content-Type":"application/json"
       },
@@ -471,39 +663,59 @@ async function authenticatedRequest(action) {
   );
 
   const result = await response.json();
-  if(!response.ok) throw new Error(result.error || "HTTP "+response.status);
+
+  if(!response.ok) {
+    throw new Error(
+      result.error || "HTTP "+response.status
+    );
+  }
+
   return result;
 }
 
 function formatDate(day) {
   if(!day) return "–";
+
   const d = new Date(day+"T12:00:00");
-  return isNaN(d.getTime()) ? day :
-    d.toLocaleDateString("de-DE",{day:"2-digit",month:"short"});
+
+  return isNaN(d.getTime())
+    ? day
+    : d.toLocaleDateString("de-DE",{
+        day:"2-digit",
+        month:"short"
+      });
 }
 
 function renderChart(id) {
   const box = $(id);
   box.replaceChildren();
+
   if(!sleepData.length) {
-    box.textContent = "Noch keine Schlafdaten verfügbar.";
+    box.textContent =
+      "Noch keine Schlafdaten verfügbar.";
     return;
   }
-  sleepData.slice(-7).forEach(item=>{
+
+  sleepData.slice(-7).forEach(item => {
     const column = document.createElement("div");
     column.className = "chart-column";
+
     const value = document.createElement("span");
     value.className = "chart-value";
     value.textContent = item.score;
+
     const track = document.createElement("div");
     track.className = "chart-track";
+
     const bar = document.createElement("div");
     bar.className = "chart-bar";
     bar.style.height = item.score+"%";
     track.append(bar);
+
     const label = document.createElement("span");
     label.className = "chart-label";
     label.textContent = formatDate(item.day);
+
     column.append(value,track,label);
     box.append(column);
   });
@@ -512,54 +724,90 @@ function renderChart(id) {
 function renderSleep() {
   renderChart("homeChart");
   renderChart("sleepChart");
+
   const list = $("sleepList");
   list.replaceChildren();
-  sleepData.slice().reverse().forEach(item=>{
+
+  sleepData.slice().reverse().forEach(item => {
     const row = document.createElement("div");
     row.className = "meal-row";
+
     const date = document.createElement("span");
     date.textContent = formatDate(item.day);
+
     const score = document.createElement("strong");
     score.textContent = item.score;
+
     row.append(date,score);
     list.append(row);
   });
 
   if(!sleepData.length) {
-    list.textContent = "Keine Schlafscores für die letzten 7 Tage.";
+    list.textContent =
+      "Keine Schlafscores für die letzten 7 Tage.";
+
+    $("mainScore").textContent = "–";
+    $("miniSleep").textContent = "–";
+    $("scoreDate").textContent = "Letzte Messung";
+    $("scoreRating").textContent = "Noch keine Daten";
+    $("scoreCircle").style.strokeDashoffset = 452.39;
     return;
   }
+
   const latest = sleepData[sleepData.length-1];
+
   $("mainScore").textContent = latest.score;
   $("miniSleep").textContent = latest.score;
   $("scoreDate").textContent = formatDate(latest.day);
-  $("scoreRating").textContent = latest.score>=85
-    ? "Sehr gut" : latest.score>=70 ? "Gut erholt"
-    : latest.score>=60 ? "Ausbaufähig" : "Erholung beachten";
+
+  $("scoreRating").textContent =
+    latest.score>=85 ? "Sehr gut" :
+    latest.score>=70 ? "Gut erholt" :
+    latest.score>=60 ? "Ausbaufähig" :
+    "Erholung beachten";
+
   $("scoreCircle").style.strokeDashoffset =
     452.39*(1-latest.score/100);
 }
 
 async function loadSleep() {
   if(loadingSleep) return;
+
   loadingSleep = true;
   const userId = currentUserId;
+
   $("sleepButton").disabled = true;
   ouraMessage("Schlafdaten werden geladen ...");
+
   try {
     const result = await authenticatedRequest("daily");
+
     if(currentUserId!==userId) return;
-    sleepData = (Array.isArray(result.data)?result.data:[])
-      .filter(x=>typeof x.day==="string" &&
-        x.score!==null && x.score!==undefined &&
+
+    sleepData = (
+      Array.isArray(result.data) ? result.data : []
+    )
+      .filter(x =>
+        typeof x.day==="string" &&
+        x.score!==null &&
+        x.score!==undefined &&
         Number.isFinite(Number(x.score)) &&
-        Number(x.score)>=0 && Number(x.score)<=100)
-      .map(x=>({day:x.day,score:Number(x.score)}))
-      .sort((a,b)=>a.day.localeCompare(b.day));
+        Number(x.score)>=0 &&
+        Number(x.score)<=100
+      )
+      .map(x => ({
+        day:x.day,
+        score:Number(x.score)
+      }))
+      .sort((a,b) => a.day.localeCompare(b.day));
+
     renderSleep();
     ouraMessage("✓ Schlafdaten aktualisiert.");
+
   } catch(e) {
-    if(currentUserId===userId) ouraMessage("Fehler: "+e.message);
+    if(currentUserId===userId) {
+      ouraMessage("Fehler: "+e.message);
+    }
   } finally {
     loadingSleep = false;
     $("sleepButton").disabled = false;
@@ -567,35 +815,50 @@ async function loadSleep() {
 }
 
 function number(value) {
-  return Number(value||0).toLocaleString("de-DE",{
-    maximumFractionDigits:1
-  });
+  return Number(value||0).toLocaleString(
+    "de-DE",
+    {maximumFractionDigits:1}
+  );
 }
 
 function renderNutrition() {
   const sum = field => nutritionData.reduce(
-    (total,item)=>total+Number(item[field]||0),0
+    (total,item) =>
+      total+Number(item[field]||0),
+    0
   );
-  $("totalCalories").textContent = number(sum("calories"));
-  $("totalProtein").textContent = number(sum("protein"));
-  $("totalCarbs").textContent = number(sum("carbs"));
-  $("totalFat").textContent = number(sum("fat"));
+
+  $("totalCalories").textContent =
+    number(sum("calories"));
+
+  $("totalProtein").textContent =
+    number(sum("protein"));
+
+  $("totalCarbs").textContent =
+    number(sum("carbs"));
+
+  $("totalFat").textContent =
+    number(sum("fat"));
 
   if($("nutritionDate").value===localDate()) {
-    $("homeCalories").textContent = number(sum("calories"));
+    $("homeCalories").textContent =
+      number(sum("calories"));
+
     $("homeNutritionInfo").textContent =
-      nutritionData.length+" Mahlzeit(en) heute eingetragen.";
+      nutritionData.length+
+      " Mahlzeit(en) heute eingetragen.";
   }
 
   const list = $("nutritionList");
   list.replaceChildren();
 
   if(!nutritionData.length) {
-    list.textContent = "Für dieses Datum sind noch keine Mahlzeiten gespeichert.";
+    list.textContent =
+      "Für dieses Datum sind noch keine Mahlzeiten gespeichert.";
     return;
   }
 
-  nutritionData.forEach(item=>{
+  nutritionData.forEach(item => {
     const row = document.createElement("div");
     row.className = "meal-row";
 
@@ -615,8 +878,14 @@ function renderNutrition() {
 
     const del = document.createElement("button");
     del.textContent = "Löschen";
-    del.setAttribute("aria-label","Mahlzeit löschen: "+item.food_name);
-    del.addEventListener("click",()=>deleteMeal(item.id));
+    del.setAttribute(
+      "aria-label",
+      "Mahlzeit löschen: "+item.food_name
+    );
+
+    del.addEventListener("click",() => {
+      deleteMeal(item.id);
+    });
 
     row.append(info,del);
     list.append(row);
@@ -625,77 +894,483 @@ function renderNutrition() {
 
 async function loadNutrition() {
   if(!currentUserId) return;
+
+  const requestId = ++nutritionLoadCounter;
   const userId = currentUserId;
   const date = $("nutritionDate").value;
+
   nutritionMessage("Mahlzeiten werden geladen ...");
 
   const {data,error} = await supabase
     .from("nutrition_entries")
-    .select("id,meal_type,food_name,calories,protein,carbs,fat,entry_date,created_at")
+    .select(
+      "id,meal_type,food_name,calories,protein,carbs,fat,entry_date,created_at"
+    )
     .eq("user_id",userId)
     .eq("entry_date",date)
     .order("created_at",{ascending:false});
 
-  if(currentUserId!==userId || $("nutritionDate").value!==date) return;
+  if(
+    currentUserId!==userId ||
+    $("nutritionDate").value!==date ||
+    requestId!==nutritionLoadCounter
+  ) return;
 
   if(error) {
-    nutritionMessage("Laden fehlgeschlagen: "+error.message);
+    nutritionMessage(
+      "Laden fehlgeschlagen: "+error.message
+    );
     return;
   }
+
   nutritionData = data||[];
   renderNutrition();
   nutritionMessage("");
 }
 
-$("nutritionDate").addEventListener("change",loadNutrition);
+$("nutritionDate").addEventListener(
+  "change",
+  loadNutrition
+);
 
-$("nutritionForm").addEventListener("submit",async event=>{
-  event.preventDefault();
-  const button = $("saveMeal");
-  button.disabled = true;
-  nutritionMessage("Mahlzeit wird gespeichert ...");
+// -----------------------------------
+// NEU: Lebensmittelsuche
+// -----------------------------------
 
-  try {
-    const {data:{user},error:userError} = await supabase.auth.getUser();
-    if(userError || !user) throw new Error("Bitte erneut anmelden.");
+function validNutrient(value) {
+  if(value===null || value===undefined || value==="") {
+    return null;
+  }
 
-    const fields = ["calories","protein","carbs","fat"];
-    const values = {};
-    for(const field of fields) {
-      const value = Number($(field).value);
-      if(!Number.isFinite(value) || value<0 || value>999999)
-        throw new Error("Bitte gültige Nährwerte eingeben.");
-      values[field] = value;
-    }
+  const n = Number(value);
+  return Number.isFinite(n) && n>=0 && n<=1000
+    ? n
+    : null;
+}
 
-    const foodName = $("foodName").value.trim();
-    if(!foodName || foodName.length>200)
-      throw new Error("Bitte einen gültigen Namen eingeben.");
+function normalizeFood(product) {
+  const nutrients = product.nutriments || {};
 
-    const {error} = await supabase.from("nutrition_entries").insert({
-      user_id:user.id,
-      meal_type:$("mealType").value,
-      food_name:foodName,
-      entry_date:$("nutritionDate").value,
-      ...values
-    });
+  const calories = validNutrient(
+    nutrients["energy-kcal_100g"]
+  );
 
-    if(error) throw error;
+  const protein = validNutrient(
+    nutrients.proteins_100g
+  );
 
-    $("nutritionForm").reset();
-    nutritionMessage("✓ Mahlzeit gespeichert.");
-    await loadNutrition();
-    nutritionMessage("✓ Mahlzeit gespeichert.");
-  } catch(e) {
-    nutritionMessage("Speichern fehlgeschlagen: "+e.message);
-  } finally {
-    button.disabled = false;
+  const carbs = validNutrient(
+    nutrients.carbohydrates_100g
+  );
+
+  const fat = validNutrient(
+    nutrients.fat_100g
+  );
+
+  const name = String(
+    product.product_name_de ||
+    product.product_name ||
+    ""
+  ).trim();
+
+  if(!name || calories===null) return null;
+
+  // Nur Produkte mit allen vier Nährwerten
+  // automatisch übernehmen.
+  if(
+    protein===null ||
+    carbs===null ||
+    fat===null
+  ) return null;
+
+  // Grobe Plausibilitätsprüfung.
+  if(protein>100 || carbs>100 || fat>100) {
+    return null;
+  }
+
+  return {
+    name:name.slice(0,200),
+    brand:String(product.brands||"").slice(0,100),
+    image:product.image_front_small_url || "",
+    code:String(product.code||""),
+    calories,
+    protein,
+    carbs,
+    fat
+  };
+}
+
+function clearFoodSelection() {
+  selectedFood = null;
+  $("nutritionForm").reset();
+  $("foodAmount").value = "100";
+  $("protein").value = "0";
+  $("carbs").value = "0";
+  $("fat").value = "0";
+  $("selectedFoodInfo").textContent =
+    "Wähle ein Suchergebnis oder gib deine Werte selbst ein.";
+}
+
+$("clearFood").addEventListener(
+  "click",
+  clearFoodSelection
+);
+
+function calculateSelectedFood() {
+  if(!selectedFood) return;
+
+  const grams = Number($("foodAmount").value);
+
+  if(
+    !Number.isFinite(grams) ||
+    grams<=0 ||
+    grams>100000
+  ) return;
+
+  const factor = grams/100;
+
+  const rounded = n =>
+    Math.round(n*factor*100)/100;
+
+  $("calories").value =
+    rounded(selectedFood.calories);
+
+  $("protein").value =
+    rounded(selectedFood.protein);
+
+  $("carbs").value =
+    rounded(selectedFood.carbs);
+
+  $("fat").value =
+    rounded(selectedFood.fat);
+}
+
+$("foodAmount").addEventListener(
+  "input",
+  calculateSelectedFood
+);
+
+function chooseFood(food) {
+  selectedFood = food;
+
+  $("foodName").value = food.name;
+  $("foodAmount").value = "100";
+
+  $("selectedFoodInfo").textContent =
+    "✓ Ausgewählt: "+food.name+
+    (food.brand ? " · "+food.brand : "")+
+    " · Werte je 100 g: "+
+    number(food.calories)+" kcal, "+
+    number(food.protein)+" g Eiweiß, "+
+    number(food.carbs)+" g KH, "+
+    number(food.fat)+" g Fett.";
+
+  calculateSelectedFood();
+
+  $("nutritionForm").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+$("foodName").addEventListener("input",() => {
+  // Wenn der Nutzer das ausgewählte Produkt
+  // umbenennt, ist die automatische Zuordnung
+  // nicht mehr zuverlässig.
+  if(
+    selectedFood &&
+    $("foodName").value!==selectedFood.name
+  ) {
+    selectedFood = null;
+    $("selectedFoodInfo").textContent =
+      "Manuelle Eingabe: Nährwerte bitte selbst prüfen.";
   }
 });
 
+function renderFoodResults(foods) {
+  const container = $("foodSearchResults");
+  container.replaceChildren();
+
+  if(!foods.length) {
+    foodMessage(
+      "Keine passenden Lebensmittel mit vollständigen Nährwerten gefunden. Versuche einen anderen Suchbegriff."
+    );
+    return;
+  }
+
+  foodMessage(
+    foods.length+
+    " Lebensmittel gefunden. Bitte Produkt und Nährwerte prüfen."
+  );
+
+  foods.forEach(food => {
+    const row = document.createElement("div");
+    row.className = "search-result";
+
+    if(food.image) {
+      const image = document.createElement("img");
+      image.src = food.image;
+      image.alt = "";
+      image.loading = "lazy";
+      image.referrerPolicy = "no-referrer";
+      row.append(image);
+    }
+
+    const info = document.createElement("div");
+    info.className = "search-info";
+
+    const title = document.createElement("strong");
+    title.textContent = food.name;
+
+    const brand = document.createElement("small");
+    brand.textContent =
+      (food.brand ? food.brand+" · " : "")+
+      number(food.calories)+" kcal / 100 g";
+
+    const macros = document.createElement("small");
+    macros.style.display = "block";
+    macros.textContent =
+      "E "+number(food.protein)+" g · "+
+      "KH "+number(food.carbs)+" g · "+
+      "F "+number(food.fat)+" g";
+
+    info.append(title,brand,macros);
+
+    const select = document.createElement("button");
+    select.type = "button";
+    select.textContent = "Wählen";
+
+    select.addEventListener("click",() => {
+      chooseFood(food);
+    });
+
+    row.append(info,select);
+    container.append(row);
+  });
+}
+
+$("foodSearchForm").addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
+
+    const query = $("foodSearch").value.trim();
+
+    if(query.length<2) {
+      foodMessage(
+        "Bitte mindestens zwei Zeichen eingeben."
+      );
+      return;
+    }
+
+    const requestId = ++foodSearchCounter;
+    const button = $("foodSearchButton");
+
+    button.disabled = true;
+    foodMessage("Lebensmittel werden gesucht ...");
+    $("foodSearchResults").replaceChildren();
+
+    try {
+      const endpoint = new URL(
+        "https://world.openfoodfacts.org/api/v2/search"
+      );
+
+      endpoint.searchParams.set(
+        "search_terms",
+        query
+      );
+
+      endpoint.searchParams.set("page_size","20");
+      endpoint.searchParams.set("page","1");
+
+      endpoint.searchParams.set(
+        "fields",
+        [
+          "code",
+          "product_name",
+          "product_name_de",
+          "brands",
+          "image_front_small_url",
+          "nutriments"
+        ].join(",")
+      );
+
+      const response = await fetch(endpoint,{
+        headers:{
+          Accept:"application/json"
+        }
+      });
+
+      if(!response.ok) {
+        throw new Error(
+          "Lebensmitteldatenbank antwortet mit HTTP "+
+          response.status
+        );
+      }
+
+      const result = await response.json();
+
+      if(requestId!==foodSearchCounter) return;
+
+      const foods = (
+        Array.isArray(result.products)
+          ? result.products
+          : []
+      )
+        .map(normalizeFood)
+        .filter(Boolean)
+        .slice(0,15);
+
+      renderFoodResults(foods);
+
+    } catch(error) {
+      if(requestId===foodSearchCounter) {
+        foodMessage(
+          "Suche fehlgeschlagen: "+error.message+
+          ". Du kannst Lebensmittel weiterhin manuell eingeben."
+        );
+      }
+    } finally {
+      if(requestId===foodSearchCounter) {
+        button.disabled = false;
+      }
+    }
+  }
+);
+
+// -----------------------------------
+// Mahlzeiten speichern
+// -----------------------------------
+
+$("nutritionForm").addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
+
+    const button = $("saveMeal");
+    button.disabled = true;
+
+    nutritionMessage(
+      "Mahlzeit wird gespeichert ..."
+    );
+
+    try {
+      const {data:{user},error:userError} =
+        await supabase.auth.getUser();
+
+      if(userError || !user) {
+        throw new Error(
+          "Bitte erneut anmelden."
+        );
+      }
+
+      const fields = [
+        "calories",
+        "protein",
+        "carbs",
+        "fat"
+      ];
+
+      const values = {};
+
+      for(const field of fields) {
+        const value = Number($(field).value);
+
+        if(
+          $(field).value.trim()==="" ||
+          !Number.isFinite(value) ||
+          value<0 ||
+          value>999999
+        ) {
+          throw new Error(
+            "Bitte gültige Nährwerte eingeben."
+          );
+        }
+
+        values[field] = value;
+      }
+
+      const foodName =
+        $("foodName").value.trim();
+
+      if(
+        !foodName ||
+        foodName.length>200
+      ) {
+        throw new Error(
+          "Bitte einen gültigen Namen eingeben."
+        );
+      }
+
+      const amount = Number(
+        $("foodAmount").value
+      );
+
+      if(
+        !Number.isFinite(amount) ||
+        amount<=0 ||
+        amount>100000
+      ) {
+        throw new Error(
+          "Bitte eine gültige Menge eingeben."
+        );
+      }
+
+      // Die bestehende Tabelle hat noch
+      // keine eigene Gramm-Spalte.
+      // Die Menge wird deshalb im Namen
+      // gespeichert, ohne die DB zu ändern.
+      const savedName =
+        `${foodName} (${number(amount)} g)`;
+
+      if(savedName.length>200) {
+        throw new Error(
+          "Der Lebensmittelname ist zu lang."
+        );
+      }
+
+      const date =
+        $("nutritionDate").value;
+
+      const {error} = await supabase
+        .from("nutrition_entries")
+        .insert({
+          user_id:user.id,
+          meal_type:$("mealType").value,
+          food_name:savedName,
+          entry_date:date,
+          ...values
+        });
+
+      if(error) throw error;
+
+      clearFoodSelection();
+
+      await loadNutrition();
+
+      nutritionMessage(
+        "✓ Mahlzeit erfolgreich gespeichert."
+      );
+
+    } catch(error) {
+      nutritionMessage(
+        "Speichern fehlgeschlagen: "+
+        error.message
+      );
+    } finally {
+      button.disabled = false;
+    }
+  }
+);
+
 async function deleteMeal(id) {
-  if(!confirm("Diese Mahlzeit wirklich löschen?")) return;
-  nutritionMessage("Eintrag wird gelöscht ...");
+  if(!confirm(
+    "Diese Mahlzeit wirklich löschen?"
+  )) return;
+
+  nutritionMessage(
+    "Eintrag wird gelöscht ..."
+  );
 
   const {error} = await supabase
     .from("nutrition_entries")
@@ -704,143 +1379,313 @@ async function deleteMeal(id) {
     .eq("user_id",currentUserId);
 
   if(error) {
-    nutritionMessage("Löschen fehlgeschlagen: "+error.message);
+    nutritionMessage(
+      "Löschen fehlgeschlagen: "+
+      error.message
+    );
     return;
   }
+
   await loadNutrition();
-  nutritionMessage("✓ Eintrag gelöscht.");
+
+  nutritionMessage(
+    "✓ Eintrag gelöscht."
+  );
 }
+
+// -----------------------------------
+// Anmeldung und Oura
+// -----------------------------------
 
 async function refreshUI() {
   const counter = ++refreshCounter;
-  const {data,error} = await supabase.auth.getUser();
+
+  const {data,error} =
+    await supabase.auth.getUser();
+
   if(counter!==refreshCounter) return;
 
   const user = data?.user;
-  $("authCard").classList.toggle("hidden",!!user);
-  $("dashboard").classList.toggle("hidden",!user);
-  $("avatar").classList.toggle("hidden",!user);
 
-  if(error && error.name!=="AuthSessionMissingError")
+  $("authCard").classList.toggle(
+    "hidden",
+    !!user
+  );
+
+  $("dashboard").classList.toggle(
+    "hidden",
+    !user
+  );
+
+  $("avatar").classList.toggle(
+    "hidden",
+    !user
+  );
+
+  if(
+    error &&
+    error.name!=="AuthSessionMissingError"
+  ) {
     message(error.message);
+  }
 
   if(!user) {
     currentUserId = null;
     sleepData = [];
     nutritionData = [];
+    ++nutritionLoadCounter;
+    ++foodSearchCounter;
     return;
   }
 
-  const changed = currentUserId!==user.id;
+  const changed =
+    currentUserId!==user.id;
+
   currentUserId = user.id;
-  $("avatar").textContent = (user.email||"V")[0].toUpperCase();
+
+  $("avatar").textContent =
+    (user.email||"V")[0].toUpperCase();
 
   if(changed) {
     sleepData = [];
     nutritionData = [];
+
     $("mainScore").textContent = "–";
     $("miniSleep").textContent = "–";
-    $("scoreCircle").style.strokeDashoffset = 452.39;
-    $("scoreRating").textContent = "Noch keine Daten";
+
+    $("scoreCircle").style.strokeDashoffset =
+      452.39;
+
+    $("scoreRating").textContent =
+      "Noch keine Daten";
+
     $("homeCalories").textContent = "0";
-    $("homeNutritionInfo").textContent = "Noch keine Mahlzeiten eingetragen.";
+
+    $("homeNutritionInfo").textContent =
+      "Noch keine Mahlzeiten eingetragen.";
+
+    clearFoodSelection();
+    $("foodSearchResults").replaceChildren();
     renderSleep();
     renderNutrition();
   }
 
-  const params = new URLSearchParams(location.search);
-  const ouraResult = params.get("oura");
+  const params =
+    new URLSearchParams(location.search);
+
+  const ouraResult =
+    params.get("oura");
+
   if(ouraResult) {
-    ouraMessage(ouraResult==="connected"
-      ? "Oura-Autorisierung erfolgreich."
-      : "Oura-Freigabe abgebrochen.");
-    const clean = new URL(location.href);
+    ouraMessage(
+      ouraResult==="connected"
+        ? "Oura-Autorisierung erfolgreich."
+        : "Oura-Freigabe abgebrochen."
+    );
+
+    const clean = new URL(
+      location.href
+    );
+
     clean.searchParams.delete("oura");
-    history.replaceState({},"",clean.toString());
+
+    history.replaceState(
+      {},
+      "",
+      clean.toString()
+    );
   }
 
-  $("ouraStatus").textContent = "Verbindung wird geprüft ...";
-  $("ouraButton").classList.add("hidden");
-  $("sleepButton").classList.add("hidden");
+  $("ouraStatus").textContent =
+    "Verbindung wird geprüft ...";
 
-  if(changed) loadNutrition();
+  $("ouraButton").classList.add(
+    "hidden"
+  );
+
+  $("sleepButton").classList.add(
+    "hidden"
+  );
+
+  if(changed) {
+    loadNutrition();
+  }
 
   try {
-    const result = await authenticatedRequest("status");
-    if(counter!==refreshCounter || currentUserId!==user.id) return;
-    const connected = result.connected===true;
+    const result =
+      await authenticatedRequest("status");
+
+    if(
+      counter!==refreshCounter ||
+      currentUserId!==user.id
+    ) return;
+
+    const connected =
+      result.connected===true;
+
     setConnected(connected);
-    if(connected && (changed || !sleepData.length)) await loadSleep();
-  } catch(e) {
+
+    if(
+      connected &&
+      (changed || !sleepData.length)
+    ) {
+      await loadSleep();
+    }
+
+  } catch(error) {
     if(counter!==refreshCounter) return;
-    $("ouraStatus").textContent = "Status konnte nicht geprüft werden.";
-    $("ouraButton").classList.remove("hidden");
-    ouraMessage("Statusabfrage fehlgeschlagen: "+e.message);
+
+    $("ouraStatus").textContent =
+      "Status konnte nicht geprüft werden.";
+
+    $("ouraButton").classList.remove(
+      "hidden"
+    );
+
+    ouraMessage(
+      "Statusabfrage fehlgeschlagen: "+
+      error.message
+    );
   }
 }
 
-$("loginForm").addEventListener("submit",async event=>{
-  event.preventDefault();
-  const {error} = await supabase.auth.signInWithPassword({
-    email:$("email").value.trim(),
-    password:$("password").value
-  });
-  if(error) return message("Anmeldung fehlgeschlagen: "+error.message);
-  message("");
-  await refreshUI();
-});
+$("loginForm").addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
 
-$("registerButton").addEventListener("click",async()=>{
-  const email = $("email").value.trim();
-  const password = $("password").value;
-  if(!email || password.length<6)
-    return message("Bitte E-Mail und Passwort mit mindestens 6 Zeichen eingeben.");
+    const {error} =
+      await supabase.auth.signInWithPassword({
+        email:$("email").value.trim(),
+        password:$("password").value
+      });
 
-  const {error} = await supabase.auth.signUp({
-    email,password,
-    options:{emailRedirectTo:"https://woozy1x1.github.io/fitlife-ai/"}
-  });
-  message(error
-    ? "Registrierung fehlgeschlagen: "+error.message
-    : "Registrierung gestartet. Bitte prüfe deine E-Mails.");
-  await refreshUI();
-});
+    if(error) {
+      return message(
+        "Anmeldung fehlgeschlagen: "+
+        error.message
+      );
+    }
 
-$("logoutButton").addEventListener("click",async()=>{
-  const {error} = await supabase.auth.signOut();
-  if(error) return message(error.message);
-  currentUserId = null;
-  message("Erfolgreich abgemeldet.");
-  await refreshUI();
-});
-
-$("ouraButton").addEventListener("click",async()=>{
-  const button = $("ouraButton");
-  button.disabled = true;
-  try {
-    const result = await authenticatedRequest("start");
-    const target = result.url||result.authorization_url;
-    if(!target) throw new Error("Keine Weiterleitungsadresse erhalten.");
-    const url = new URL(target);
-    if(url.protocol!=="https:" || url.hostname!=="cloud.ouraring.com")
-      throw new Error("Unerwartete Oura-Adresse.");
-    location.assign(url.href);
-  } catch(e) {
-    ouraMessage(e.message);
-  } finally {
-    button.disabled = false;
+    message("");
+    await refreshUI();
   }
-});
+);
 
-$("sleepButton").addEventListener("click",loadSleep);
+$("registerButton").addEventListener(
+  "click",
+  async () => {
+    const email =
+      $("email").value.trim();
+
+    const password =
+      $("password").value;
+
+    if(!email || password.length<6) {
+      return message(
+        "Bitte E-Mail und Passwort mit mindestens 6 Zeichen eingeben."
+      );
+    }
+
+    const {error} =
+      await supabase.auth.signUp({
+        email,
+        password,
+        options:{
+          emailRedirectTo:
+            "https://woozy1x1.github.io/fitlife-ai/"
+        }
+      });
+
+    message(
+      error
+        ? "Registrierung fehlgeschlagen: "+
+          error.message
+        : "Registrierung gestartet. Bitte prüfe deine E-Mails."
+    );
+
+    await refreshUI();
+  }
+);
+
+$("logoutButton").addEventListener(
+  "click",
+  async () => {
+    const {error} =
+      await supabase.auth.signOut();
+
+    if(error) {
+      return message(error.message);
+    }
+
+    currentUserId = null;
+    nutritionData = [];
+    sleepData = [];
+    ++nutritionLoadCounter;
+    ++foodSearchCounter;
+
+    message("Erfolgreich abgemeldet.");
+    await refreshUI();
+  }
+);
+
+$("ouraButton").addEventListener(
+  "click",
+  async () => {
+    const button = $("ouraButton");
+    button.disabled = true;
+
+    try {
+      const result =
+        await authenticatedRequest("start");
+
+      const target =
+        result.url ||
+        result.authorization_url;
+
+      if(!target) {
+        throw new Error(
+          "Keine Weiterleitungsadresse erhalten."
+        );
+      }
+
+      const url = new URL(target);
+
+      if(
+        url.protocol!=="https:" ||
+        url.hostname!=="cloud.ouraring.com"
+      ) {
+        throw new Error(
+          "Unerwartete Oura-Adresse."
+        );
+      }
+
+      location.assign(url.href);
+
+    } catch(error) {
+      ouraMessage(error.message);
+    } finally {
+      button.disabled = false;
+    }
+  }
+);
+
+$("sleepButton").addEventListener(
+  "click",
+  loadSleep
+);
 
 const hour = new Date().getHours();
-$("greeting").textContent =
-  hour<11?"Morgen":hour<18?"Tag":"Abend";
 
-supabase.auth.onAuthStateChange(()=>{
+$("greeting").textContent =
+  hour<11 ? "Morgen" :
+  hour<18 ? "Tag" :
+  "Abend";
+
+supabase.auth.onAuthStateChange(() => {
   setTimeout(refreshUI,0);
 });
+
 refreshUI();
 </script>
 </body>
