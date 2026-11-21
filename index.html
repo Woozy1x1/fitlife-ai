@@ -177,6 +177,8 @@ label{display:block;font-size:12px;color:var(--muted)}
   border-radius:30px;background:#29473f;
   color:var(--green);font-size:11px
 }
+.nutrition-summary.three{grid-template-columns:repeat(3,1fr)}
+.meal-row .row-actions{display:flex;gap:6px;flex-shrink:0}
 .section-divider{
   height:1px;background:var(--border);margin:22px 0
 }
@@ -194,6 +196,8 @@ footer a{color:var(--muted);margin:0 7px}
   .stat{padding:13px}
   .stat strong{font-size:22px}
   .nutrition-summary{grid-template-columns:repeat(2,1fr)}
+  .nutrition-summary.three{grid-template-columns:repeat(3,1fr)}
+  .bottom-nav button{font-size:10px}
   .bottom-nav{
     bottom:0;left:0;transform:none;width:100%;
     border-radius:20px 20px 0 0;justify-content:space-around;
@@ -293,15 +297,15 @@ footer a{color:var(--muted);margin:0 7px}
     </div>
     <div class="card stat">
       <div class="stat-icon">♡</div>
-      <small>Herzfrequenz</small>
-      <strong>–</strong>
-      <small>Noch keine Daten</small>
+      <small>Puls</small>
+      <strong id="homePulse">–</strong>
+      <small id="homePulseInfo">Noch keine Daten</small>
     </div>
     <div class="card stat">
       <div class="stat-icon">⚡</div>
-      <small>Aktivität</small>
-      <strong>–</strong>
-      <small>Noch keine Daten</small>
+      <small>Training heute</small>
+      <strong id="homeTraining">–</strong>
+      <small id="homeTrainingInfo">Noch nichts eingetragen</small>
     </div>
   </div>
 
@@ -457,9 +461,171 @@ footer a{color:var(--muted);margin:0 7px}
   </div>
 </section>
 
-<section id="sleepView" class="view">
+<section id="trainingView" class="view">
+  <div class="eyebrow">Dein Trainingstagebuch</div>
+  <h1>Training 🏋️</h1>
+  <p class="muted">
+    Übungen mit Sätzen, Wiederholungen und Gewicht eintragen.
+  </p>
+
+  <div class="card">
+    <label for="trainingDate">Datum auswählen</label>
+    <input id="trainingDate" type="date">
+    <h2>Deine Trainingsbilanz</h2>
+    <div class="nutrition-summary three">
+      <div class="nutrition-stat">
+        <strong id="totalExercises">0</strong><small>Übungen</small>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="totalSets">0</strong><small>Sätze</small>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="totalVolume">0</strong><small>Volumen (kg)</small>
+      </div>
+    </div>
+    <p class="muted">
+      Volumen = Sätze × Wiederholungen × Gewicht.
+      Übungen mit Körpergewicht zählen hier mit 0 kg.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>+ Übung eintragen</h2>
+    <form id="workoutForm">
+      <label for="exercise">Übung</label>
+      <input id="exercise" list="exerciseSuggestions"
+        maxlength="120" placeholder="z. B. Liegestütze" required>
+      <datalist id="exerciseSuggestions"></datalist>
+
+      <p id="lastTimeInfo" class="muted"></p>
+
+      <div class="form-grid">
+        <div>
+          <label for="sets">Sätze</label>
+          <input id="sets" type="number" min="1" max="100"
+            step="1" value="3" required>
+        </div>
+        <div>
+          <label for="reps">Wiederholungen (oder Sekunden)</label>
+          <input id="reps" type="number" min="1" max="1000"
+            step="1" value="10" required>
+        </div>
+      </div>
+
+      <label for="weight">Zusatzgewicht in kg (leer = Körpergewicht)</label>
+      <input id="weight" type="number" min="0" max="1000"
+        step="0.5" placeholder="leer lassen bei Körpergewicht">
+
+      <label for="workoutNotes">Notiz (optional)</label>
+      <input id="workoutNotes" maxlength="500"
+        placeholder="z. B. letzte Wiederholung schwer">
+
+      <button id="saveWorkout" class="btn full" type="submit">
+        Übung speichern
+      </button>
+    </form>
+    <p id="workoutMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="card">
+    <h2>Eingetragene Übungen</h2>
+    <div id="workoutList" class="muted">
+      Einträge werden geladen ...
+    </div>
+  </div>
+</section>
+
+<section id="healthView" class="view">
+  <div class="eyebrow">Deine Gesundheitswerte</div>
+  <h1>Gesundheit ♡</h1>
+  <p class="muted">
+    Gewicht, Blutdruck, Puls und Schlaf an einem Ort.
+  </p>
+
+  <div class="stats">
+    <div class="card stat">
+      <div class="stat-icon">⚖</div>
+      <small>Gewicht</small>
+      <strong id="latestWeight">–</strong>
+      <small id="latestWeightDate">Noch keine Daten</small>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon">🩺</div>
+      <small>Blutdruck</small>
+      <strong id="latestBp">–</strong>
+      <small id="latestBpDate">Noch keine Daten</small>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon">♡</div>
+      <small>Puls</small>
+      <strong id="latestPulse">–</strong>
+      <small id="latestPulseDate">Noch keine Daten</small>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>+ Werte eintragen</h2>
+    <p class="muted">
+      Fülle nur aus, was du gemessen hast. Mindestens ein Wert ist nötig.
+    </p>
+    <form id="healthForm">
+      <label for="healthDate">Datum</label>
+      <input id="healthDate" type="date" required>
+
+      <label for="bodyWeight">Gewicht (kg)</label>
+      <input id="bodyWeight" type="number" min="20" max="400"
+        step="0.1" placeholder="z. B. 78,5">
+
+      <div class="form-grid">
+        <div>
+          <label for="systolic">Blutdruck oben (mmHg)</label>
+          <input id="systolic" type="number" min="50" max="260"
+            step="1" placeholder="z. B. 120">
+        </div>
+        <div>
+          <label for="diastolic">Blutdruck unten (mmHg)</label>
+          <input id="diastolic" type="number" min="30" max="180"
+            step="1" placeholder="z. B. 80">
+        </div>
+      </div>
+
+      <label for="pulse">Puls (Schläge/Minute)</label>
+      <input id="pulse" type="number" min="25" max="250"
+        step="1" placeholder="z. B. 65">
+
+      <label for="healthNotes">Notiz (optional)</label>
+      <input id="healthNotes" maxlength="500"
+        placeholder="z. B. morgens nüchtern gemessen">
+
+      <button id="saveHealth" class="btn full" type="submit">
+        Werte speichern
+      </button>
+    </form>
+    <p id="healthMessage" class="message" role="status"></p>
+    <p class="muted">
+      VYORA zeigt deine Werte nur an und bewertet sie nicht medizinisch.
+      Bei auffälligen oder ungewohnten Werten sprich bitte mit deiner
+      Ärztin oder deinem Arzt.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Gewichtsverlauf</h2>
+    <p class="muted">Letzte 10 Messungen</p>
+    <div id="weightChart" class="chart"></div>
+  </div>
+
+  <div class="card">
+    <h2>Deine Messungen</h2>
+    <div id="healthList" class="muted">
+      Einträge werden geladen ...
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
   <div class="eyebrow">Deine Schlafgesundheit</div>
-  <h1>Dein Schlaf ☾</h1>
+  <h1>Schlaf ☾</h1>
   <div class="card">
     <h2>Schlafscore-Verlauf</h2>
     <div id="sleepChart" class="chart"></div>
@@ -475,14 +641,6 @@ footer a{color:var(--muted);margin:0 7px}
 <section id="moreView" class="view">
   <div class="eyebrow">VYORA AI</div>
   <h1>Mehr entdecken ✦</h1>
-
-  <div class="card">
-    <h2>🏋️ Training</h2>
-    <p class="muted">
-      Trainingspläne, Übungen, Sätze und Fortschritte
-      folgen als nächster großer Bereich.
-    </p>
-  </div>
 
   <div class="card">
     <h2>♡ Gesundheitstrends</h2>
@@ -508,13 +666,16 @@ footer a{color:var(--muted);margin:0 7px}
 
 <nav class="bottom-nav" aria-label="Hauptnavigation">
   <button class="active" data-view="homeView">
-    <span>⌂</span>Home
+    <span>⌂</span>Heute
   </button>
   <button data-view="nutritionView">
     <span>🥗</span>Ernährung
   </button>
-  <button data-view="sleepView">
-    <span>☾</span>Schlaf
+  <button data-view="trainingView">
+    <span>🏋️</span>Training
+  </button>
+  <button data-view="healthView">
+    <span>♡</span>Gesundheit
   </button>
   <button data-view="moreView">
     <span>✦</span>Mehr
@@ -559,6 +720,18 @@ let loadingSleep = false;
 let selectedFood = null;
 let foodSearchCounter = 0;
 let nutritionLoadCounter = 0;
+let workoutData = [];
+let healthData = [];
+let workoutLoadCounter = 0;
+let healthLoadCounter = 0;
+let lastTimeCounter = 0;
+
+const DEFAULT_EXERCISES = [
+  "Liegestütze","Klimmzüge","Dips","Kniebeugen",
+  "Ausfallschritte","Plank (Sekunden)","Australian Pull-ups",
+  "Pike Push-ups","Beinheben","Bankdrücken","Kreuzheben",
+  "Schulterdrücken","Rudern","Bizepscurls","Laufen (Minuten)"
+];
 
 const mealNames = {
   breakfast:"Frühstück",
@@ -576,6 +749,8 @@ function localDate() {
 }
 
 $("nutritionDate").value = localDate();
+$("trainingDate").value = localDate();
+$("healthDate").value = localDate();
 
 function message(text) {
   $("message").textContent = text || "";
@@ -1491,6 +1666,554 @@ async function deleteMeal(id) {
 }
 
 // -----------------------------------
+// Trainingstagebuch
+// -----------------------------------
+
+function workoutMessage(text) {
+  $("workoutMessage").textContent = text || "";
+}
+
+function optionalNumber(id,min,max,label,integer) {
+  const raw = $(id).value.trim();
+  if(raw==="") return null;
+
+  const value = Number(raw.replace(",","."));
+
+  if(
+    !Number.isFinite(value) ||
+    value<min || value>max ||
+    (integer && !Number.isInteger(value))
+  ) {
+    throw new Error(
+      label+": bitte einen Wert zwischen "+
+      min+" und "+max+" eingeben."
+    );
+  }
+  return value;
+}
+
+function deleteButton(label,onClick) {
+  const del = document.createElement("button");
+  del.type = "button";
+  del.textContent = "Löschen";
+  del.setAttribute("aria-label",label);
+  del.addEventListener("click",onClick);
+  return del;
+}
+
+function renderExerciseSuggestions(extra) {
+  const names = new Set(DEFAULT_EXERCISES);
+  (extra||[]).forEach(n => n && names.add(n));
+
+  const list = $("exerciseSuggestions");
+  list.replaceChildren();
+
+  [...names].sort((a,b)=>a.localeCompare(b,"de"))
+    .forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      list.append(option);
+    });
+}
+
+async function loadExerciseSuggestions() {
+  if(!currentUserId) return;
+  const userId = currentUserId;
+
+  const {data,error} = await supabase
+    .from("workout_entries")
+    .select("exercise")
+    .eq("user_id",userId)
+    .order("created_at",{ascending:false})
+    .limit(200);
+
+  if(error || currentUserId!==userId) return;
+  renderExerciseSuggestions((data||[]).map(x=>x.exercise));
+}
+
+function workoutLine(item) {
+  return item.sets+" × "+item.reps+
+    (item.weight_kg!==null && item.weight_kg!==undefined
+      ? " · "+number(item.weight_kg)+" kg"
+      : " · Körpergewicht");
+}
+
+function renderTraining() {
+  const sets = workoutData.reduce(
+    (t,x)=>t+Number(x.sets||0),0
+  );
+  const volume = workoutData.reduce(
+    (t,x)=>t+Number(x.sets||0)*Number(x.reps||0)*
+      Number(x.weight_kg||0),0
+  );
+
+  $("totalExercises").textContent = workoutData.length;
+  $("totalSets").textContent = sets;
+  $("totalVolume").textContent = number(volume);
+
+  if($("trainingDate").value===localDate()) {
+    $("homeTraining").textContent = workoutData.length
+      ? workoutData.length
+      : "–";
+    $("homeTrainingInfo").textContent = workoutData.length
+      ? (workoutData.length===1 ? "Übung" : "Übungen")+
+        " · "+sets+" Sätze"
+      : "Noch nichts eingetragen";
+  }
+
+  const list = $("workoutList");
+  list.replaceChildren();
+
+  if(!workoutData.length) {
+    list.textContent =
+      "Für dieses Datum sind noch keine Übungen gespeichert.";
+    return;
+  }
+
+  workoutData.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "meal-row";
+
+    const info = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = item.exercise;
+
+    const details = document.createElement("small");
+    details.textContent = workoutLine(item)+
+      (item.notes ? " · "+item.notes : "");
+
+    info.append(title,details);
+
+    const actions = document.createElement("div");
+    actions.className = "row-actions";
+
+    const again = document.createElement("button");
+    again.type = "button";
+    again.textContent = "Nochmal";
+    again.style.background = "#29473f";
+    again.style.color = "var(--green)";
+    again.setAttribute(
+      "aria-label","Übung als Vorlage nehmen: "+item.exercise
+    );
+    again.addEventListener("click",() => {
+      $("exercise").value = item.exercise;
+      $("sets").value = item.sets;
+      $("reps").value = item.reps;
+      $("weight").value = item.weight_kg ?? "";
+      showLastTime();
+      $("workoutForm").scrollIntoView({behavior:"smooth"});
+    });
+
+    actions.append(
+      again,
+      deleteButton(
+        "Übung löschen: "+item.exercise,
+        () => deleteWorkout(item.id)
+      )
+    );
+
+    row.append(info,actions);
+    list.append(row);
+  });
+}
+
+async function loadTraining() {
+  if(!currentUserId) return;
+
+  const requestId = ++workoutLoadCounter;
+  const userId = currentUserId;
+  const date = $("trainingDate").value;
+
+  workoutMessage("Übungen werden geladen ...");
+
+  const {data,error} = await supabase
+    .from("workout_entries")
+    .select("id,exercise,sets,reps,weight_kg,notes,entry_date,created_at")
+    .eq("user_id",userId)
+    .eq("entry_date",date)
+    .order("created_at",{ascending:true});
+
+  if(
+    currentUserId!==userId ||
+    $("trainingDate").value!==date ||
+    requestId!==workoutLoadCounter
+  ) return;
+
+  if(error) {
+    workoutMessage("Laden fehlgeschlagen: "+error.message);
+    return;
+  }
+
+  workoutData = data||[];
+  renderTraining();
+  workoutMessage("");
+}
+
+// Zeigt, was du bei dieser Übung zuletzt
+// (vor dem gewählten Datum) gemacht hast.
+async function showLastTime() {
+  const name = $("exercise").value.trim();
+  const info = $("lastTimeInfo");
+  const requestId = ++lastTimeCounter;
+
+  if(!name || !currentUserId) {
+    info.textContent = "";
+    return;
+  }
+
+  const {data,error} = await supabase
+    .from("workout_entries")
+    .select("sets,reps,weight_kg,entry_date")
+    .eq("user_id",currentUserId)
+    .ilike("exercise",name.replace(/[%_\\]/g,"\\$&"))
+    .lt("entry_date",$("trainingDate").value)
+    .order("entry_date",{ascending:false})
+    .order("created_at",{ascending:false})
+    .limit(1);
+
+  if(requestId!==lastTimeCounter) return;
+
+  if(error || !data || !data.length) {
+    info.textContent = "";
+    return;
+  }
+
+  info.textContent = "Letztes Mal ("+
+    formatDate(data[0].entry_date)+"): "+
+    workoutLine(data[0]);
+}
+
+$("exercise").addEventListener("change",showLastTime);
+$("trainingDate").addEventListener("change",() => {
+  loadTraining();
+  showLastTime();
+});
+
+$("workoutForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const button = $("saveWorkout");
+  button.disabled = true;
+  workoutMessage("Übung wird gespeichert ...");
+
+  try {
+    if(!currentUserId) throw new Error("Bitte erneut anmelden.");
+
+    const exercise = $("exercise").value.trim();
+    if(!exercise || exercise.length>120) {
+      throw new Error("Bitte eine Übung eingeben.");
+    }
+
+    const sets = optionalNumber("sets",1,100,"Sätze",true);
+    const reps = optionalNumber("reps",1,1000,"Wiederholungen",true);
+    if(sets===null || reps===null) {
+      throw new Error("Bitte Sätze und Wiederholungen eingeben.");
+    }
+
+    const weight = optionalNumber("weight",0,1000,"Gewicht",false);
+    const notes = $("workoutNotes").value.trim().slice(0,500);
+
+    const {error} = await supabase
+      .from("workout_entries")
+      .insert({
+        user_id:currentUserId,
+        entry_date:$("trainingDate").value,
+        exercise,
+        sets,
+        reps,
+        weight_kg:weight,
+        notes:notes||null
+      });
+
+    if(error) throw error;
+
+    // Übung, Sätze und Wdh. bleiben stehen,
+    // damit man den nächsten Satz schnell erfassen kann.
+    $("workoutNotes").value = "";
+
+    await loadTraining();
+    loadExerciseSuggestions();
+    workoutMessage("✓ Übung gespeichert.");
+
+  } catch(error) {
+    workoutMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+async function deleteWorkout(id) {
+  if(!confirm("Diese Übung wirklich löschen?")) return;
+
+  workoutMessage("Eintrag wird gelöscht ...");
+
+  const {error} = await supabase
+    .from("workout_entries")
+    .delete()
+    .eq("id",id)
+    .eq("user_id",currentUserId);
+
+  if(error) {
+    workoutMessage("Löschen fehlgeschlagen: "+error.message);
+    return;
+  }
+
+  await loadTraining();
+  workoutMessage("✓ Eintrag gelöscht.");
+}
+
+// -----------------------------------
+// Gesundheitswerte
+// -----------------------------------
+
+function healthMessage(text) {
+  $("healthMessage").textContent = text || "";
+}
+
+function latestWith(field) {
+  return healthData.find(x =>
+    x[field]!==null && x[field]!==undefined
+  );
+}
+
+function renderWeightChart() {
+  const box = $("weightChart");
+  box.replaceChildren();
+
+  const points = healthData
+    .filter(x => x.weight_kg!==null && x.weight_kg!==undefined)
+    .slice(0,10)
+    .reverse();
+
+  if(!points.length) {
+    box.textContent = "Noch keine Gewichtswerte eingetragen.";
+    return;
+  }
+
+  const values = points.map(x=>Number(x.weight_kg));
+  const min = Math.min(...values)-2;
+  const max = Math.max(...values)+2;
+
+  points.forEach(item => {
+    const column = document.createElement("div");
+    column.className = "chart-column";
+
+    const value = document.createElement("span");
+    value.className = "chart-value";
+    value.textContent = number(item.weight_kg);
+
+    const track = document.createElement("div");
+    track.className = "chart-track";
+
+    const bar = document.createElement("div");
+    bar.className = "chart-bar";
+    bar.style.height =
+      Math.max(8,(Number(item.weight_kg)-min)/(max-min)*100)+"%";
+    track.append(bar);
+
+    const label = document.createElement("span");
+    label.className = "chart-label";
+    label.textContent = formatDate(item.entry_date);
+
+    column.append(value,track,label);
+    box.append(column);
+  });
+}
+
+function renderHealth() {
+  const w = latestWith("weight_kg");
+  const bp = latestWith("systolic");
+  const p = latestWith("pulse");
+
+  $("latestWeight").textContent = w ? number(w.weight_kg)+" kg" : "–";
+  $("latestWeightDate").textContent = w
+    ? formatDate(w.entry_date) : "Noch keine Daten";
+
+  $("latestBp").textContent = bp
+    ? bp.systolic+"/"+bp.diastolic : "–";
+  $("latestBpDate").textContent = bp
+    ? formatDate(bp.entry_date)+" · mmHg" : "Noch keine Daten";
+
+  $("latestPulse").textContent = p ? p.pulse : "–";
+  $("latestPulseDate").textContent = p
+    ? formatDate(p.entry_date)+" · Schläge/min" : "Noch keine Daten";
+
+  $("homePulse").textContent = p ? p.pulse : "–";
+  $("homePulseInfo").textContent = p
+    ? "Letzter Eintrag · "+formatDate(p.entry_date)
+    : "Noch keine Daten";
+
+  renderWeightChart();
+
+  const list = $("healthList");
+  list.replaceChildren();
+
+  if(!healthData.length) {
+    list.textContent = "Noch keine Gesundheitswerte gespeichert.";
+    return;
+  }
+
+  healthData.forEach(item => {
+    const parts = [];
+    if(item.weight_kg!==null) parts.push(number(item.weight_kg)+" kg");
+    if(item.systolic!==null) {
+      parts.push("RR "+item.systolic+"/"+item.diastolic);
+    }
+    if(item.pulse!==null) parts.push("Puls "+item.pulse);
+
+    const row = document.createElement("div");
+    row.className = "meal-row";
+
+    const info = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = formatDate(item.entry_date)+" · "+
+      parts.join(" · ");
+
+    const details = document.createElement("small");
+    details.textContent = item.notes || "";
+
+    info.append(title,details);
+    row.append(
+      info,
+      deleteButton(
+        "Messung löschen vom "+formatDate(item.entry_date),
+        () => deleteHealth(item.id)
+      )
+    );
+    list.append(row);
+  });
+}
+
+async function loadHealth() {
+  if(!currentUserId) return;
+
+  const requestId = ++healthLoadCounter;
+  const userId = currentUserId;
+
+  const {data,error} = await supabase
+    .from("health_entries")
+    .select("id,entry_date,weight_kg,systolic,diastolic,pulse,notes,created_at")
+    .eq("user_id",userId)
+    .order("entry_date",{ascending:false})
+    .order("created_at",{ascending:false})
+    .limit(60);
+
+  if(
+    currentUserId!==userId ||
+    requestId!==healthLoadCounter
+  ) return;
+
+  if(error) {
+    healthMessage("Laden fehlgeschlagen: "+error.message);
+    return;
+  }
+
+  healthData = data||[];
+  renderHealth();
+}
+
+$("healthForm").addEventListener("submit",async event => {
+  event.preventDefault();
+
+  const button = $("saveHealth");
+  button.disabled = true;
+  healthMessage("Werte werden gespeichert ...");
+
+  try {
+    if(!currentUserId) throw new Error("Bitte erneut anmelden.");
+
+    const date = $("healthDate").value;
+    if(!date) throw new Error("Bitte ein Datum wählen.");
+
+    const weight = optionalNumber("bodyWeight",20,400,"Gewicht",false);
+    const systolic = optionalNumber("systolic",50,260,"Blutdruck oben",true);
+    const diastolic = optionalNumber("diastolic",30,180,"Blutdruck unten",true);
+    const pulse = optionalNumber("pulse",25,250,"Puls",true);
+
+    if((systolic===null)!==(diastolic===null)) {
+      throw new Error(
+        "Bitte beim Blutdruck beide Werte (oben und unten) eingeben."
+      );
+    }
+    if(systolic!==null && diastolic>=systolic) {
+      throw new Error(
+        "Der untere Blutdruckwert muss kleiner als der obere sein."
+      );
+    }
+    if(weight===null && systolic===null && pulse===null) {
+      throw new Error("Bitte mindestens einen Wert eingeben.");
+    }
+
+    const notes = $("healthNotes").value.trim().slice(0,500);
+
+    const {error} = await supabase
+      .from("health_entries")
+      .insert({
+        user_id:currentUserId,
+        entry_date:date,
+        weight_kg:weight===null ? null : Math.round(weight*10)/10,
+        systolic,
+        diastolic,
+        pulse,
+        notes:notes||null
+      });
+
+    if(error) throw error;
+
+    ["bodyWeight","systolic","diastolic","pulse","healthNotes"]
+      .forEach(id => $(id).value = "");
+
+    await loadHealth();
+    healthMessage("✓ Werte gespeichert.");
+
+  } catch(error) {
+    healthMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+async function deleteHealth(id) {
+  if(!confirm("Diese Messung wirklich löschen?")) return;
+
+  healthMessage("Eintrag wird gelöscht ...");
+
+  const {error} = await supabase
+    .from("health_entries")
+    .delete()
+    .eq("id",id)
+    .eq("user_id",currentUserId);
+
+  if(error) {
+    healthMessage("Löschen fehlgeschlagen: "+error.message);
+    return;
+  }
+
+  await loadHealth();
+  healthMessage("✓ Eintrag gelöscht.");
+}
+
+function resetTrainingAndHealth() {
+  workoutData = [];
+  healthData = [];
+  ++workoutLoadCounter;
+  ++healthLoadCounter;
+  ++lastTimeCounter;
+  $("homeTraining").textContent = "–";
+  $("homeTrainingInfo").textContent = "Noch nichts eingetragen";
+  $("lastTimeInfo").textContent = "";
+  $("workoutForm").reset();
+  $("healthForm").reset();
+  $("trainingDate").value = localDate();
+  $("healthDate").value = localDate();
+  renderExerciseSuggestions([]);
+  renderTraining();
+  renderHealth();
+}
+
+renderExerciseSuggestions([]);
+
+// -----------------------------------
 // Anmeldung und Oura
 // -----------------------------------
 
@@ -1532,6 +2255,7 @@ async function refreshUI() {
     nutritionData = [];
     ++nutritionLoadCounter;
     ++foodSearchCounter;
+    resetTrainingAndHealth();
     return;
   }
 
@@ -1565,6 +2289,7 @@ async function refreshUI() {
     $("foodSearchResults").replaceChildren();
     renderSleep();
     renderNutrition();
+    resetTrainingAndHealth();
   }
 
   const params =
@@ -1606,6 +2331,9 @@ async function refreshUI() {
 
   if(changed) {
     loadNutrition();
+    loadTraining();
+    loadHealth();
+    loadExerciseSuggestions();
   }
 
   try {
@@ -1720,6 +2448,7 @@ $("logoutButton").addEventListener(
     sleepData = [];
     ++nutritionLoadCounter;
     ++foodSearchCounter;
+    resetTrainingAndHealth();
 
     message("Erfolgreich abgemeldet.");
     await refreshUI();
