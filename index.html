@@ -2,422 +2,1251 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VYORA AI – Dein Gesundheitsdashboard</title>
-  <style>
-    * { box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080d17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>VYORA AI – Dein Gesundheitsdashboard</title>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #0b1220;
-      color: #f1f5f9;
-      font-family: Arial, sans-serif;
-      padding: 24px;
-    }
+<style>
+:root {
+  --bg: #080d17;
+  --card: #142033;
+  --card2: #19283e;
+  --border: #293a52;
+  --text: #f5f8fc;
+  --muted: #94a8c1;
+  --green: #70efbd;
+  --blue: #87baff;
+  --purple: #b9a8ff;
+}
 
-    main {
-      max-width: 480px;
-      margin: 50px auto;
-    }
+* { box-sizing: border-box; }
 
-    h1 {
-      color: #4ade80;
-      font-size: 38px;
-      margin-bottom: 8px;
-    }
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top, #1b3446, transparent 420px),
+    var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
 
-    .subtitle {
-      color: #94a3b8;
-      margin-bottom: 30px;
-    }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .5; }
+.hidden { display: none !important; }
 
-    .card {
-      background: #172338;
-      border: 1px solid #30415a;
-      border-radius: 18px;
-      padding: 26px;
-      margin-bottom: 18px;
-    }
+.app {
+  max-width: 1050px;
+  margin: auto;
+  padding: 22px 18px 115px;
+}
 
-    input, button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      border-radius: 10px;
-      font-size: 15px;
-    }
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
 
-    input {
-      background: #0b1220;
-      border: 1px solid #475569;
-      color: white;
-    }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    button {
-      border: none;
-      background: #4ade80;
-      color: #082013;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.logo-icon {
+  background: linear-gradient(135deg, #9dffda, #4aa7aa);
+  color: #06251c;
+  width: 44px;
+  height: 44px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  font-weight: 900;
+}
 
-    button:disabled {
-      opacity: .6;
-      cursor: wait;
-    }
+.logo strong {
+  font-size: 22px;
+  letter-spacing: 2px;
+}
 
-    .secondary {
-      background: #334155;
-      color: white;
-    }
+.logo strong span { color: var(--green); }
 
-    .hidden { display: none; }
+.logo small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
 
-    .success { color: #4ade80; }
-    .muted { color: #94a3b8; }
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #263b50;
+  border: 1px solid #426079;
+  color: var(--green);
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+}
 
-    #message {
-      color: #facc15;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      margin-top: 16px;
-    }
+.card {
+  background: linear-gradient(145deg, #18263b, #101b2c);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 23px;
+  margin-bottom: 16px;
+}
 
-    #sleepResult {
-      margin-top: 16px;
-      padding: 14px;
-      background: #0b1220;
-      border-radius: 10px;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      line-height: 1.8;
-    }
+.hero {
+  background:
+    radial-gradient(circle at top right, #286a6040, transparent 55%),
+    linear-gradient(145deg, #1b3544, #111e30);
+  padding: 28px;
+}
 
-    footer {
-      text-align: center;
-      margin-top: 30px;
-    }
+.eyebrow {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
 
-    footer a {
-      color: #94a3b8;
-      margin: 0 7px;
-    }
-  </style>
+h1 {
+  font-size: clamp(28px, 5vw, 40px);
+  margin: 12px 0;
+  letter-spacing: -1px;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 0 0 16px;
+}
+
+p {
+  line-height: 1.6;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+}
+
+.hero-content {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin-top: 28px;
+}
+
+.score-ring {
+  width: 175px;
+  height: 175px;
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+.score-ring svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.score-ring circle {
+  fill: none;
+  stroke-width: 11;
+}
+
+.ring-track { stroke: #344d56; }
+
+.ring-progress {
+  stroke: var(--green);
+  stroke-linecap: round;
+  stroke-dasharray: 452.39;
+  stroke-dashoffset: 452.39;
+  transition: stroke-dashoffset .8s ease;
+}
+
+.score-center {
+  text-align: center;
+}
+
+.score-center strong {
+  display: block;
+  font-size: 56px;
+  line-height: 1;
+}
+
+.score-center small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.score-info strong {
+  color: var(--green);
+  font-size: 22px;
+  display: block;
+  margin: 8px 0;
+}
+
+.score-info p {
+  color: #bbcad9;
+  font-size: 13px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #73849a;
+}
+
+.dot.connected {
+  background: var(--green);
+  box-shadow: 0 0 14px var(--green);
+}
+
+.btn {
+  border: 0;
+  border-radius: 13px;
+  padding: 13px 17px;
+  background: var(--green);
+  color: #09291e;
+  font-size: 13px;
+  font-weight: 800;
+  margin: 5px 5px 5px 0;
+}
+
+.btn.secondary {
+  background: #2a3c53;
+  color: white;
+}
+
+.btn.full {
+  width: 100%;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.stat {
+  min-height: 155px;
+}
+
+.stat-icon {
+  font-size: 24px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 28px;
+  margin: 12px 0 4px;
+}
+
+.stat small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.chart {
+  height: 185px;
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+
+.chart-column {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 7px;
+  min-width: 0;
+}
+
+.chart-value {
+  font-size: 11px;
+  color: #c6d8e8;
+}
+
+.chart-track {
+  height: 125px;
+  width: min(100%, 44px);
+  background: #26374a;
+  border-radius: 9px;
+  overflow: hidden;
+  display: flex;
+  align-items: end;
+}
+
+.chart-bar {
+  width: 100%;
+  background: linear-gradient(to top, #319d9d, #7bf0bd);
+  border-radius: 9px;
+  transition: height .6s;
+}
+
+.chart-label {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.insight {
+  display: flex;
+  gap: 15px;
+  align-items: start;
+}
+
+.insight-icon {
+  background: #29433f;
+  color: var(--green);
+  padding: 13px;
+  border-radius: 13px;
+  font-size: 22px;
+}
+
+.insight p {
+  color: #b7c9d9;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.notice {
+  background: #1a2b3e;
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 14px;
+  color: #b8c9da;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.sleep-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+  margin: 9px 0;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+}
+
+.sleep-item strong {
+  color: var(--green);
+  font-size: 21px;
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+.bottom-nav {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  padding: 7px;
+  background: #18273aef;
+  backdrop-filter: blur(18px);
+  border: 1px solid #34475e;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.bottom-nav button {
+  background: transparent;
+  border: 0;
+  border-radius: 14px;
+  color: #a1b4cb;
+  min-width: 80px;
+  padding: 10px 16px;
+  font-size: 11px;
+}
+
+.bottom-nav button span {
+  display: block;
+  font-size: 23px;
+  margin-bottom: 3px;
+}
+
+.bottom-nav button.active {
+  background: #29473f;
+  color: var(--green);
+}
+
+.auth {
+  max-width: 440px;
+  margin: 60px auto;
+}
+
+.auth input {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin: 12px 0;
+  background: #0b1624;
+  color: white;
+  border: 1px solid #40516a;
+  border-radius: 13px;
+}
+
+.message {
+  color: #ffd17c;
+  font-size: 13px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+footer {
+  text-align: center;
+  margin: 35px 0;
+  font-size: 12px;
+}
+
+footer a {
+  color: var(--muted);
+  margin: 0 8px;
+}
+
+@media (max-width: 760px) {
+  .grid { grid-template-columns: 1fr; }
+
+  .app {
+    padding: 18px 15px 115px;
+  }
+
+  .hero {
+    padding: 22px;
+  }
+
+  .hero-content {
+    gap: 15px;
+  }
+
+  .score-ring {
+    width: 140px;
+    height: 140px;
+  }
+
+  .score-center strong {
+    font-size: 46px;
+  }
+
+  .score-info strong {
+    font-size: 18px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 14px;
+    min-height: 145px;
+  }
+
+  .stat strong {
+    font-size: 23px;
+  }
+
+  .bottom-nav {
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    justify-content: space-around;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav button {
+    min-width: 0;
+    flex: 1;
+    padding: 9px 5px;
+  }
+}
+
+@media (max-width: 380px) {
+  .score-ring {
+    width: 120px;
+    height: 120px;
+  }
+
+  .score-center strong {
+    font-size: 39px;
+  }
+
+  .score-info p {
+    font-size: 11px;
+  }
+}
+</style>
 </head>
 
 <body>
-<main>
-  <h1>VYORA AI</h1>
 
-  <p class="subtitle">
-    Dein intelligenter Begleiter für Schlaf,
-    Fitness und Gesundheit.
+<div class="app">
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">V</div>
+    <div>
+      <strong>VYORA <span>AI</span></strong>
+      <small>YOUR HEALTH, IN FOCUS</small>
+    </div>
+  </div>
+
+  <div class="avatar hidden" id="avatar">V</div>
+</header>
+
+<section id="authCard" class="card auth hidden">
+  <div class="eyebrow">Willkommen zurück</div>
+
+  <h1>Deine Gesundheit.<br>Dein Überblick.</h1>
+
+  <p class="muted">
+    Melde dich an, um deine persönlichen Gesundheitsdaten zu sehen.
   </p>
 
-  <section id="authCard" class="card">
-    <h2>Willkommen</h2>
-    <p>Melde dich an oder erstelle dein kostenloses Konto.</p>
+  <form id="loginForm">
+    <input
+      id="email"
+      type="email"
+      placeholder="E-Mail-Adresse"
+      autocomplete="email"
+      required
+    >
 
-    <form id="loginForm">
-      <input
-        id="email"
-        type="email"
-        placeholder="E-Mail-Adresse"
-        autocomplete="email"
-        required
-      >
+    <input
+      id="password"
+      type="password"
+      placeholder="Passwort"
+      autocomplete="current-password"
+      minlength="6"
+      required
+    >
 
-      <input
-        id="password"
-        type="password"
-        placeholder="Passwort"
-        autocomplete="current-password"
-        minlength="6"
-        required
-      >
-
-      <button type="submit">Anmelden</button>
-    </form>
-
-    <button id="registerButton" class="secondary">
-      Neues Konto erstellen
+    <button class="btn full" type="submit">
+      Anmelden
     </button>
-  </section>
+  </form>
 
-  <section id="dashboard" class="card hidden">
-    <h2>Dein Dashboard</h2>
+  <button id="registerButton" class="btn secondary full">
+    Neues Konto erstellen
+  </button>
+</section>
 
-    <p>Angemeldet als:</p>
-    <p id="userEmail"></p>
+<div id="dashboard" class="hidden">
 
-    <h3>Oura Ring</h3>
+<section id="homeView" class="view active">
 
-    <p id="ouraStatus" class="muted">
-      Verbindungsstatus wird geprüft ...
-    </p>
+  <div class="grid">
 
-    <button id="ouraButton" class="hidden">
-      Oura Ring verbinden
-    </button>
+    <div class="card hero">
+      <div class="eyebrow">Dein Gesundheitsüberblick</div>
 
-    <button id="sleepButton" class="secondary hidden">
-      Schlafdaten abrufen
-    </button>
+      <h1>Guten <span id="greeting">Tag</span> ✨</h1>
 
-    <div id="sleepResult" class="hidden" role="status"></div>
+      <p class="muted">
+        Ein klarer Blick auf deinen Schlaf und deine Erholung.
+      </p>
 
-    <button id="logoutButton" class="secondary">
-      Abmelden
-    </button>
-  </section>
+      <div class="hero-content">
 
-  <p id="message" role="status" aria-live="polite"></p>
+        <div class="score-ring">
+          <svg viewBox="0 0 180 180" width="100%" height="100%">
+            <circle
+              class="ring-track"
+              cx="90" cy="90" r="72"
+            />
+            <circle
+              id="scoreCircle"
+              class="ring-progress"
+              cx="90" cy="90" r="72"
+            />
+          </svg>
 
-  <footer>
-    <a href="datenschutz.html">Datenschutz</a>
-    <a href="impressum.html">Impressum</a>
-    <a href="nutzungsbedingungen.html">
-      Nutzungsbedingungen
-    </a>
-  </footer>
-</main>
+          <div class="score-center">
+            <strong id="mainScore">–</strong>
+            <small>Schlafscore</small>
+          </div>
+        </div>
+
+        <div class="score-info">
+          <div class="eyebrow" id="scoreDate">
+            Letzte Messung
+          </div>
+
+          <strong id="scoreRating">
+            Noch keine Daten
+          </strong>
+
+          <p id="scoreDescription">
+            Deine Schlafdaten werden geladen.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>◉ Dein Oura Ring</h2>
+
+      <div class="status-row">
+        <div id="ouraDot" class="dot"></div>
+        <span id="ouraStatus">
+          Verbindung wird geprüft ...
+        </span>
+      </div>
+
+      <p class="muted">
+        Deine Schlafdaten werden über deine bestehende
+        Oura-Verbindung geladen.
+      </p>
+
+      <button id="ouraButton" class="btn secondary hidden">
+        Oura Ring verbinden
+      </button>
+
+      <button id="sleepButton" class="btn hidden">
+        Daten aktualisieren ↻
+      </button>
+
+      <p id="ouraMessage" class="message"></p>
+
+      <div class="notice">
+        ✦ Hier erscheinen nur echte Messwerte.
+        Fehlende Gesundheitsdaten werden nicht geschätzt.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="stats">
+
+    <div class="card stat">
+      <div class="stat-icon">☾</div>
+      <small>Schlaf</small>
+      <strong id="miniSleep">–</strong>
+      <small>Oura Schlafscore</small>
+    </div>
+
+    <div class="card stat">
+      <div class="stat-icon">♡</div>
+      <small>Herzfrequenz</small>
+      <strong>–</strong>
+      <small>Noch keine Daten</small>
+    </div>
+
+    <div class="card stat">
+      <div class="stat-icon">⚡</div>
+      <small>Aktivität</small>
+      <strong>–</strong>
+      <small>Noch keine Daten</small>
+    </div>
+
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>Dein Schlafverlauf</h2>
+      <p class="muted">Letzte 7 Tage</p>
+      <div id="homeChart" class="chart"></div>
+    </div>
+
+    <div class="card">
+      <h2>✦ Deine Schlaf-Einschätzung</h2>
+
+      <div class="insight">
+        <div class="insight-icon">✦</div>
+        <div>
+          <strong id="insightTitle">
+            Bereit für deinen Überblick
+          </strong>
+
+          <p id="insightText">
+            Sobald deine Schlafdaten geladen sind,
+            erscheint hier eine einfache Einordnung.
+          </p>
+        </div>
+      </div>
+
+      <p class="muted">
+        Diese Einschätzung basiert auf deinem Schlafscore.
+        Sie ist noch keine KI-Analyse.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<section id="sleepView" class="view">
+  <div class="eyebrow">Deine Schlafgesundheit</div>
+  <h1>Dein Schlaf ☾</h1>
+
+  <div class="card">
+    <h2>Schlafscores im Verlauf</h2>
+    <div id="sleepChart" class="chart"></div>
+  </div>
+
+  <div class="card">
+    <h2>Deine letzten Messungen</h2>
+    <div id="sleepList" class="muted">
+      Noch keine Daten geladen.
+    </div>
+  </div>
+</section>
+
+<section id="trendsView" class="view">
+  <div class="eyebrow">Deine Entwicklung</div>
+  <h1>Gesundheitstrends ▥</h1>
+
+  <div class="card">
+    <h2>Schlafscore-Trend</h2>
+    <div id="trendsChart" class="chart"></div>
+  </div>
+
+  <div class="notice">
+    Weitere Trends für Herzfrequenz, Aktivität und Erholung
+    ergänzen wir, sobald diese Daten angebunden sind.
+  </div>
+</section>
+
+<section id="coachView" class="view">
+  <div class="eyebrow">Dein persönlicher Begleiter</div>
+  <h1>VYORA KI-Coach ✦</h1>
+
+  <div class="card">
+    <div class="insight">
+      <div class="insight-icon">✦</div>
+
+      <div>
+        <strong>Dein zukünftiger Gesundheitscoach</strong>
+
+        <p>
+          Hier wird VYORA später deine Schlaf-,
+          Aktivitäts- und Erholungsdaten gemeinsam
+          betrachten und verständlich erklären.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">
+    Der KI-Coach ist noch nicht aktiviert.
+    Gesundheitsinformationen ersetzen keine ärztliche Diagnose.
+  </div>
+</section>
+
+<div style="text-align:center;margin:28px 0">
+  <button id="logoutButton" class="btn secondary">
+    Abmelden
+  </button>
+</div>
+
+<nav class="bottom-nav" aria-label="Hauptnavigation">
+  <button class="active" data-view="homeView">
+    <span>⌂</span>Home
+  </button>
+
+  <button data-view="sleepView">
+    <span>☾</span>Schlaf
+  </button>
+
+  <button data-view="trendsView">
+    <span>▥</span>Trends
+  </button>
+
+  <button data-view="coachView">
+    <span>✦</span>KI-Coach
+  </button>
+</nav>
+
+</div>
+
+<p id="message" class="message" role="status"></p>
+
+<footer>
+  <a href="datenschutz.html">Datenschutz</a>
+  <a href="impressum.html">Impressum</a>
+  <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a>
+</footer>
+
+</div>
 
 <script type="module">
-  import { createClient } from
-    "https://esm.sh/@supabase/supabase-js@2";
 
-  const SUPABASE_URL =
-    "https://uukjvrmxrxbhueqarjpp.supabase.co";
+import { createClient } from
+  "https://esm.sh/@supabase/supabase-js@2";
 
-  const SUPABASE_KEY =
-    "sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP";
+const SUPABASE_URL =
+  "https://uukjvrmxrxbhueqarjpp.supabase.co";
 
-  const OURA_FUNCTION =
-    SUPABASE_URL + "/functions/v1/oura-connect";
+const SUPABASE_KEY =
+  "sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP";
 
-  const supabase = createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+const OURA_FUNCTION =
+  SUPABASE_URL + "/functions/v1/oura-connect";
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const $ = id => document.getElementById(id);
+
+let currentUserId = null;
+let refreshCounter = 0;
+let latestSleep = [];
+let loadingSleep = false;
+
+function showMessage(text) {
+  $("message").textContent = text || "";
+}
+
+function showOuraMessage(text) {
+  $("ouraMessage").textContent = text || "";
+}
+
+function setConnected(connected) {
+  $("ouraDot").classList.toggle(
+    "connected",
+    connected
   );
 
-  const $ = (id) => document.getElementById(id);
+  $("ouraStatus").textContent = connected
+    ? "✓ Oura Ring verbunden"
+    : "Oura Ring nicht verbunden";
 
-  const authCard = $("authCard");
-  const dashboard = $("dashboard");
-  const userEmail = $("userEmail");
-  const ouraStatus = $("ouraStatus");
-  const ouraButton = $("ouraButton");
-  const sleepButton = $("sleepButton");
-  const sleepResult = $("sleepResult");
+  $("ouraButton").classList.remove("hidden");
 
-  let currentUserId = null;
-  let refreshCounter = 0;
+  $("ouraButton").textContent = connected
+    ? "Erneut verbinden"
+    : "Oura Ring verbinden";
 
-  function showMessage(text) {
-    $("message").textContent = text;
+  $("sleepButton").classList.toggle(
+    "hidden",
+    !connected
+  );
+}
+
+async function authenticatedRequest(action) {
+  const { data, error } =
+    await supabase.auth.getSession();
+
+  if (error || !data.session) {
+    throw new Error("Bitte erneut anmelden.");
   }
 
-  function showConnection(connected) {
-    ouraButton.classList.remove("hidden");
-
-    if (connected) {
-      ouraStatus.textContent = "✓ Oura Ring verbunden";
-      ouraStatus.className = "success";
-
-      ouraButton.textContent = "Oura Ring erneut verbinden";
-      sleepButton.classList.remove("hidden");
-    } else {
-      ouraStatus.textContent = "Oura Ring nicht verbunden";
-      ouraStatus.className = "muted";
-
-      ouraButton.textContent = "Oura Ring verbinden";
-      sleepButton.classList.add("hidden");
-      sleepResult.classList.add("hidden");
+  const response = await fetch(
+    OURA_FUNCTION + "?action=" + encodeURIComponent(action),
+    {
+      method: "POST",
+      headers: {
+        Authorization:
+          "Bearer " + data.session.access_token,
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({})
     }
+  );
+
+  let result;
+
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error("Ungültige Serverantwort.");
   }
 
-  function showChecking() {
-    ouraStatus.textContent =
-      "Oura-Verbindung wird geprüft ...";
-
-    ouraStatus.className = "muted";
-    ouraButton.classList.add("hidden");
-    sleepButton.classList.add("hidden");
+  if (!response.ok) {
+    throw new Error(
+      result.error ||
+      "Serverfehler HTTP " + response.status
+    );
   }
 
-  async function authenticatedRequest(action) {
-    const { data, error } =
-      await supabase.auth.getSession();
+  return result;
+}
 
-    if (error || !data.session) {
-      throw new Error("Bitte erneut anmelden.");
-    }
+function formatDate(day) {
+  if (!day) return "–";
 
-    const response = await fetch(
-      OURA_FUNCTION +
-      "?action=" +
-      encodeURIComponent(action),
-      {
-        method: "POST",
-        headers: {
-          Authorization:
-            "Bearer " + data.session.access_token,
-          apikey: SUPABASE_KEY,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({})
-      }
+  const date = new Date(day + "T12:00:00");
+
+  return Number.isNaN(date.getTime())
+    ? day
+    : date.toLocaleDateString("de-DE", {
+        day: "2-digit",
+        month: "short"
+      });
+}
+
+function scoreRating(score) {
+  if (score >= 85) return "Sehr gut";
+  if (score >= 70) return "Gut erholt";
+  if (score >= 60) return "Ausbaufähig";
+  return "Erholung beachten";
+}
+
+function renderChart(targetId, entries) {
+  const container = $(targetId);
+  container.replaceChildren();
+
+  if (!entries.length) {
+    container.textContent =
+      "Noch keine Schlafdaten verfügbar.";
+    return;
+  }
+
+  entries.slice(-7).forEach(item => {
+    const column = document.createElement("div");
+    column.className = "chart-column";
+
+    const value = document.createElement("span");
+    value.className = "chart-value";
+    value.textContent = item.score;
+
+    const track = document.createElement("div");
+    track.className = "chart-track";
+
+    const bar = document.createElement("div");
+    bar.className = "chart-bar";
+    bar.style.height = item.score + "%";
+
+    track.appendChild(bar);
+
+    const label = document.createElement("span");
+    label.className = "chart-label";
+    label.textContent = formatDate(item.day);
+
+    column.append(value, track, label);
+    container.appendChild(column);
+  });
+}
+
+function renderSleep() {
+  for (const id of [
+    "homeChart",
+    "sleepChart",
+    "trendsChart"
+  ]) {
+    renderChart(id, latestSleep);
+  }
+
+  const list = $("sleepList");
+  list.replaceChildren();
+
+  if (!latestSleep.length) {
+    list.textContent =
+      "Keine Schlafdaten für die letzten 7 Tage.";
+    return;
+  }
+
+  latestSleep.slice().reverse().forEach(item => {
+    const row = document.createElement("div");
+    row.className = "sleep-item";
+
+    const date = document.createElement("span");
+    date.textContent = formatDate(item.day);
+
+    const score = document.createElement("strong");
+    score.textContent = item.score;
+
+    row.append(date, score);
+    list.appendChild(row);
+  });
+
+  const latest = latestSleep[latestSleep.length - 1];
+
+  $("mainScore").textContent = latest.score;
+  $("miniSleep").textContent = latest.score;
+
+  $("scoreDate").textContent =
+    formatDate(latest.day);
+
+  $("scoreRating").textContent =
+    scoreRating(latest.score);
+
+  $("scoreDescription").textContent =
+    "Dein zuletzt von Oura erfasster Schlafscore.";
+
+  $("scoreCircle").style.strokeDashoffset =
+    452.39 * (1 - latest.score / 100);
+
+  $("insightTitle").textContent =
+    scoreRating(latest.score);
+
+  $("insightText").textContent =
+    latest.score >= 85
+      ? "Dein letzter Schlafscore liegt im hohen Bereich. Beobachte auch den Verlauf über mehrere Nächte."
+      : latest.score >= 70
+      ? "Dein letzter Schlafscore liegt im guten Bereich. Achte auch auf deinen längerfristigen Trend."
+      : "Dein letzter Schlafscore ist niedriger. Beobachte den Verlauf und achte darauf, wie du dich fühlst.";
+}
+
+async function loadSleep() {
+  if (loadingSleep) return;
+
+  const userId = currentUserId;
+
+  loadingSleep = true;
+  $("sleepButton").disabled = true;
+
+  showOuraMessage("Schlafdaten werden geladen ...");
+
+  try {
+    const result =
+      await authenticatedRequest("daily");
+
+    if (currentUserId !== userId) return;
+
+    const items = Array.isArray(result.data)
+      ? result.data
+      : [];
+
+    latestSleep = items
+      .filter(item =>
+        typeof item.day === "string" &&
+        item.score !== null &&
+        item.score !== undefined &&
+        Number.isFinite(Number(item.score)) &&
+        Number(item.score) >= 0 &&
+        Number(item.score) <= 100
+      )
+      .map(item => ({
+        day: item.day,
+        score: Number(item.score)
+      }))
+      .sort((a, b) =>
+        a.day.localeCompare(b.day)
+      );
+
+    renderSleep();
+
+    showOuraMessage(
+      latestSleep.length
+        ? "✓ Schlafdaten aktualisiert."
+        : "Keine Schlafscores für die letzten 7 Tage."
     );
 
-    let result;
-
-    try {
-      result = await response.json();
-    } catch {
-      throw new Error("Ungültige Serverantwort.");
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        result.error ||
-        "Serverfehler (HTTP " + response.status + ")"
+  } catch (error) {
+    if (currentUserId === userId) {
+      showOuraMessage(
+        "Schlafdaten konnten nicht geladen werden: " +
+        error.message
       );
     }
+  } finally {
+    loadingSleep = false;
+    $("sleepButton").disabled = false;
+  }
+}
 
-    return result;
+async function refreshUI() {
+  const counter = ++refreshCounter;
+
+  const { data, error } =
+    await supabase.auth.getUser();
+
+  if (counter !== refreshCounter) return;
+
+  const user = data?.user;
+
+  $("authCard").classList.toggle(
+    "hidden",
+    !!user
+  );
+
+  $("dashboard").classList.toggle(
+    "hidden",
+    !user
+  );
+
+  $("avatar").classList.toggle(
+    "hidden",
+    !user
+  );
+
+  if (error &&
+      error.name !== "AuthSessionMissingError") {
+    showMessage(error.message);
   }
 
-  async function checkOuraStatus(userId, counter) {
-    showChecking();
-
-    try {
-      const result = await authenticatedRequest("status");
-
-      if (
-        currentUserId !== userId ||
-        refreshCounter !== counter
-      ) {
-        return;
-      }
-
-      showConnection(result.connected === true);
-
-    } catch (error) {
-      if (
-        currentUserId !== userId ||
-        refreshCounter !== counter
-      ) {
-        return;
-      }
-
-      ouraStatus.textContent =
-        "Verbindungsstatus konnte nicht geprüft werden.";
-
-      ouraStatus.className = "muted";
-      ouraButton.classList.remove("hidden");
-      ouraButton.textContent = "Oura Ring verbinden";
-
-      showMessage(
-        "Statusabfrage fehlgeschlagen: " + error.message
-      );
-    }
+  if (!user) {
+    currentUserId = null;
+    latestSleep = [];
+    return;
   }
 
-  async function refreshUI() {
-    const counter = ++refreshCounter;
+  $("avatar").textContent =
+    (user.email || "V").charAt(0).toUpperCase();
 
-    const { data, error } =
-      await supabase.auth.getUser();
+  const userChanged = currentUserId !== user.id;
+  currentUserId = user.id;
 
-    if (counter !== refreshCounter) return;
+  if (userChanged) {
+    latestSleep = [];
 
-    const user = data?.user;
+    $("mainScore").textContent = "–";
+    $("miniSleep").textContent = "–";
+    $("scoreCircle").style.strokeDashoffset = 452.39;
+    $("scoreRating").textContent = "Noch keine Daten";
+    $("scoreDate").textContent = "Letzte Messung";
 
-    if (error && error.name !== "AuthSessionMissingError") {
-      showMessage(error.message);
+    $("insightTitle").textContent =
+      "Bereit für deinen Überblick";
+
+    $("insightText").textContent =
+      "Deine Schlafdaten werden geladen.";
+
+    for (const id of [
+      "homeChart",
+      "sleepChart",
+      "trendsChart"
+    ]) {
+      renderChart(id, []);
     }
 
-    authCard.classList.toggle("hidden", !!user);
-    dashboard.classList.toggle("hidden", !user);
-    userEmail.textContent = user?.email || "";
+    $("sleepList").textContent =
+      "Noch keine Daten geladen.";
+  }
 
-    if (!user) {
-      currentUserId = null;
+  const params =
+    new URLSearchParams(location.search);
+
+  const ouraResult = params.get("oura");
+
+  if (ouraResult) {
+    showOuraMessage(
+      ouraResult === "connected"
+        ? "Oura-Autorisierung erfolgreich."
+        : "Oura-Freigabe abgebrochen."
+    );
+
+    const cleanUrl = new URL(location.href);
+    cleanUrl.searchParams.delete("oura");
+
+    history.replaceState(
+      {},
+      "",
+      cleanUrl.toString()
+    );
+  }
+
+  $("ouraStatus").textContent =
+    "Verbindung wird geprüft ...";
+
+  $("ouraButton").classList.add("hidden");
+  $("sleepButton").classList.add("hidden");
+
+  try {
+    const result =
+      await authenticatedRequest("status");
+
+    if (
+      counter !== refreshCounter ||
+      currentUserId !== user.id
+    ) {
       return;
     }
 
-    currentUserId = user.id;
+    const connected = result.connected === true;
 
-    const params = new URLSearchParams(
-      window.location.search
+    setConnected(connected);
+
+    if (
+      connected &&
+      (userChanged || !latestSleep.length)
+    ) {
+      await loadSleep();
+    }
+
+  } catch (error) {
+    if (counter !== refreshCounter) return;
+
+    $("ouraStatus").textContent =
+      "Status konnte nicht geprüft werden.";
+
+    $("ouraButton").classList.remove("hidden");
+
+    showOuraMessage(
+      "Statusabfrage fehlgeschlagen: " +
+      error.message
     );
-
-    const ouraResult = params.get("oura");
-
-    if (ouraResult === "connected") {
-      showMessage(
-        "Oura-Autorisierung erfolgreich abgeschlossen."
-      );
-    } else if (ouraResult === "denied") {
-      showMessage("Oura-Freigabe abgebrochen.");
-    }
-
-    if (ouraResult !== null) {
-      const cleanUrl = new URL(window.location.href);
-      cleanUrl.searchParams.delete("oura");
-
-      window.history.replaceState(
-        {},
-        "",
-        cleanUrl.toString()
-      );
-    }
-
-    await checkOuraStatus(user.id, counter);
   }
+}
 
-  $("loginForm").addEventListener(
-    "submit",
-    async (event) => {
-      event.preventDefault();
+$("loginForm").addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
 
-      const email = $("email").value.trim();
-      const password = $("password").value;
+    const { error } =
+      await supabase.auth.signInWithPassword({
+        email: $("email").value.trim(),
+        password: $("password").value
+      });
 
-      const { error } =
-        await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-
-      if (error) {
-        showMessage(
-          "Anmeldung fehlgeschlagen: " + error.message
-        );
-        return;
-      }
-
-      showMessage("Erfolgreich angemeldet.");
-      await refreshUI();
+    if (error) {
+      showMessage(
+        "Anmeldung fehlgeschlagen: " +
+        error.message
+      );
+      return;
     }
-  );
 
-  $("registerButton").addEventListener(
-    "click",
-    async () => {
-      const email = $("email").value.trim();
-      const password = $("password").value;
+    showMessage("");
+    await refreshUI();
+  }
+);
 
-      if (!email || password.length < 6) {
-        showMessage(
-          "Bitte E-Mail und ein Passwort mit mindestens 6 Zeichen eingeben."
-        );
-        return;
-      }
+$("registerButton").addEventListener(
+  "click",
+  async () => {
+    const email = $("email").value.trim();
+    const password = $("password").value;
 
-      const { error } = await supabase.auth.signUp({
+    if (!email || password.length < 6) {
+      showMessage(
+        "Bitte E-Mail und Passwort mit mindestens 6 Zeichen eingeben."
+      );
+      return;
+    }
+
+    const { error } =
+      await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -426,132 +1255,128 @@
         }
       });
 
-      showMessage(
-        error
-          ? "Registrierung fehlgeschlagen: " + error.message
-          : "Registrierung gestartet. Bitte prüfe deine E-Mails."
+    showMessage(
+      error
+        ? "Registrierung fehlgeschlagen: " +
+          error.message
+        : "Registrierung gestartet. Bitte prüfe deine E-Mails."
+    );
+
+    await refreshUI();
+  }
+);
+
+$("logoutButton").addEventListener(
+  "click",
+  async () => {
+    const { error } =
+      await supabase.auth.signOut();
+
+    if (error) {
+      showMessage(error.message);
+      return;
+    }
+
+    currentUserId = null;
+    showMessage("Erfolgreich abgemeldet.");
+
+    await refreshUI();
+  }
+);
+
+$("ouraButton").addEventListener(
+  "click",
+  async () => {
+    const button = $("ouraButton");
+    button.disabled = true;
+
+    try {
+      showOuraMessage(
+        "Oura-Verbindung wird gestartet ..."
       );
 
-      await refreshUI();
-    }
-  );
+      const result =
+        await authenticatedRequest("start");
 
-  $("logoutButton").addEventListener(
-    "click",
-    async () => {
-      const { error } = await supabase.auth.signOut();
+      const target =
+        result.url || result.authorization_url;
 
-      if (error) {
-        showMessage(error.message);
-        return;
-      }
-
-      currentUserId = null;
-      showMessage("Erfolgreich abgemeldet.");
-      await refreshUI();
-    }
-  );
-
-  ouraButton.addEventListener(
-    "click",
-    async () => {
-      ouraButton.disabled = true;
-
-      try {
-        showMessage(
-          "Oura-Verbindung wird gestartet ..."
+      if (!target) {
+        throw new Error(
+          "Keine Oura-Weiterleitungsadresse erhalten."
         );
-
-        const result =
-          await authenticatedRequest("start");
-
-        const target =
-          result.url || result.authorization_url;
-
-        if (!target) {
-          throw new Error(
-            "Keine Oura-Weiterleitungsadresse erhalten."
-          );
-        }
-
-        const url = new URL(target);
-
-        if (
-          url.protocol !== "https:" ||
-          url.hostname !== "cloud.ouraring.com"
-        ) {
-          throw new Error(
-            "Unerwartete Oura-Weiterleitungsadresse."
-          );
-        }
-
-        window.location.assign(url.href);
-
-      } catch (error) {
-        showMessage(error.message);
-      } finally {
-        ouraButton.disabled = false;
       }
-    }
-  );
 
-  sleepButton.addEventListener(
-    "click",
-    async () => {
-      sleepButton.disabled = true;
+      const url = new URL(target);
 
-      sleepResult.classList.remove("hidden");
-      sleepResult.textContent =
-        "Schlafdaten werden geladen ...";
-
-      try {
-        const result =
-          await authenticatedRequest("daily");
-
-        const entries =
-          Array.isArray(result.data)
-            ? result.data
-            : [];
-
-        if (entries.length === 0) {
-          sleepResult.textContent =
-            "Keine Schlafdaten für die letzten 7 Tage verfügbar.";
-        } else {
-          const lines = entries.map((item) => {
-            const date = item.day || "Unbekanntes Datum";
-            const score = item.score ?? "Kein Wert";
-
-            return (
-              date + " – Schlafscore: " + score
-            );
-          });
-
-          sleepResult.textContent = lines.join("\n");
-        }
-
-        showMessage("Schlafdaten erfolgreich abgerufen.");
-
-      } catch (error) {
-        sleepResult.textContent =
-          "Fehler: " + error.message;
-
-        showMessage(
-          "Schlafdaten konnten nicht geladen werden."
+      if (
+        url.protocol !== "https:" ||
+        url.hostname !== "cloud.ouraring.com"
+      ) {
+        throw new Error(
+          "Unerwartete Oura-Adresse."
         );
-
-      } finally {
-        sleepButton.disabled = false;
       }
-    }
-  );
 
-  supabase.auth.onAuthStateChange(() => {
-    setTimeout(() => {
-      refreshUI();
-    }, 0);
+      location.assign(url.href);
+
+    } catch (error) {
+      showOuraMessage(error.message);
+    } finally {
+      button.disabled = false;
+    }
+  }
+);
+
+$("sleepButton").addEventListener(
+  "click",
+  loadSleep
+);
+
+document.querySelectorAll(
+  ".bottom-nav button"
+).forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(
+      ".bottom-nav button"
+    ).forEach(item => {
+      item.classList.toggle(
+        "active",
+        item === button
+      );
+    });
+
+    document.querySelectorAll(
+      ".view"
+    ).forEach(view => {
+      view.classList.toggle(
+        "active",
+        view.id === button.dataset.view
+      );
+    });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   });
+});
 
-  refreshUI();
+const hour = new Date().getHours();
+
+$("greeting").textContent =
+  hour < 11
+    ? "Morgen"
+    : hour < 18
+    ? "Tag"
+    : "Abend";
+
+supabase.auth.onAuthStateChange(() => {
+  setTimeout(refreshUI, 0);
+});
+
+refreshUI();
+
 </script>
 </body>
 </html>
