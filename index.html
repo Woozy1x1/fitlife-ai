@@ -4,42 +4,275 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FitLife AI</title>
+  <title>VYORA AI – Dein Gesundheitsdashboard</title>
   <style>
+    * { box-sizing: border-box; }
     body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0b1220;
+      color: #f1f5f9;
       font-family: Arial, sans-serif;
-      background: #101820;
-      color: white;
-      text-align: center;
-      padding: 40px 20px;
-    }
-    h1 { color: #40e0a0; }
-    .card {
-      background: #1d2b36;
       padding: 24px;
+    }
+    main { max-width: 480px; margin: 50px auto; }
+    h1 { color: #4ade80; font-size: 38px; margin-bottom: 8px; }
+    .subtitle { color: #94a3b8; margin-bottom: 30px; }
+    .card {
+      background: #172338;
+      border: 1px solid #30415a;
       border-radius: 18px;
-      margin-top: 25px;
+      padding: 26px;
+      margin-bottom: 18px;
+    }
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+    input {
+      background: #0b1220;
+      border: 1px solid #475569;
+      color: white;
     }
     button {
-      background: #40e0a0;
       border: none;
-      border-radius: 12px;
-      padding: 15px 25px;
-      font-size: 16px;
+      background: #4ade80;
+      color: #082013;
+      font-weight: bold;
       cursor: pointer;
     }
+    button:disabled { opacity: .6; cursor: wait; }
+    .secondary { background: #334155; color: white; }
+    .hidden { display: none; }
+    #message {
+      color: #facc15;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      margin-top: 16px;
+    }
+    footer { text-align: center; margin-top: 30px; }
+    footer a { color: #94a3b8; margin: 0 7px; }
   </style>
 </head>
 <body>
-  <h1>FitLife AI</h1>
-  <p>Dein persönlicher Fitness- und Gesundheitsassistent</p>
+<main>
+  <h1>VYORA AI</h1>
+  <p class="subtitle">Dein intelligenter Begleiter für Schlaf, Fitness und Gesundheit.</p>
 
-  <div class="card">
-    <h2>Willkommen!</h2>
-    <p>Verbinde künftig deine Gesundheitsdaten und verfolge deine Fortschritte.</p>
-    <button onclick="alert('FitLife AI wird vorbereitet!')">
-      Jetzt starten
+  <section id="authCard" class="card">
+    <h2>Willkommen</h2>
+    <p>Melde dich an oder erstelle dein kostenloses Konto.</p>
+
+    <form id="loginForm">
+      <input id="email" type="email" placeholder="E-Mail-Adresse"
+             autocomplete="email" required>
+      <input id="password" type="password" placeholder="Passwort"
+             autocomplete="current-password" minlength="6" required>
+      <button type="submit">Anmelden</button>
+    </form>
+
+    <button id="registerButton" class="secondary">
+      Neues Konto erstellen
     </button>
-  </div>
+  </section>
+
+  <section id="dashboard" class="card hidden">
+    <h2>Dein Dashboard</h2>
+    <p>Angemeldet als:</p>
+    <p id="userEmail"></p>
+
+    <h3>Oura Ring</h3>
+    <p>Verbinde deinen Ring, um später deine persönlichen Schlaf- und Gesundheitsdaten zu sehen.</p>
+
+    <button id="ouraButton">Oura Ring verbinden</button>
+    <button id="logoutButton" class="secondary">Abmelden</button>
+  </section>
+
+  <p id="message" role="status" aria-live="polite"></p>
+
+  <footer>
+    <a href="datenschutz.html">Datenschutz</a>
+    <a href="impressum.html">Impressum</a>
+    <a href="nutzungsbedingungen.html">Nutzungsbedingungen</a>
+  </footer>
+</main>
+
+<script type="module">
+  import { createClient } from
+    "https://esm.sh/@supabase/supabase-js@2";
+
+  const SUPABASE_URL =
+    "https://uukjvrmxrxbhueqarjpp.supabase.co";
+
+  // HIER DEINEN OEFFENTLICHEN PUBLISHABLE KEY EINFUEGEN
+  const SUPABASE_KEY = "HIER_PUBLISHABLE_KEY_EINFUEGEN";
+
+  const OURA_FUNCTION =
+    SUPABASE_URL + "/functions/v1/oura-connect";
+
+  const message = document.getElementById("message");
+  const authCard = document.getElementById("authCard");
+  const dashboard = document.getElementById("dashboard");
+  const userEmail = document.getElementById("userEmail");
+
+  const showMessage = (text) => {
+    message.textContent = text;
+  };
+
+  const configured =
+    SUPABASE_KEY !== "HIER_PUBLISHABLE_KEY_EINFUEGEN";
+
+  let supabase = null;
+
+  if (configured) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  } else {
+    showMessage("sb_publishable_PsUKAdDVjsQ3MAmCAFqKvg_1lo8yljP");
+  }
+
+  async function refreshUI() {
+    if (!supabase) return;
+
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error && error.name !== "AuthSessionMissingError") {
+      showMessage(error.message);
+    }
+
+    const user = data?.user;
+    authCard.classList.toggle("hidden", !!user);
+    dashboard.classList.toggle("hidden", !user);
+    userEmail.textContent = user?.email || "";
+  }
+
+  document.getElementById("loginForm")
+    .addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!supabase) return;
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email, password
+      });
+
+      if (error) {
+        showMessage("Anmeldung fehlgeschlagen: " + error.message);
+        return;
+      }
+
+      showMessage("Erfolgreich angemeldet.");
+      await refreshUI();
+    });
+
+  document.getElementById("registerButton")
+    .addEventListener("click", async () => {
+      if (!supabase) return;
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || password.length < 6) {
+        showMessage("Bitte E-Mail und ein Passwort mit mindestens 6 Zeichen eingeben.");
+        return;
+      }
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo:
+            "https://woozy1x1.github.io/fitlife-ai/"
+        }
+      });
+
+      showMessage(error
+        ? "Registrierung fehlgeschlagen: " + error.message
+        : "Registrierung gestartet. Bitte prüfe deine E-Mails und bestätige dein Konto, falls erforderlich."
+      );
+
+      await refreshUI();
+    });
+
+  document.getElementById("logoutButton")
+    .addEventListener("click", async () => {
+      if (!supabase) return;
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        showMessage(error.message);
+        return;
+      }
+
+      showMessage("Erfolgreich abgemeldet.");
+      await refreshUI();
+    });
+
+  document.getElementById("ouraButton")
+    .addEventListener("click", async () => {
+      if (!supabase) return;
+
+      const button = document.getElementById("ouraButton");
+      button.disabled = true;
+
+      try {
+        const { data, error } = await supabase.auth.getSession();
+
+        if (error || !data.session) {
+          throw new Error("Bitte erneut anmelden.");
+        }
+
+        // Erwartete Schnittstelle: POST ?action=start
+        // mit Bearer-JWT, Antwort { url: "https://..." }.
+        // Muss mit dem Backend-Code abgeglichen werden.
+        const response = await fetch(
+          OURA_FUNCTION + "?action=start",
+          {
+            method: "POST",
+            headers: {
+              "Authorization":
+                "Bearer " + data.session.access_token,
+              "apikey": SUPABASE_KEY,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({})
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Oura-Verbindung konnte nicht gestartet werden (HTTP " +
+            response.status + ")."
+          );
+        }
+
+        const result = await response.json();
+        const url = new URL(result.url);
+
+        if (url.protocol !== "https:" ||
+            url.hostname !== "cloud.ouraring.com") {
+          throw new Error("Unerwartete Oura-Weiterleitungsadresse.");
+        }
+
+        window.location.assign(url.href);
+      } catch (error) {
+        showMessage(error.message);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+  if (supabase) {
+    supabase.auth.onAuthStateChange(() => {
+      refreshUI();
+    });
+
+    refreshUI();
+  }
+</script>
 </body>
 </html>
