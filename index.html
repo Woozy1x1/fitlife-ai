@@ -579,19 +579,21 @@ footer a{color:var(--muted);margin:0 7px}
         <div class="score-info">
           <div class="eyebrow" id="scoreDate">Letzte Messung</div>
           <strong id="scoreRating">Noch keine Daten</strong>
-          <p>Dein zuletzt erfasster Oura-Schlafscore.</p>
+          <p>Dein zuletzt erfasster Schlafscore vom Tracker.</p>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2>◉ Dein Oura Ring</h2>
+      <h2>⌚ Dein Tracker</h2>
       <div class="status-row">
         <div id="ouraDot" class="dot"></div>
         <span id="ouraStatus">Verbindung wird geprüft ...</span>
       </div>
       <p class="muted">
-        Deine Schlafdaten werden über deine Oura-Verbindung abgerufen.
+        Verbinde einen Tracker für Schlaf, Puls und Schritte. Ohne Tracker
+        kannst du alles selbst eintragen. Unterstützt: Oura Ring. Weitere
+        Geräte wie Garmin, Fitbit oder Apple Watch sind in Planung.
       </p>
       <button id="ouraButton" class="btn secondary hidden">
         Oura verbinden
@@ -608,7 +610,7 @@ footer a{color:var(--muted);margin:0 7px}
       <div class="stat-icon">☾</div>
       <small>Schlaf</small>
       <strong id="miniSleep">–</strong>
-      <small>Oura Score</small>
+      <small>vom Tracker</small>
     </div>
     <div class="card stat">
       <div class="stat-icon">♡</div>
@@ -1600,7 +1602,7 @@ function setConnected(connected) {
 
   $("ouraStatus").textContent = connected
     ? "✓ Oura Ring verbunden"
-    : "Oura Ring nicht verbunden";
+    : "Noch kein Tracker verbunden";
 
   $("ouraButton").classList.remove("hidden");
 
