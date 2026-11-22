@@ -1,0 +1,58 @@
+# Lädt den Barcode-Scanner (Ersatz für iPhone/Firefox) und die
+# Schrift Bricolage Grotesque (OFL-Lizenz) einmalig von npm, prüft die Prüfsumme und legt ihn als feste Datei ins
+# Repository. Die App lädt ihn danach nur noch von GitHub Pages.
+name: Vendor assets (Scanner + Schrift)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and verify @zxing/library 0.21.3
+        run: |
+          set -euo pipefail
+          EXPECTED="sha512-hZHqFe2JyH/ZxviJZosZjV+2s6EDSY0O24R+FQmlWZBZXP9IqMo7S3nb3+2LBWxodJQkSurdQGnqE7KXqrYgow=="
+          curl -fsSL -o /tmp/zxing.tgz https://registry.npmjs.org/@zxing/library/-/library-0.21.3.tgz
+          ACTUAL="sha512-$(openssl dgst -sha512 -binary /tmp/zxing.tgz | base64 -w0)"
+          echo "expected: $EXPECTED"
+          echo "actual:   $ACTUAL"
+          test "$EXPECTED" = "$ACTUAL"
+          mkdir -p /tmp/zxing vendor
+          tar -xzf /tmp/zxing.tgz -C /tmp/zxing package/umd/index.min.js
+          cp /tmp/zxing/package/umd/index.min.js vendor/zxing-library-0.21.3.min.js
+          grep -q "ZXing" vendor/zxing-library-0.21.3.min.js
+          echo "sha256 der Datei:"
+          sha256sum vendor/zxing-library-0.21.3.min.js
+
+      - name: Download and verify Bricolage Grotesque 5.3.0 (OFL-1.1)
+        run: |
+          set -euo pipefail
+          EXPECTED="sha512-TLi9Q4hJjS2UvoTMRSS2nHu6c4R56lAw60NR9QYtVRCHn0XtsFpiEhNffZ8Glsoxu6wEEwLKBP8lb94J52PNBA=="
+          curl -fsSL -o /tmp/font.tgz https://registry.npmjs.org/@fontsource-variable/bricolage-grotesque/-/bricolage-grotesque-5.3.0.tgz
+          ACTUAL="sha512-$(openssl dgst -sha512 -binary /tmp/font.tgz | base64 -w0)"
+          echo "expected: $EXPECTED"
+          echo "actual:   $ACTUAL"
+          test "$EXPECTED" = "$ACTUAL"
+          mkdir -p /tmp/font vendor/fonts
+          tar -xzf /tmp/font.tgz -C /tmp/font
+          ls /tmp/font/package/files
+          SRC=$(ls /tmp/font/package/files/*-latin-wght-normal.woff2 | head -n1)
+          cp "$SRC" vendor/fonts/bricolage-grotesque-latin-wght-normal.woff2
+          cp /tmp/font/package/LICENSE vendor/fonts/bricolage-grotesque-LICENSE.txt || true
+          sha256sum vendor/fonts/*
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add vendor/zxing-library-0.21.3.min.js vendor/fonts
+          git diff --cached --quiet && exit 0
+          git commit -m "Vendor ZXing 0.21.3 + Bricolage Grotesque 5.3.0 (npm integrity verified)"
+          git push
