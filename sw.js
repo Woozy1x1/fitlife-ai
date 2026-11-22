@@ -3,7 +3,7 @@
 // Persönliche Daten und alle Anfragen an Supabase/Oura werden NICHT
 // angefasst oder zwischengespeichert.
 
-const CACHE = "vyora-app-v2";
+const CACHE = "vyora-app-v3";
 
 const APP_FILES = [
   "./",
@@ -41,6 +41,37 @@ self.addEventListener("activate", event => {
 });
 
 const sameOrigin = url => url.origin === self.location.origin;
+
+// Push-Erinnerungen anzeigen (Inhalt kommt verschlüsselt vom Server)
+self.addEventListener("push", event => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch (_e) {}
+  const view = typeof data.view === "string" ? data.view : "homeView";
+  event.waitUntil(self.registration.showNotification(data.title || "VYORA", {
+    body: data.body || "",
+    icon: "icons/icon-192.png",
+    badge: "icons/icon-192.png",
+    tag: "vyora-" + view,
+    data: { view }
+  }));
+});
+
+self.addEventListener("notificationclick", event => {
+  event.notification.close();
+  const view = event.notification.data?.view || "homeView";
+  const target = new URL("./#" + view, self.registration.scope).href;
+  event.waitUntil((async () => {
+    const list = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const client of list) {
+      if (client.url.startsWith(self.registration.scope)) {
+        await client.focus();
+        client.postMessage({ type: "open-view", view });
+        return;
+      }
+    }
+    await self.clients.openWindow(target);
+  })());
+});
 
 self.addEventListener("fetch", event => {
   const request = event.request;
