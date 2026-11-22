@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://uukjvrmxrxbhueqarjpp.supabase.co wss://uukjvrmxrxbhueqarjpp.supabase.co; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#100d26">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=482b5fecd0">
+<link rel="stylesheet" href="css/app.css?v=6d8aac50c3">
 </head>
 <body>
 <div class="app">
@@ -31,9 +32,9 @@
   <h1>Neues Passwort</h1>
   <p class="muted">Wähle ein neues Passwort für dein VYORA-Konto (mindestens 8 Zeichen).</p>
   <form id="resetForm">
-    <input id="newPassword" type="password" placeholder="Neues Passwort"
+    <input id="newPassword" type="password" aria-label="Neues Passwort" placeholder="Neues Passwort"
       autocomplete="new-password" minlength="8" required>
-    <input id="newPassword2" type="password" placeholder="Neues Passwort wiederholen"
+    <input id="newPassword2" type="password" aria-label="Neues Passwort wiederholen" placeholder="Neues Passwort wiederholen"
       autocomplete="new-password" minlength="8" required>
     <button id="resetSave" class="btn full" type="submit">Passwort speichern</button>
   </form>
@@ -45,9 +46,9 @@
   <h1>Deine Gesundheit.<br>Dein Überblick.</h1>
   <p class="muted">Melde dich an, um deine Daten zu sehen.</p>
   <form id="loginForm">
-    <input id="email" type="email" placeholder="E-Mail-Adresse"
+    <input id="email" type="email" aria-label="E-Mail-Adresse" placeholder="E-Mail-Adresse"
       autocomplete="email" required>
-    <input id="password" type="password" placeholder="Passwort"
+    <input id="password" type="password" aria-label="Passwort" placeholder="Passwort"
       autocomplete="current-password" minlength="6" required>
     <button class="btn full" type="submit">Anmelden</button>
   </form>
@@ -235,7 +236,7 @@
         <span class="week-delta" id="wkStepsDelta"></span>
       </div>
     </div>
-    <p class="muted small-note" id="wkNote">Kalorien: Durchschnitt der Tage, an denen du etwas eingetragen hast.</p>
+    <p class="muted small-note" id="wkNote">Kalorien: Durchschnitt der Tage, an denen du etwas eingetragen hast. Zur Orientierung: Die WHO empfiehlt an mindestens 2 Tagen pro Woche Kräftigung; Studien zeigen ab etwa 7.000 Schritten am Tag einen deutlichen Gesundheitsnutzen.</p>
   </div>
 
   <div class="card hidden" id="trackerCard">
@@ -825,6 +826,17 @@
         </div>
         <label for="mPulse">Puls (optional)</label>
         <input id="mPulse" type="number" inputmode="numeric" min="25" max="250" step="1" placeholder="z. B. 65">
+        <details class="calc-info">
+          <summary>So misst du zu Hause richtig</summary>
+          <ul class="muted guide-list">
+            <li>30 Minuten vorher kein Kaffee, keine Zigarette, kein Sport.</li>
+            <li>5 Minuten ruhig sitzen, Rücken angelehnt, Füße auf dem Boden, nicht sprechen.</li>
+            <li>Manschette am Oberarm auf Herzhöhe, passende Manschettengröße.</li>
+            <li>Zweimal messen, etwa 1 Minute Abstand – beide Werte eintragen.</li>
+            <li>Vor einem Arzttermin: 7 Tage lang morgens und abends messen.</li>
+          </ul>
+          <p class="muted small-note">Nach den Empfehlungen der Europäischen Gesellschaft für Hypertonie. VYORA bewertet die Werte nicht – besprich sie mit deiner Ärztin oder deinem Arzt.</p>
+        </details>
       </div>
 
       <div data-group="glucose" class="hidden">
@@ -1160,16 +1172,29 @@
         <div>
           <label for="goalStepsInput">Schritte</label>
           <input id="goalStepsInput" type="number" inputmode="numeric"
-            min="1000" max="50000" step="100" placeholder="z. B. 8000">
+            min="1000" max="50000" step="100" placeholder="z. B. 7000">
         </div>
       </div>
       <label for="goalWaterInput">Wasser (Gläser à 250 ml)</label>
       <input id="goalWaterInput" type="number" inputmode="numeric"
-        min="1" max="20" step="1" placeholder="z. B. 8 (= 2 Liter)">
+        min="1" max="20" step="1" placeholder="z. B. 6 (= 1,5 Liter)">
       <button id="saveGoals" class="btn full" type="submit">
         Ziele speichern
       </button>
     </form>
+    <div class="guide-box">
+      <strong>Orientierung nach aktuellen Empfehlungen</strong>
+      <ul>
+        <li>Schritte: ab etwa 7.000 pro Tag – darüber steigt der Nutzen für die meisten Bereiche nur noch wenig (Meta-Analyse, Lancet Public Health 2025)</li>
+        <li>Trinken: rund 1,5 Liter am Tag, also 6 Gläser – bei Hitze und Sport mehr (DGE)</li>
+        <li>Bewegung: 150–300 Minuten pro Woche mäßig anstrengend, dazu an 2 Tagen Kräftigung (WHO)</li>
+        <li>Schlaf: mindestens 7 Stunden pro Nacht (Fachgesellschaften für Schlafmedizin)</li>
+        <li>Essen: zu mehr als drei Vierteln pflanzlich, 5 Portionen Obst und Gemüse (DGE 2024)</li>
+      </ul>
+      <button id="goalsUseGuide" class="btn secondary full" type="button">
+        Schritte und Wasser danach einstellen
+      </button>
+    </div>
     <p class="muted">
       Die Ziele sind Richtwerte, die du selbst festlegst – keine
       medizinische Empfehlung.
@@ -1212,7 +1237,7 @@
     <p class="muted" id="appleStatus">Status wird geladen ...</p>
     <div id="appleKeyBox" class="notice hidden">
       <strong>Dein Import-Schlüssel</strong> (wird nur jetzt angezeigt):
-      <input id="appleKey" readonly>
+      <input id="appleKey" readonly aria-label="Dein Import-Schlüssel">
       <button id="appleCopy" class="btn secondary" type="button">Schlüssel kopieren</button>
     </div>
     <button id="appleCreate" class="btn full" type="button">Import-Schlüssel erstellen</button>
@@ -1332,7 +1357,7 @@
 </footer>
 </div>
 
-<script type="module" src="js/app.js?v=66c46df7d4"></script>
+<script type="module" src="js/app.js?v=10aa4cf31d"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
