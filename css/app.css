@@ -62,7 +62,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
   background:linear-gradient(90deg,var(--sun-2),var(--sun));
   -webkit-background-clip:text;background-clip:text;color:transparent
 }
-.logo small{display:block;color:var(--muted);font-size:11px;letter-spacing:.02em;text-transform:none}
+.logo small{display:block;color:var(--muted);font-size:12px;letter-spacing:.02em;text-transform:none}
 .avatar{
   border-radius:50%;width:40px;height:40px;
   background:var(--card-2);border:1px solid var(--border-strong);
@@ -180,7 +180,7 @@ a{color:var(--sun)}
 .chart-value{font-size:12px;font-weight:700}
 .chart-track{height:125px;width:min(100%,40px);border-radius:999px;background:var(--inset);display:flex;align-items:end;overflow:hidden}
 .chart-bar{width:100%;border-radius:999px;background:linear-gradient(180deg,var(--sun),var(--sun-2) 60%,#9b5cff)}
-.chart-label{font-size:11px;color:var(--muted)}
+.chart-label{font-size:12px;color:var(--muted)}
 #hrChart svg{width:100%;height:150px;display:block}
 
 /* ---------- Navigation ---------- */
@@ -196,7 +196,7 @@ a{color:var(--sun)}
 }
 .bottom-nav button{
   background:none;border:0;border-radius:999px;color:var(--muted);
-  padding:8px 14px;min-width:72px;font-size:11px;font-weight:600;position:relative
+  padding:8px 14px;min-width:72px;font-size:12px;font-weight:600;position:relative
 }
 .bottom-nav button span{display:block;font-size:21px;margin-bottom:3px;filter:grayscale(.4);transition:transform .2s}
 .bottom-nav button.active{color:var(--text);background:#ffffff0d}
@@ -235,7 +235,7 @@ label.check input{width:22px;height:22px;margin:2px 0 0;flex-shrink:0;accent-col
 .nutrition-summary.three{grid-template-columns:repeat(3,1fr)}
 .nutrition-stat{background:var(--inset);border:1px solid var(--border);padding:15px 9px;border-radius:var(--radius-sm);text-align:center}
 .nutrition-stat strong{display:block;font-size:25px;font-weight:800;letter-spacing:-.03em}
-.nutrition-stat small{color:var(--muted);font-size:11.5px}
+.nutrition-stat small{color:var(--muted);font-size:12px}
 .meal-row{
   display:flex;align-items:center;justify-content:space-between;gap:12px;
   background:var(--inset);border:1px solid var(--border);
@@ -266,7 +266,7 @@ label.check input{width:22px;height:22px;margin:2px 0 0;flex-shrink:0;accent-col
 .tracker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .week-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .week-grid .nutrition-stat strong{font-size:22px}
-.week-delta{display:block;font-size:11.5px;color:var(--soft);margin-top:4px;font-variant-numeric:tabular-nums}
+.week-delta{display:block;font-size:12px;color:var(--soft);margin-top:4px;font-variant-numeric:tabular-nums}
 .trend-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 6px}
 .trend-controls .day-picker{margin:0}
 .trend-chart{width:100%;height:auto;display:block;margin-top:8px}
@@ -283,7 +283,7 @@ label.check input{width:22px;height:22px;margin:2px 0 0;flex-shrink:0;accent-col
 .kv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
 .kv{background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px}
 .kv strong{display:block;font-size:21px;font-weight:800;letter-spacing:-.02em}
-.kv small{color:var(--muted);font-size:11.5px}
+.kv small{color:var(--muted);font-size:12px}
 .phase-bar{display:flex;height:16px;border-radius:999px;overflow:hidden;margin:10px 0 6px;background:var(--inset)}
 .phase-bar span{display:block;height:100%}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--soft)}
@@ -334,7 +334,7 @@ label.check input{width:22px;height:22px;margin:2px 0 0;flex-shrink:0;accent-col
 .goal[data-goal="water"] .goal-fill{stroke:#5ab8ff}
 .goal.done .goal-fill{filter:drop-shadow(0 0 6px currentColor)}
 .goal-ring strong{font-size:19px;font-weight:800;letter-spacing:-.03em;line-height:1}
-.goal small{display:block;color:var(--muted);font-size:11.5px;line-height:1.35}
+.goal small{display:block;color:var(--muted);font-size:12px;line-height:1.35}
 .goal-actions{display:flex;flex-wrap:wrap;gap:0 6px}
 
 /* ---------- Calisthenics ---------- */
@@ -467,7 +467,7 @@ footer a{color:var(--muted);margin:0 7px}
     left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));
     transform:none;justify-content:space-around
   }
-  .bottom-nav button{min-width:0;flex:1;padding:8px 2px;font-size:10.5px}
+  .bottom-nav button{min-width:0;flex:1;padding:8px 2px;font-size:11.5px}
 }
 @media(max-width:380px){
   .score-ring{width:118px;height:118px}
@@ -484,3 +484,6 @@ footer a{color:var(--muted);margin:0 7px}
 .calc-row strong{font-variant-numeric:tabular-nums}
 .calc-info{margin-top:10px}
 .calc-info summary{cursor:pointer;color:var(--muted,inherit);font-size:14px;padding:6px 0}
+.guide-box{margin-top:16px;padding:14px;border:1px solid var(--border);border-radius:14px}
+.guide-box ul,.guide-list{margin:8px 0 12px;padding-left:18px;color:var(--soft);font-size:14px;line-height:1.5}
+.guide-box li,.guide-list li{margin:4px 0}
