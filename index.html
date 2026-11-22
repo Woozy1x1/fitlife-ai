@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=89d5e5c425">
+<link rel="stylesheet" href="css/app.css?v=264db83d3b">
 </head>
 <body>
 <div class="app">
@@ -1100,6 +1100,29 @@
     <p id="goalsMessage" class="message" role="status"></p>
   </div>
 
+  <div class="card" id="remindCard">
+    <h2>🔔 Erinnerungen</h2>
+    <p class="muted">
+      VYORA erinnert dich per Benachrichtigung – auch wenn die App
+      geschlossen ist. Wähle aus, woran und wann.
+    </p>
+    <p class="muted" id="pushStatus">Wird geprüft ...</p>
+    <button id="pushEnable" class="btn full hidden" type="button">Benachrichtigungen erlauben</button>
+    <div id="remindList"></div>
+    <button id="remindSave" class="btn full" type="button">Erinnerungen speichern</button>
+    <div class="st-actions" style="margin-top:8px">
+      <button id="pushTest" class="btn secondary hidden" type="button">Test senden</button>
+      <button id="pushOff" class="btn secondary hidden" type="button">Auf diesem Gerät aus</button>
+    </div>
+    <p class="muted small-note">
+      Benachrichtigungen laufen über den Push-Dienst deines Browsers bzw.
+      Handys (z. B. Apple oder Google). Der Inhalt ist verschlüsselt, der
+      Dienst sieht ihn nicht. Auf dem iPhone geht das nur, wenn VYORA zum
+      Home-Bildschirm hinzugefügt ist.
+    </p>
+    <p id="remindMessage" class="message" role="status"></p>
+  </div>
+
   <div class="card" id="appleCard">
     <h2>🍎 Apple Watch &amp; Apple Health</h2>
     <p class="muted">
@@ -1232,7 +1255,7 @@
 </footer>
 </div>
 
-<script type="module" src="js/app.js?v=618e18a109"></script>
+<script type="module" src="js/app.js?v=b5764d5546"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
