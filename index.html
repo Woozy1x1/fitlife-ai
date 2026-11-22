@@ -499,7 +499,8 @@ footer a{color:var(--muted);margin:0 7px}
   <div class="eyebrow">Bevor es losgeht</div>
   <h1>Deine Einwilligung</h1>
   <p class="notice hidden" id="consentUpdateNote">
-    Neu in VYORA: Blutzucker, Insulin, Tagesziele und ein Trainingsprogramm.
+    Neu in VYORA: Schlaf selbst eintragen, Apple Health, Blutzucker, Insulin,
+    Tagesziele und ein Trainingsprogramm.
     Weil dabei weitere Gesundheitsdaten gespeichert werden können, bitten
     wir dich, deine Einwilligung zu erneuern.
   </p>
@@ -512,9 +513,11 @@ footer a{color:var(--muted);margin:0 7px}
     <li><strong>Welche Daten:</strong> Mahlzeiten und Nährwerte, Trainings
       und Trainingsfortschritt, Tagesziele, Gewicht, Blutdruck, Puls,
       Blutzucker, Insulin-Einträge (Einheiten, Art, Name, KE) und Notizen,
-      die du selbst einträgst. Wenn du
+      Schlafzeiten und Notizen, die du selbst einträgst. Wenn du
       einen Oura Ring verbindest, außerdem Schlaf-, Erholungs-, Aktivitäts-,
-      Herzfrequenz- und Workout-Daten aus deinem Oura-Konto.</li>
+      Herzfrequenz- und Workout-Daten aus deinem Oura-Konto. Wenn du Apple
+      Health per Kurzbefehl verbindest, die übermittelten Tageswerte
+      (Schritte, Schlafdauer, Ruhepuls, aktive Kalorien).</li>
     <li><strong>Wozu:</strong> nur um dir diese Werte anzuzeigen und für dich
       auszuwerten. Keine Werbung, kein Verkauf, keine Weitergabe an Dritte,
       keine KI-Auswertung durch externe Anbieter.</li>
@@ -573,13 +576,13 @@ footer a{color:var(--muted);margin:0 7px}
           </svg>
           <div class="score-center">
             <strong id="mainScore">–</strong>
-            <small>Schlafscore</small>
+            <small id="scoreLabel">Schlafscore</small>
           </div>
         </div>
         <div class="score-info">
           <div class="eyebrow" id="scoreDate">Letzte Messung</div>
           <strong id="scoreRating">Noch keine Daten</strong>
-          <p>Dein zuletzt erfasster Schlafscore vom Tracker.</p>
+          <p id="scoreSource">Dein zuletzt erfasster Schlafscore vom Tracker.</p>
         </div>
       </div>
     </div>
@@ -592,8 +595,9 @@ footer a{color:var(--muted);margin:0 7px}
       </div>
       <p class="muted">
         Verbinde einen Tracker für Schlaf, Puls und Schritte. Ohne Tracker
-        kannst du alles selbst eintragen. Unterstützt: Oura Ring. Weitere
-        Geräte wie Garmin, Fitbit oder Apple Watch sind in Planung.
+        kannst du alles selbst eintragen. Direkt verbinden: Oura Ring.
+        Apple Watch: über Apple Health unter „Mehr“. Garmin und Fitbit
+        sind in Planung.
       </p>
       <button id="ouraButton" class="btn secondary hidden">
         Oura verbinden
@@ -1316,6 +1320,40 @@ footer a{color:var(--muted);margin:0 7px}
   <div class="eyebrow">Deine Schlafgesundheit</div>
   <h1>Schlaf ☾</h1>
 
+  <div class="card" id="manualSleepCard">
+    <h2>😴 Schlaf eintragen</h2>
+    <p class="muted">
+      Ohne Tracker? Trag ein, wann du ins Bett gegangen und aufgestanden
+      bist. Die Schlafdauer erscheint dann auf der Startseite.
+    </p>
+    <form id="manualSleepForm">
+      <label for="msDay">Nacht zum</label>
+      <input id="msDay" type="date" required>
+      <div class="form-grid">
+        <div>
+          <label for="msBed">Ins Bett</label>
+          <input id="msBed" type="time" value="23:00" required>
+        </div>
+        <div>
+          <label for="msWake">Aufgestanden</label>
+          <input id="msWake" type="time" value="07:00" required>
+        </div>
+      </div>
+      <label for="msQuality">Wie gut hast du geschlafen?</label>
+      <select id="msQuality">
+        <option value="">keine Angabe</option>
+        <option value="5">sehr gut</option>
+        <option value="4">gut</option>
+        <option value="3">mittel</option>
+        <option value="2">schlecht</option>
+        <option value="1">sehr schlecht</option>
+      </select>
+      <button id="msSave" class="btn full" type="submit">Schlaf speichern</button>
+    </form>
+    <p id="msMessage" class="message" role="status"></p>
+    <div id="metricsList"></div>
+  </div>
+
   <div class="card">
     <h2>☾ Schlafanalyse</h2>
     <p class="muted" id="sleepSource">
@@ -1387,6 +1425,40 @@ footer a{color:var(--muted);margin:0 7px}
     <p id="goalsMessage" class="message" role="status"></p>
   </div>
 
+  <div class="card" id="appleCard">
+    <h2>🍎 Apple Watch &amp; Apple Health</h2>
+    <p class="muted">
+      Apple erlaubt Webseiten keinen direkten Zugriff auf Apple Health.
+      Mit einem iPhone-Kurzbefehl kannst du deine Tageswerte (Schritte,
+      Schlaf, Ruhepuls, aktive Kalorien) trotzdem einmal am Tag an VYORA
+      senden. Das klappt auch mit anderen Uhren, die ihre Daten in Apple
+      Health speichern.
+    </p>
+    <p class="muted" id="appleStatus">Status wird geladen ...</p>
+    <div id="appleKeyBox" class="notice hidden">
+      <strong>Dein Import-Schlüssel</strong> (wird nur jetzt angezeigt):
+      <input id="appleKey" readonly>
+      <button id="appleCopy" class="btn secondary" type="button">Schlüssel kopieren</button>
+    </div>
+    <button id="appleCreate" class="btn full" type="button">Import-Schlüssel erstellen</button>
+    <button id="appleDelete" class="btn danger full hidden" type="button">Verbindung trennen</button>
+    <details class="cx-extra">
+      <summary>Anleitung: Kurzbefehl einrichten</summary>
+      <ol class="consent-list">
+        <li>Öffne auf dem iPhone die App <strong>Kurzbefehle</strong> → <strong>Automation</strong> → <strong>Neue Automation</strong> → <strong>Tageszeit</strong>, z. B. täglich 21:00, „Sofort ausführen“.</li>
+        <li>Füge für jeden Wert die Aktion <strong>„Health-Samples suchen“</strong> hinzu: Schritte (heute), Schlafanalyse (letzte Nacht), Ruheherzfrequenz (heute), Aktive Energie (heute). Stelle jeweils eine Zusammenfassung (Summe bzw. Durchschnitt) ein.</li>
+        <li>Füge <strong>„Wörterbuch“</strong> hinzu mit den Schlüsseln <code>steps</code>, <code>sleep_minutes</code>, <code>resting_hr</code>, <code>active_kcal</code> (Typ Zahl) und setze die Werte aus Schritt 2 ein. Zeigt das iPhone den Schlaf in Stunden, nimm statt <code>sleep_minutes</code> den Schlüssel <code>sleep_hours</code>.</li>
+        <li>Füge <strong>„Inhalte von URL abrufen“</strong> hinzu:<br>
+          URL: <code id="appleUrl"></code><br>
+          Methode: <strong>POST</strong>, Anfragetext: <strong>JSON</strong> → das Wörterbuch<br>
+          Header: <code>Authorization</code> = <code>Bearer</code>, Leerzeichen, dann dein Import-Schlüssel.</li>
+        <li>Einmal von Hand ausführen. Unter „Gesundheit → Schlaf eintragen“ siehst du danach den Eintrag „Apple Health“.</li>
+      </ol>
+      <p class="muted">Behandle den Schlüssel wie ein Passwort. Wenn er in falsche Hände gerät, trenne die Verbindung und erstelle einen neuen.</p>
+    </details>
+    <p id="appleMessage" class="message" role="status"></p>
+  </div>
+
   <div class="card hidden" id="installCard">
     <h2>📲 VYORA als App</h2>
     <p class="muted" id="installText">
@@ -1413,7 +1485,8 @@ footer a{color:var(--muted);margin:0 7px}
     <p class="muted">
       Du bekommst alle in VYORA gespeicherten Daten zu deinem Konto als
       Datei (JSON): Mahlzeiten, Trainings, Pläne, Trainingsprogramm,
-      Gesundheitswerte, Messtagebuch, Tagesziele und Einwilligungen.
+      Gesundheitswerte, Messtagebuch, Schlaf- und Tageswerte, Tagesziele
+      und Einwilligungen.
     </p>
     <button id="exportButton" class="btn secondary full" type="button">
       Daten exportieren ⬇
@@ -1727,8 +1800,13 @@ function renderSleep() {
     $("scoreDate").textContent = "Letzte Messung";
     $("scoreRating").textContent = "Noch keine Daten";
     setScoreVisual(null);
+    renderSleepFallback();
     return;
   }
+
+  $("scoreLabel").textContent = "Schlafscore";
+  $("scoreSource").textContent =
+    "Dein zuletzt erfasster Schlafscore vom Tracker.";
 
   const latest = sleepData[sleepData.length-1];
 
@@ -1960,6 +2038,301 @@ function repeatMeal(item) {
     block:"start"
   });
 }
+
+// -----------------------------------
+// Tageswerte ohne Oura: Schlaf selbst eintragen
+// und Apple Health per iPhone-Kurzbefehl
+// -----------------------------------
+
+const IMPORT_FUNCTION =
+  SUPABASE_URL + "/functions/v1/health-import";
+const SLEEP_QUALITY = {5:"sehr gut",4:"gut",3:"mittel",2:"schlecht",1:"sehr schlecht"};
+
+let metricsData = [];
+let metricsCounter = 0;
+
+function msMessage(text) { $("msMessage").textContent = text || ""; }
+function appleMessage(text) { $("appleMessage").textContent = text || ""; }
+
+function hoursText(minutes) {
+  const m = Math.round(Number(minutes)||0);
+  return Math.floor(m/60)+" h "+String(m%60).padStart(2,"0")+" min";
+}
+
+function latestSleepMetric() {
+  return metricsData
+    .filter(x => x.sleep_minutes!==null && x.sleep_minutes!==undefined)
+    .sort((a,b) => b.day.localeCompare(a.day) ||
+      (a.source==="apple_health" ? -1 : 1))[0] || null;
+}
+
+// Startseite ohne Oura: Schlafdauer statt Schlafscore.
+// Der Ring zeigt die Dauer im Verhältnis zu 8 Stunden.
+function renderSleepFallback() {
+  if(sleepData.length) return;
+  const last = latestSleepMetric();
+
+  if(!last) {
+    $("scoreLabel").textContent = "Schlafscore";
+    $("scoreSource").textContent =
+      "Verbinde einen Tracker oder trag deinen Schlaf unter „Gesundheit“ ein.";
+    return;
+  }
+
+  const hours = Number(last.sleep_minutes)/60;
+  $("mainScore").textContent =
+    (Math.round(hours*10)/10).toLocaleString("de-DE");
+  $("miniSleep").textContent = hoursText(last.sleep_minutes);
+  $("scoreLabel").textContent = "Std. Schlaf";
+  $("scoreDate").textContent = formatDate(last.day);
+  $("scoreRating").textContent = last.sleep_quality
+    ? "Gefühlt: "+SLEEP_QUALITY[last.sleep_quality]
+    : "Letzte Nacht";
+  $("scoreSource").textContent = last.source==="apple_health"
+    ? "Aus Apple Health. Der Ring zeigt die Dauer im Verhältnis zu 8 Stunden."
+    : "Selbst eingetragen. Der Ring zeigt die Dauer im Verhältnis zu 8 Stunden.";
+  setScoreVisual(Math.min(100,Number(last.sleep_minutes)/480*100));
+}
+
+function renderMetricsList() {
+  const list = $("metricsList");
+  list.replaceChildren();
+  if(!metricsData.length) return;
+
+  const head = document.createElement("div");
+  head.className = "day-head";
+  head.textContent = "Deine letzten Tage";
+  list.append(head);
+
+  metricsData.slice(0,14).forEach(m => {
+    const row = document.createElement("div");
+    row.className = "meal-row";
+    const info = document.createElement("div");
+    const title = document.createElement("strong");
+    const parts = [];
+    if(m.sleep_minutes!=null) parts.push("Schlaf "+hoursText(m.sleep_minutes));
+    if(m.steps!=null) parts.push(Number(m.steps).toLocaleString("de-DE")+" Schritte");
+    if(m.resting_hr!=null) parts.push("Ruhepuls "+m.resting_hr);
+    if(m.active_kcal!=null) parts.push(m.active_kcal+" aktive kcal");
+    title.textContent = formatDate(m.day)+" · "+(parts.join(" · ")||"–");
+    const small = document.createElement("small");
+    small.textContent = (m.source==="apple_health" ? "Apple Health" : "Selbst eingetragen")+
+      (m.sleep_quality ? " · "+SLEEP_QUALITY[m.sleep_quality] : "")+
+      (m.bedtime && m.waketime ? " · "+clock(m.bedtime)+"–"+clock(m.waketime) : "");
+    info.append(title,small);
+    row.append(info,deleteButton(
+      "Tageswert löschen vom "+formatDate(m.day),
+      () => deleteMetric(m)
+    ));
+    list.append(row);
+  });
+}
+
+function applyMetrics() {
+  renderMetricsList();
+  renderSleepFallback();
+  // Schritte für die Tagesziele, wenn kein Oura-Tracker liefert
+  if(!trackerData) {
+    const today = metricsData.find(m =>
+      m.day===localDate() && m.source==="apple_health" && m.steps!=null);
+    todaySteps = today ? Number(today.steps) : null;
+    renderGoals();
+  }
+}
+
+function resetMetrics() {
+  metricsData = [];
+  ++metricsCounter;
+  $("manualSleepForm").reset();
+  $("msDay").value = localDate();
+  $("appleKeyBox").classList.add("hidden");
+  $("appleKey").value = "";
+  msMessage("");
+  appleMessage("");
+  renderMetricsList();
+}
+
+async function loadMetrics() {
+  if(!currentUserId) return;
+  const requestId = ++metricsCounter;
+  const userId = currentUserId;
+  const since = new Date();
+  since.setDate(since.getDate()-30);
+
+  const {data,error} = await supabase
+    .from("daily_metrics")
+    .select("day,source,sleep_minutes,sleep_quality,bedtime,waketime,steps,resting_hr,active_kcal")
+    .eq("user_id",userId)
+    .gte("day",dayString(since))
+    .order("day",{ascending:false})
+    .limit(120);
+
+  if(requestId!==metricsCounter || userId!==currentUserId) return;
+  if(error) {
+    msMessage("Tageswerte konnten nicht geladen werden: "+error.message);
+    return;
+  }
+  metricsData = data||[];
+  applyMetrics();
+}
+
+async function deleteMetric(m) {
+  if(!confirm("Diesen Tageswert wirklich löschen?")) return;
+  const {error} = await supabase
+    .from("daily_metrics")
+    .delete()
+    .eq("user_id",currentUserId)
+    .eq("day",m.day)
+    .eq("source",m.source);
+  if(error) {
+    msMessage("Löschen fehlgeschlagen: "+error.message);
+    return;
+  }
+  await loadMetrics();
+  msMessage("Eintrag gelöscht.");
+}
+
+$("manualSleepForm").addEventListener("submit",async event => {
+  event.preventDefault();
+  if(!currentUserId) return;
+  const button = $("msSave");
+  button.disabled = true;
+
+  try {
+    const day = $("msDay").value;
+    if(!day) throw new Error("Bitte das Datum wählen.");
+    if(day>localDate()) throw new Error("Das Datum liegt in der Zukunft.");
+
+    // Aufstehen am gewählten Tag; ins Bett am Vortag,
+    // wenn die Bettzeit später als die Aufstehzeit ist.
+    const wake = new Date(day+"T"+$("msWake").value);
+    let bed = new Date(day+"T"+$("msBed").value);
+    if(bed>=wake) bed = new Date(bed.getTime()-24*3600*1000);
+    const minutes = Math.round((wake-bed)/60000);
+    if(!Number.isFinite(minutes) || minutes<30 || minutes>1080) {
+      throw new Error("Bitte prüfe die Uhrzeiten (zwischen 30 Minuten und 18 Stunden).");
+    }
+
+    const quality = $("msQuality").value;
+    const {error} = await supabase
+      .from("daily_metrics")
+      .upsert({
+        user_id:currentUserId,
+        day,
+        source:"manual",
+        sleep_minutes:minutes,
+        sleep_quality:quality ? Number(quality) : null,
+        bedtime:bed.toISOString(),
+        waketime:wake.toISOString(),
+        updated_at:new Date().toISOString()
+      },{onConflict:"user_id,day,source"});
+    if(error) throw error;
+
+    await loadMetrics();
+    msMessage("✓ Schlaf gespeichert: "+hoursText(minutes)+".");
+  } catch(error) {
+    msMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+// --- Apple Health: persönlicher Import-Schlüssel ---
+
+async function sha256Hex(text) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",new TextEncoder().encode(text));
+  return [...new Uint8Array(digest)]
+    .map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function newImportKey() {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  const b64 = btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  return "vy_"+b64;
+}
+
+async function loadAppleStatus() {
+  if(!currentUserId) return;
+  $("appleUrl").textContent = IMPORT_FUNCTION;
+  const {data,error} = await supabase
+    .from("import_tokens")
+    .select("created_at,last_used_at")
+    .eq("user_id",currentUserId)
+    .maybeSingle();
+
+  if(error) {
+    $("appleStatus").textContent = "Status konnte nicht geladen werden.";
+    return;
+  }
+  const has = !!data;
+  $("appleCreate").textContent = has
+    ? "Neuen Schlüssel erstellen (alter wird ungültig)"
+    : "Import-Schlüssel erstellen";
+  $("appleDelete").classList.toggle("hidden",!has);
+  $("appleStatus").textContent = !has
+    ? "Noch nicht verbunden."
+    : data.last_used_at
+      ? "✓ Verbunden · letzte Übertragung "+
+        new Date(data.last_used_at).toLocaleString("de-DE")
+      : "Schlüssel erstellt am "+new Date(data.created_at).toLocaleDateString("de-DE")+
+        " · noch keine Übertragung";
+}
+
+$("appleCreate").addEventListener("click",async () => {
+  if(!currentUserId) return;
+  const key = newImportKey();
+  const button = $("appleCreate");
+  button.disabled = true;
+  try {
+    const {error} = await supabase
+      .from("import_tokens")
+      .upsert({
+        user_id:currentUserId,
+        token_hash:await sha256Hex(key),
+        created_at:new Date().toISOString(),
+        last_used_at:null
+      },{onConflict:"user_id"});
+    if(error) throw error;
+    $("appleKey").value = key;
+    $("appleKeyBox").classList.remove("hidden");
+    appleMessage("✓ Schlüssel erstellt. Kopiere ihn jetzt in deinen Kurzbefehl – er wird später nicht mehr angezeigt.");
+    await loadAppleStatus();
+  } catch(error) {
+    appleMessage("Erstellen fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("appleCopy").addEventListener("click",async () => {
+  try {
+    await navigator.clipboard.writeText($("appleKey").value);
+    appleMessage("✓ Kopiert.");
+  } catch(_error) {
+    $("appleKey").select();
+    appleMessage("Bitte den markierten Schlüssel selbst kopieren.");
+  }
+});
+
+$("appleDelete").addEventListener("click",async () => {
+  if(!confirm("Verbindung zu Apple Health trennen? Der Kurzbefehl funktioniert danach nicht mehr. Bereits übertragene Werte bleiben, bis du sie löschst.")) return;
+  const {error} = await supabase
+    .from("import_tokens")
+    .delete()
+    .eq("user_id",currentUserId);
+  if(error) {
+    appleMessage("Trennen fehlgeschlagen: "+error.message);
+    return;
+  }
+  $("appleKeyBox").classList.add("hidden");
+  $("appleKey").value = "";
+  appleMessage("Verbindung getrennt.");
+  await loadAppleStatus();
+});
+
+$("msDay").value = localDate();
 
 // -----------------------------------
 // Tages-Checkliste & Messtagebuch
@@ -5283,7 +5656,7 @@ setupSocialLogin();
 
 // Bei inhaltlichen Änderungen des Einwilligungstextes die Version
 // erhöhen – dann wird die Einwilligung erneut abgefragt.
-const CONSENT_VERSION = "2026-11-21.2";
+const CONSENT_VERSION = "2026-11-22";
 
 let consentConfirmedFor = null;
 let consentInfo = null;
@@ -5392,6 +5765,8 @@ $("exportButton").addEventListener("click",async () => {
       ["tagesziele","user_goals"],
       ["trainingsprogramm","training_program"],
       ["messtagebuch","measurements"],
+      ["tageswerte","daily_metrics"],
+      ["import_schluessel","import_tokens"],
       ["gesundheitswerte","health_entries"],
       ["einwilligungen","user_consents"],
       ["oura_verbindung","oura_connections"]
@@ -5597,6 +5972,7 @@ async function refreshUI() {
     userGoals = {kcal:null,protein_g:null,steps:null};
     resetProgram();
     resetMeasurements();
+    resetMetrics();
     fillGoalsForm();
     renderGoals();
     renderFrequentFoods([]);
@@ -5650,6 +6026,8 @@ async function refreshUI() {
   );
 
   if(changed) {
+    loadMetrics();
+    loadAppleStatus();
     loadGoals();
     loadProgram();
     loadMeasurements();
