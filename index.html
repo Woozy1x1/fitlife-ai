@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=1da9c0b097">
+<link rel="stylesheet" href="css/app.css?v=1dc93f5dfe">
 </head>
 <body>
 <div class="app">
@@ -213,6 +213,30 @@
     </div>
   </div>
 
+  <div class="card" id="weekCard">
+    <h2>📅 Deine Woche</h2>
+    <p class="muted">Die letzten 7 Tage im Vergleich zu den 7 Tagen davor.</p>
+    <div class="week-grid">
+      <div class="nutrition-stat">
+        <strong id="wkSleep">–</strong><small id="wkSleepLabel">Ø Schlaf</small>
+        <span class="week-delta" id="wkSleepDelta"></span>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="wkTrain">–</strong><small>Trainingstage</small>
+        <span class="week-delta" id="wkTrainDelta"></span>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="wkKcal">–</strong><small>Ø kcal pro Tag</small>
+        <span class="week-delta" id="wkKcalDelta"></span>
+      </div>
+      <div class="nutrition-stat">
+        <strong id="wkSteps">–</strong><small>Ø Schritte</small>
+        <span class="week-delta" id="wkStepsDelta"></span>
+      </div>
+    </div>
+    <p class="muted small-note" id="wkNote">Kalorien: Durchschnitt der Tage, an denen du etwas eingetragen hast.</p>
+  </div>
+
   <div class="card hidden" id="trackerCard">
     <div class="eyebrow" id="trackerCardSource">Von deinem Tracker</div>
     <h2 id="trackerCardTitle">⌚ Heute auf einen Blick</h2>
@@ -272,6 +296,21 @@
         </div>
         <small id="goalStepsText">Schritte</small>
       </div>
+      <div class="goal" data-goal="water">
+        <div class="goal-ring">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <circle class="goal-track" cx="32" cy="32" r="27"/>
+            <circle class="goal-fill" id="goalWaterFill" cx="32" cy="32" r="27"/>
+          </svg>
+          <strong id="goalWaterValue">0</strong>
+        </div>
+        <small id="goalWaterText">Gläser Wasser</small>
+      </div>
+      </div>
+      <div class="water-row">
+        <button id="waterMinus" type="button" aria-label="Ein Glas Wasser weniger">−</button>
+        <span id="waterInfo" aria-live="polite">💧 0 Gläser · 0,0 l</span>
+        <button id="waterPlus" class="plus" type="button" aria-label="Ein Glas Wasser getrunken">+</button>
       </div>
       <p id="homeNutritionInfo" class="muted">
         Noch keine Mahlzeiten eingetragen.
@@ -845,6 +884,22 @@
     </p>
   </div>
 
+  <div class="card" id="trendCard">
+    <h2>📈 Verläufe</h2>
+    <div class="day-picker" id="trendPick" role="radiogroup" aria-label="Wert für den Verlauf"></div>
+    <div class="trend-controls">
+      <div class="day-picker" id="trendRange" role="radiogroup" aria-label="Zeitraum"></div>
+    </div>
+    <figure style="margin:0">
+      <div id="trendBox"></div>
+      <figcaption class="muted" id="trendInfo"></figcaption>
+    </figure>
+    <p class="muted small-note">
+      Die Verläufe zeigen nur deine eingetragenen Werte. VYORA bewertet sie
+      nicht – besprich Auffälligkeiten mit deiner Ärztin oder deinem Arzt.
+    </p>
+  </div>
+
   <div class="card">
     <h2>Dein Messtagebuch</h2>
     <p class="muted">Letzte 7 Tage</p>
@@ -1030,6 +1085,9 @@
             min="1000" max="50000" step="100" placeholder="z. B. 8000">
         </div>
       </div>
+      <label for="goalWaterInput">Wasser (Gläser à 250 ml)</label>
+      <input id="goalWaterInput" type="number" inputmode="numeric"
+        min="1" max="20" step="1" placeholder="z. B. 8 (= 2 Liter)">
       <button id="saveGoals" class="btn full" type="submit">
         Ziele speichern
       </button>
@@ -1173,6 +1231,18 @@
 </footer>
 </div>
 
-<script type="module" src="js/app.js?v=d392ce5c4c"></script>
+<script type="module" src="js/app.js?v=9fdd4702f7"></script>
+<dialog id="tourDialog" aria-labelledby="tourTitle">
+  <div class="tour-body">
+    <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
+    <h2 id="tourTitle"></h2>
+    <p id="tourText"></p>
+    <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+    <div class="tour-actions">
+      <button id="tourSkip" class="btn secondary" type="button">Überspringen</button>
+      <button id="tourNext" class="btn" type="button">Weiter</button>
+    </div>
+  </div>
+</dialog>
 </body>
 </html>
