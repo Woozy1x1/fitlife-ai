@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=264db83d3b">
+<link rel="stylesheet" href="css/app.css?v=482b5fecd0">
 </head>
 <body>
 <div class="app">
@@ -1064,6 +1064,83 @@
     </p>
   </div>
 
+  <div class="card" id="calcCard">
+    <h2>🧮 Bedarf automatisch berechnen</h2>
+    <p class="muted">
+      VYORA schätzt aus deinen Angaben, wie viele Kalorien und wie viel
+      Eiweiß zu deinem Ziel passen. Wenn du ein neues Gewicht einträgst,
+      rechnet die App von selbst neu.
+    </p>
+    <form id="calcForm">
+      <div class="form-grid">
+        <div>
+          <label for="calcSex">Formel für</label>
+          <select id="calcSex" required>
+            <option value="">Bitte wählen</option>
+            <option value="m">Mann</option>
+            <option value="f">Frau</option>
+            <option value="x">Mittelwert beider</option>
+          </select>
+        </div>
+        <div>
+          <label for="calcBirthYear">Geburtsjahr</label>
+          <input id="calcBirthYear" type="number" inputmode="numeric"
+            min="1900" max="2010" step="1" placeholder="z. B. 1998" required>
+        </div>
+        <div>
+          <label for="calcHeight">Größe (cm)</label>
+          <input id="calcHeight" type="number" inputmode="numeric"
+            min="120" max="230" step="1" placeholder="z. B. 178" required>
+        </div>
+        <div>
+          <label for="calcWeight">Gewicht (kg)</label>
+          <input id="calcWeight" type="number" inputmode="decimal"
+            min="30" max="300" step="0.1" placeholder="z. B. 75" required>
+        </div>
+      </div>
+      <label for="calcPal">Wie aktiv bist du im Alltag?</label>
+      <select id="calcPal" required>
+        <option value="1.4">Überwiegend sitzend (Büro, Schule) – wenig Sport</option>
+        <option value="1.6">Sitzend, aber 2–3× pro Woche Sport</option>
+        <option value="1.7">Sitzend, aber 4–5× pro Woche Sport</option>
+        <option value="1.8">Viel stehend oder gehend (z. B. Pflege, Verkauf)</option>
+        <option value="2.0">Stehend/gehend und regelmäßig Sport</option>
+        <option value="2.2">Körperlich schwere Arbeit</option>
+      </select>
+      <label for="calcGoal">Dein Ziel</label>
+      <select id="calcGoal" required>
+        <option value="keep">Gewicht halten</option>
+        <option value="lose">Abnehmen (ca. 0,5 kg/Woche)</option>
+        <option value="gain">Muskeln aufbauen (+10 %)</option>
+      </select>
+      <button id="calcSave" class="btn full" type="submit">
+        Berechnen und als Ziel übernehmen
+      </button>
+    </form>
+    <div id="calcResult" class="calc-result hidden" aria-live="polite"></div>
+    <p id="calcMessage" class="message" role="status"></p>
+    <details class="calc-info">
+      <summary>Wie wird gerechnet?</summary>
+      <p class="muted">
+        Grundumsatz nach Mifflin-St Jeor – in Studienvergleichen die
+        Formel, die bei den meisten Menschen auf ±10 % an den gemessenen
+        Wert herankommt. Mal deinem Aktivitätsfaktor (PAL nach den
+        Referenzwerten der DGE) ergibt das deinen Tagesbedarf. Abnehmen:
+        bis zu 500 kcal weniger, nie unter deinem Grundumsatz.
+        Aufbauen: rund 10 % mehr. Eiweiß: 1,6 g pro kg Körpergewicht –
+        mehr bringt laut Meta-Analyse keinen zusätzlichen Muskelaufbau
+        (bei starkem Übergewicht bezogen auf ein Normalgewicht).
+      </p>
+      <p class="muted">
+        Das ist eine Schätzung, keine medizinische Empfehlung. Prüf nach
+        2–3 Wochen deinen Gewichtsverlauf und pass das Ziel an. Nicht
+        geeignet in Schwangerschaft und Stillzeit, unter 18 Jahren oder
+        bei Erkrankungen – dann bitte ärztlich oder mit einer
+        Ernährungsfachkraft klären.
+      </p>
+    </details>
+  </div>
+
   <div class="card" id="goalsCard">
     <h2>🎯 Deine Tagesziele</h2>
     <p class="muted">
@@ -1255,7 +1332,7 @@
 </footer>
 </div>
 
-<script type="module" src="js/app.js?v=b5764d5546"></script>
+<script type="module" src="js/app.js?v=66c46df7d4"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
