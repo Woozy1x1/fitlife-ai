@@ -394,6 +394,7 @@ details.cx-extra ul{margin:0;padding:0 14px 14px 32px;color:var(--soft);font-siz
 .chip small{color:var(--muted);font-weight:500;margin-left:6px}
 .chip:active{transform:scale(.97)}
 .logout-wrap{text-align:center;margin:25px 0}
+.link-btn{display:block;margin:8px auto 0;background:none;border:0;color:var(--sun);font-size:13.5px;text-decoration:underline;padding:6px}
 footer{text-align:center;margin:35px 0;font-size:12px}
 footer a{color:var(--muted);margin:0 7px}
 
@@ -443,6 +444,19 @@ footer a{color:var(--muted);margin:0 7px}
   <div class="avatar hidden" id="avatar">V</div>
 </header>
 
+<section id="resetCard" class="card auth hidden">
+  <h1>Neues Passwort</h1>
+  <p class="muted">Wähle ein neues Passwort für dein VYORA-Konto (mindestens 8 Zeichen).</p>
+  <form id="resetForm">
+    <input id="newPassword" type="password" placeholder="Neues Passwort"
+      autocomplete="new-password" minlength="8" required>
+    <input id="newPassword2" type="password" placeholder="Neues Passwort wiederholen"
+      autocomplete="new-password" minlength="8" required>
+    <button id="resetSave" class="btn full" type="submit">Passwort speichern</button>
+  </form>
+  <p id="resetMessage" class="message" role="status"></p>
+</section>
+
 <section id="authCard" class="card auth hidden">
   <div class="eyebrow">Willkommen zurück</div>
   <h1>Deine Gesundheit.<br>Dein Überblick.</h1>
@@ -456,6 +470,9 @@ footer a{color:var(--muted);margin:0 7px}
   </form>
   <button id="registerButton" class="btn secondary full">
     Neues Konto erstellen
+  </button>
+  <button id="forgotButton" class="link-btn" type="button">
+    Passwort vergessen?
   </button>
 
   <p class="muted small-note">
@@ -5814,8 +5831,57 @@ $("greeting").textContent =
   hour<18 ? "Tag" :
   "Abend";
 
-supabase.auth.onAuthStateChange(() => {
+supabase.auth.onAuthStateChange(event => {
+  // Link aus der "Passwort vergessen"-E-Mail geöffnet
+  if(event==="PASSWORD_RECOVERY") {
+    $("resetCard").classList.remove("hidden");
+    window.scrollTo({top:0});
+  }
   setTimeout(refreshUI,0);
+});
+
+// -----------------------------------
+// Passwort vergessen / neues Passwort
+// -----------------------------------
+
+$("forgotButton").addEventListener("click",async () => {
+  const email = $("email").value.trim();
+  if(!email) {
+    message("Bitte zuerst deine E-Mail-Adresse oben eintragen.");
+    $("email").focus();
+    return;
+  }
+
+  $("forgotButton").disabled = true;
+  const {error} = await supabase.auth.resetPasswordForEmail(email,{
+    redirectTo:APP_URL
+  });
+  $("forgotButton").disabled = false;
+
+  // Aus Datenschutzgründen nicht verraten, ob es das Konto gibt.
+  message(error && error.status===429
+    ? "Zu viele Anfragen. Bitte warte ein paar Minuten."
+    : "Falls ein Konto mit dieser E-Mail existiert, haben wir dir einen Link zum Zurücksetzen geschickt. Schau auch im Spam-Ordner nach.");
+});
+
+$("resetForm").addEventListener("submit",async event => {
+  event.preventDefault();
+  const pw = $("newPassword").value;
+  const msg = text => { $("resetMessage").textContent = text; };
+
+  if(pw.length<8) return msg("Bitte mindestens 8 Zeichen verwenden.");
+  if(pw!==$("newPassword2").value) return msg("Die Passwörter stimmen nicht überein.");
+
+  $("resetSave").disabled = true;
+  const {error} = await supabase.auth.updateUser({password:pw});
+  $("resetSave").disabled = false;
+
+  if(error) return msg("Speichern fehlgeschlagen: "+error.message);
+
+  $("resetForm").reset();
+  msg("");
+  $("resetCard").classList.add("hidden");
+  message("✓ Neues Passwort gespeichert.");
 });
 
 refreshUI();
