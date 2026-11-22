@@ -603,7 +603,7 @@ footer a{color:var(--muted);margin:0 7px}
     </div>
 
     <div class="card">
-      <h2>⌚ Dein Tracker</h2>
+      <h2 id="trackerTitle">⌚ Dein Tracker</h2>
       <div class="status-row">
         <div id="ouraDot" class="dot"></div>
         <span id="ouraStatus">Verbindung wird geprüft ...</span>
@@ -629,7 +629,7 @@ footer a{color:var(--muted);margin:0 7px}
       <div class="stat-icon">☾</div>
       <small>Schlaf</small>
       <strong id="miniSleep">–</strong>
-      <small>vom Tracker</small>
+      <small id="miniSleepSrc">vom Tracker</small>
     </div>
     <div class="card stat">
       <div class="stat-icon">♡</div>
@@ -647,7 +647,7 @@ footer a{color:var(--muted);margin:0 7px}
 
   <div class="card hidden" id="trackerCard">
     <div class="eyebrow" id="trackerCardSource">Von deinem Tracker</div>
-    <h2>⌚ Heute auf einen Blick</h2>
+    <h2 id="trackerCardTitle">⌚ Heute auf einen Blick</h2>
     <div class="tracker-grid">
       <div class="nutrition-stat">
         <strong id="trkHr">–</strong><small id="trkHrInfo">Aktuelle HF</small>
@@ -1102,7 +1102,7 @@ footer a{color:var(--muted);margin:0 7px}
   </div>
 
   <div class="card hidden" id="trackerWorkoutCard">
-    <h2>⌚ Vom Tracker erkannte Workouts</h2>
+    <h2 id="trackerWorkoutTitle">⌚ Vom Tracker erkannte Workouts</h2>
     <p class="muted" id="trackerWorkoutSource"></p>
     <div id="trackerWorkouts"></div>
   </div>
@@ -1636,6 +1636,45 @@ let sleepData = [];
 let nutritionData = [];
 let loadingSleep = false;
 let ouraConnected = false;
+let appleConnected = false;
+
+// Symbol und Name passend zum verbundenen Gerät:
+// Oura Ring 💍, Apple Watch ⌚, beide, oder noch keins.
+function trackerIdentity() {
+  if(ouraConnected && appleConnected) {
+    return {icon:"💍⌚",title:"Deine Tracker",name:"Oura Ring",short:"vom Oura Ring"};
+  }
+  if(ouraConnected) {
+    return {icon:"💍",title:"Dein Oura Ring",name:"Oura Ring",short:"vom Oura Ring"};
+  }
+  if(appleConnected) {
+    return {icon:"⌚",title:"Deine Apple Watch",name:"Apple Watch",short:"aus Apple Health"};
+  }
+  return {icon:"🔗",title:"Tracker verbinden",name:"Tracker",short:"vom Tracker"};
+}
+
+function renderTrackerIdentity() {
+  const t = trackerIdentity();
+  $("trackerTitle").textContent = t.icon+" "+t.title;
+  $("trackerCardTitle").textContent = (ouraConnected ? "💍" : t.icon)+" Heute auf einen Blick";
+  $("trackerWorkoutTitle").textContent = (ouraConnected ? "💍 Vom Oura Ring" : t.icon+" Vom Tracker")+" erkannte Workouts";
+
+  // Woher kommt der Schlafwert auf der Startseite?
+  const manualOnly = !ouraConnected && typeof latestSleepMetric==="function" &&
+    latestSleepMetric()?.source==="manual";
+  $("miniSleepSrc").textContent = sleepData.length
+    ? "vom Oura Ring"
+    : manualOnly ? "selbst eingetragen" : t.short;
+
+  if(!ouraConnected) {
+    $("ouraDot").classList.toggle("connected",appleConnected);
+    $("ouraStatus").textContent = appleConnected
+      ? "✓ Apple Health verbunden (per Kurzbefehl)"
+      : "Noch kein Tracker verbunden";
+  } else if(appleConnected) {
+    $("ouraStatus").textContent = "✓ Oura Ring und Apple Health verbunden";
+  }
+}
 let lastTrackerLoad = 0;
 let selectedFood = null;
 let foodSearchCounter = 0;
@@ -1738,6 +1777,7 @@ function setConnected(connected) {
     "hidden",
     !connected
   );
+  renderTrackerIdentity();
 }
 
 async function authenticatedRequest(action) {
@@ -1857,7 +1897,8 @@ function renderSleep() {
 
   $("scoreLabel").textContent = "Schlafscore";
   $("scoreSource").textContent =
-    "Dein zuletzt erfasster Schlafscore vom Tracker.";
+    "Dein zuletzt erfasster Schlafscore vom Oura Ring.";
+  renderTrackerIdentity();
 
   const latest = sleepData[sleepData.length-1];
 
@@ -2184,6 +2225,7 @@ function renderMetricsList() {
 function applyMetrics() {
   renderMetricsList();
   renderSleepFallback();
+  renderTrackerIdentity();
   // Schritte für die Tagesziele, wenn kein Oura-Tracker liefert
   if(!trackerData) {
     const today = metricsData.find(m =>
@@ -2195,6 +2237,9 @@ function applyMetrics() {
 
 function resetMetrics() {
   metricsData = [];
+  appleConnected = false;
+  ouraConnected = false;
+  renderTrackerIdentity();
   ++metricsCounter;
   $("manualSleepForm").reset();
   $("msDay").value = localDate();
@@ -2320,6 +2365,8 @@ async function loadAppleStatus() {
     return;
   }
   const has = !!data;
+  appleConnected = has;
+  renderTrackerIdentity();
   $("appleCreate").textContent = has
     ? "Neuen Schlüssel erstellen (alter wird ungültig)"
     : "Import-Schlüssel erstellen";
