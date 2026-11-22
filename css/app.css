@@ -477,3 +477,10 @@ footer a{color:var(--muted);margin:0 7px}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+.calc-result{margin-top:14px;padding:12px 14px;border:1px solid var(--border);border-radius:14px}
+.calc-result.hidden{display:none}
+.calc-row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--border)}
+.calc-row:last-of-type{border-bottom:0}
+.calc-row strong{font-variant-numeric:tabular-nums}
+.calc-info{margin-top:10px}
+.calc-info summary{cursor:pointer;color:var(--muted,inherit);font-size:14px;padding:6px 0}
