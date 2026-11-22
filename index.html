@@ -3,242 +3,430 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#080d17">
+<meta name="theme-color" content="#100d26">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VYORA">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
 <style>
+/* ===================================================
+   VYORA AI – Design "Morgendämmerung"
+   Idee: Erholung ist wie ein Sonnenaufgang. Je besser
+   du geschlafen hast, desto höher steht die Sonne.
+   =================================================== */
+@font-face{
+  font-family:"Bricolage";
+  src:url("./vendor/fonts/bricolage-grotesque-latin-wght-normal.woff2") format("woff2-variations"),
+      url("./vendor/fonts/bricolage-grotesque-latin-wght-normal.woff2") format("woff2");
+  font-weight:200 800;font-style:normal;font-display:swap
+}
 :root{
-  --bg:#080d17;--card:#142033;--border:#293a52;
-  --text:#f5f8fc;--muted:#9aacc2;--green:#70efbd;
+  /* Nacht */
+  --bg:#100d26;--bg-deep:#0b0920;
+  --card:#1a1636;--card-2:#211c44;--inset:#14112d;
+  --border:#2e2856;--border-strong:#433b78;
+  /* Licht */
+  --text:#f3f0ff;--muted:#a6a0c8;--soft:#cfc9ea;
+  /* Morgen (Hauptakzent) */
+  --sun:#ffb866;--sun-2:#ff8a6b;--sun-ink:#2a1405;
+  /* Bedeutungsfarben */
+  --green:#7ce8d4;--green-bg:#173b3c;
+  --pulse:#ff6f91;--danger-bg:#4a1d33;
+  --warn:#ffd27a;
+  --radius-xl:30px;--radius:22px;--radius-sm:14px;
+  --font:"Bricolage",ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark
 }
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
 body{
   margin:0;min-height:100vh;color:var(--text);
-  font-family:system-ui,-apple-system,sans-serif;
-  background:radial-gradient(circle at top,#193343,transparent 420px),var(--bg)
+  font-family:var(--font);font-size:15px;
+  font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(120% 60% at 50% -10%,#2a1f5c 0%,transparent 60%),
+    radial-gradient(80% 40% at 100% 0%,#3b1f4a55 0%,transparent 70%),
+    var(--bg);
+  background-attachment:fixed
 }
-button,input,select{font:inherit}
+button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
-button:disabled{opacity:.55;cursor:wait}
+button:disabled{opacity:.5;cursor:wait}
+:focus-visible{outline:2px solid var(--sun);outline-offset:3px;border-radius:10px}
 .hidden{display:none!important}
-.app{max-width:1050px;margin:auto;padding:20px 16px 115px}
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.app{max-width:1060px;margin:auto;padding:max(18px,env(safe-area-inset-top)) 16px 120px}
+
+/* ---------- Kopfzeile ---------- */
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
 .logo{display:flex;align-items:center;gap:12px}
 .logo-icon{
-  width:44px;height:44px;border-radius:14px;
-  background:linear-gradient(135deg,#a0ffdb,#48a9a5);
-  display:grid;place-items:center;color:#08251d;font-weight:900;font-size:25px
+  width:42px;height:42px;border-radius:50%;
+  background:radial-gradient(circle at 50% 75%,var(--sun) 0 38%,transparent 39%),
+    linear-gradient(180deg,#3a2d7a,#1c1640);
+  border:1px solid var(--border-strong);
+  color:transparent;font-size:0;
+  box-shadow:0 6px 24px -6px #ff9a6b88
 }
-.logo strong{font-size:21px;letter-spacing:2px}
-.logo strong span{color:var(--green)}
-.logo small{display:block;color:var(--muted);font-size:10px;letter-spacing:1px}
+.logo strong{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.logo strong span{
+  background:linear-gradient(90deg,var(--sun-2),var(--sun));
+  -webkit-background-clip:text;background-clip:text;color:transparent
+}
+.logo small{display:block;color:var(--muted);font-size:11px;letter-spacing:.02em;text-transform:none}
 .avatar{
-  border-radius:50%;width:42px;height:42px;
-  background:#263b50;display:grid;place-items:center;
-  color:var(--green);font-weight:bold
+  border-radius:50%;width:40px;height:40px;
+  background:var(--card-2);border:1px solid var(--border-strong);
+  display:grid;place-items:center;color:var(--sun);font-weight:800
 }
-.card{
-  background:linear-gradient(145deg,#19283d,#111b2c);
-  border:1px solid var(--border);border-radius:23px;
-  padding:22px;margin-bottom:16px
-}
-.hero{
-  background:radial-gradient(circle at top right,#286a6040,transparent 60%),
-  linear-gradient(145deg,#1b3544,#111e30)
-}
-h1{font-size:clamp(28px,5vw,40px);letter-spacing:-1px;margin:12px 0}
-h2{font-size:18px;margin:0 0 15px}
-h3{font-size:15px;margin:0 0 10px}
+
+/* ---------- Typografie ---------- */
+h1{font-size:clamp(30px,6.4vw,46px);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:6px 0 10px}
+h2{font-size:19px;line-height:1.2;letter-spacing:-.015em;font-weight:700;margin:0 0 14px}
+h3{font-size:15px;font-weight:700;margin:0 0 10px}
 p{line-height:1.55}
-.muted{color:var(--muted);font-size:13px}
-.eyebrow{
-  color:var(--muted);font-size:11px;letter-spacing:2px;
-  text-transform:uppercase;font-weight:700
+.muted{color:var(--muted);font-size:13.5px}
+.eyebrow{color:var(--muted);font-size:13px;font-weight:500;letter-spacing:0;text-transform:none}
+a{color:var(--sun)}
+
+/* ---------- Flächen ---------- */
+.card{
+  background:linear-gradient(180deg,var(--card-2),var(--card) 70%);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;margin-bottom:14px;position:relative
 }
-.grid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
-.stat{min-height:140px}
-.stat strong{display:block;font-size:27px;margin:12px 0 4px}
-.stat small{color:var(--muted);font-size:12px}
-.stat-icon{font-size:24px}
-.hero-content{display:flex;align-items:center;gap:25px;margin-top:25px}
-.score-ring{
-  width:175px;height:175px;position:relative;
-  display:grid;place-items:center;flex-shrink:0
+.view > .card,.view > .grid > .card{box-shadow:0 1px 0 #ffffff08 inset}
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}
+
+/* ---------- Startseite: Sonnenaufgang ---------- */
+.hero{
+  --score:0;
+  border-radius:var(--radius-xl);overflow:hidden;isolation:isolate;
+  border-color:#3d3470;
+  background:linear-gradient(180deg,#221a52 0%,#2c1e55 55%,#3b2250 100%);
+  padding:26px 24px 24px
 }
-.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
-.score-ring circle{fill:none;stroke-width:11}
-.ring-track{stroke:#344d56}
+/* Horizont: untere Zone der Karte etwas dunkler */
+.hero::after{
+  content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;height:34%;
+  background:linear-gradient(180deg,transparent,#110d2ae6 75%);
+  pointer-events:none
+}
+.hero h1{max-width:12ch}
+.hero-content{display:flex;align-items:center;gap:24px;margin-top:22px}
+.score-ring{width:168px;height:168px;position:relative;display:grid;place-items:center;flex-shrink:0}
+.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg);overflow:visible}
+/* Die Sonne hinter dem Ring steigt mit dem Score */
+.score-ring::before{
+  content:"";position:absolute;z-index:-1;inset:-34%;border-radius:50%;
+  background:radial-gradient(circle,#ffe6b8 0%,#ffc070 16%,#ff8a6bb0 32%,#c45cff40 50%,transparent 66%);
+  transform:translateY(calc((100 - var(--score)) * .55%));
+  opacity:calc(.35 + var(--score) / 110);
+  transition:transform 1.6s cubic-bezier(.2,.8,.2,1),opacity 1.6s
+}
+.score-ring circle{fill:none;stroke-width:10}
+.ring-track{stroke:#ffffff14}
 .ring-progress{
-  stroke:var(--green);stroke-linecap:round;
+  stroke:url(#sunGradient);stroke-linecap:round;
   stroke-dasharray:452.39;stroke-dashoffset:452.39;
-  transition:stroke-dashoffset .6s
+  filter:drop-shadow(0 0 10px #ff9a6b66);
+  transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)
 }
 .score-center{text-align:center}
-.score-center strong{display:block;font-size:53px;line-height:1}
-.score-center small{color:var(--muted);font-size:12px}
-.score-info strong{display:block;color:var(--green);font-size:21px;margin:8px 0}
-.score-info p{color:#b9c9d8;font-size:13px}
+.score-center strong{display:block;text-shadow:0 2px 18px #2a14054d;font-size:58px;line-height:.95;font-weight:800;letter-spacing:-.05em}
+.score-center small{color:var(--soft);font-size:12px}
+.score-info .eyebrow{color:var(--soft)}
+.score-info strong{display:block;color:var(--sun);font-size:24px;font-weight:800;letter-spacing:-.02em;margin:6px 0}
+.score-info p{color:var(--soft);font-size:13px;margin:0}
+
+/* Kennzahlen */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.stat{min-height:132px;padding:18px;border-radius:var(--radius)}
+.stat strong{display:block;font-size:30px;font-weight:800;letter-spacing:-.03em;margin:10px 0 2px}
+.stat small{color:var(--muted);font-size:12px}
+.stat-icon{
+  width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-size:17px;background:var(--inset);border:1px solid var(--border)
+}
+.stats .stat:nth-child(1) .stat-icon{color:#b9a8ff}
+.stats .stat:nth-child(2) .stat-icon{color:var(--pulse)}
+.stats .stat:nth-child(3) .stat-icon{color:var(--sun)}
+
+/* ---------- Knöpfe ---------- */
 .btn{
-  border:0;border-radius:13px;padding:13px 17px;
-  background:var(--green);color:#08281e;
-  font-size:13px;font-weight:800;margin:5px 5px 5px 0
+  border:0;border-radius:999px;padding:13px 20px;
+  background:linear-gradient(90deg,var(--sun-2),var(--sun));
+  color:var(--sun-ink);font-size:14px;font-weight:700;
+  margin:5px 5px 5px 0;
+  box-shadow:0 8px 22px -10px #ff8a6bcc;
+  transition:transform .12s ease,filter .12s ease
 }
-.btn.secondary{background:#2a3c53;color:white}
+.btn:active{transform:scale(.97)}
+.btn:hover{filter:brightness(1.06)}
+.btn.secondary{background:var(--card-2);color:var(--text);border:1px solid var(--border-strong);box-shadow:none}
 .btn.full{width:100%}
-.status-row{display:flex;align-items:center;gap:10px;margin:18px 0}
-.dot{width:9px;height:9px;border-radius:50%;background:#73849a}
-.dot.connected{background:var(--green);box-shadow:0 0 12px var(--green)}
-.chart{display:flex;align-items:end;gap:10px;min-height:185px}
-.chart-column{
-  flex:1;height:185px;display:flex;flex-direction:column;
-  justify-content:end;align-items:center;gap:7px;min-width:0
-}
-.chart-value{font-size:11px}
-.chart-track{
-  height:125px;width:min(100%,44px);border-radius:9px;
-  background:#26374a;display:flex;align-items:end;overflow:hidden
-}
-.chart-bar{
-  width:100%;border-radius:9px;
-  background:linear-gradient(#7bf0bd,#319d9d)
-}
-.chart-label{font-size:10px;color:var(--muted)}
-.notice{
-  background:#1a2b3e;border:1px solid var(--border);
-  padding:15px;border-radius:14px;color:#b8c9da;
-  font-size:13px;line-height:1.6
-}
-.message{
-  color:#ffd17c;font-size:13px;
-  white-space:pre-wrap;overflow-wrap:anywhere
-}
+.btn.social{background:#f6f4ff;color:#14112d;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:none}
+.btn.danger{background:var(--danger-bg);color:#ffd3de;border:1px solid #7a2f50;box-shadow:none}
+.social-icon{font-weight:900;font-size:16px}
+/* Sanfter Knopf ("Nochmal", "Starten") */
+.soft-btn,.meal-row button.soft-btn{background:var(--green-bg);color:var(--green)}
+
+/* ---------- Status ---------- */
+.status-row{display:flex;align-items:center;gap:10px;margin:16px 0}
+.dot{width:10px;height:10px;border-radius:50%;background:#6d6795}
+.dot.connected{background:var(--green);box-shadow:0 0 0 4px #7ce8d422,0 0 14px var(--green)}
+.message{color:var(--warn);font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.notice{background:var(--inset);border:1px solid var(--border);padding:15px;border-radius:var(--radius-sm);color:var(--soft);font-size:13px;line-height:1.6}
+.pill{display:inline-block;padding:5px 10px;border-radius:30px;background:var(--green-bg);color:var(--green);font-size:12px}
+
+/* ---------- Diagramme ---------- */
+.chart{display:flex;align-items:end;gap:8px;min-height:185px}
+.chart-column{flex:1;height:185px;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:7px;min-width:0}
+.chart-value{font-size:12px;font-weight:700}
+.chart-track{height:125px;width:min(100%,40px);border-radius:999px;background:var(--inset);display:flex;align-items:end;overflow:hidden}
+.chart-bar{width:100%;border-radius:999px;background:linear-gradient(180deg,var(--sun),var(--sun-2) 60%,#9b5cff)}
+.chart-label{font-size:11px;color:var(--muted)}
+#hrChart svg{width:100%;height:150px;display:block}
+
+/* ---------- Navigation ---------- */
 .view{display:none}
-.view.active{display:block}
+.view.active{display:block;animation:viewIn .35s ease both}
+@keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .bottom-nav{
-  position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
-  display:flex;gap:4px;padding:7px;border-radius:20px;
-  background:#18273af5;backdrop-filter:blur(18px);
-  border:1px solid #34475e;z-index:10
+  position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  display:flex;gap:2px;padding:6px;border-radius:999px;
+  background:#1a1636e6;backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);
+  border:1px solid var(--border-strong);z-index:10;
+  box-shadow:0 18px 40px -14px #000c
 }
 .bottom-nav button{
-  background:none;border:0;border-radius:13px;
-  color:#a1b4cb;padding:9px 13px;min-width:74px;font-size:11px
+  background:none;border:0;border-radius:999px;color:var(--muted);
+  padding:8px 14px;min-width:72px;font-size:11px;font-weight:600;position:relative
 }
-.bottom-nav button span{display:block;font-size:22px;margin-bottom:4px}
-.bottom-nav button.active{background:#29473f;color:var(--green)}
-.auth{max-width:440px;margin:60px auto}
+.bottom-nav button span{display:block;font-size:21px;margin-bottom:3px;filter:grayscale(.4);transition:transform .2s}
+.bottom-nav button.active{color:var(--text);background:#ffffff0d}
+.bottom-nav button.active span{filter:none;transform:translateY(-1px)}
+.bottom-nav button.active::after{
+  content:"";position:absolute;left:50%;bottom:3px;width:5px;height:5px;margin-left:-2.5px;
+  border-radius:50%;background:var(--sun);box-shadow:0 0 8px var(--sun)
+}
+
+/* ---------- Formulare ---------- */
+.auth{max-width:440px;margin:48px auto}
+#authCard{border-radius:var(--radius-xl);padding:30px 24px}
+#authCard h1{font-size:clamp(34px,8vw,48px)}
 input,select{
-  width:100%;padding:14px;margin:7px 0 13px;
-  background:#0b1624;border:1px solid #40516a;
-  color:white;border-radius:12px
+  width:100%;padding:14px 15px;margin:7px 0 13px;
+  background:var(--inset);border:1px solid var(--border-strong);
+  color:var(--text);border-radius:var(--radius-sm);
+  transition:border-color .15s,box-shadow .15s
 }
-label{display:block;font-size:12px;color:var(--muted)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.nutrition-summary{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:10px
-}
-.nutrition-stat{
-  background:#1d3045;padding:15px 9px;
-  border-radius:15px;text-align:center
-}
-.nutrition-stat strong{display:block;font-size:24px}
-.nutrition-stat small{color:var(--muted);font-size:11px}
-.meal-row{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;border:1px solid var(--border);
-  border-radius:14px;padding:13px;margin:9px 0
-}
-.meal-row strong{display:block;overflow-wrap:anywhere}
-.meal-row small{color:var(--muted);font-size:11px}
-.meal-row button{
-  border:0;background:#49303b;color:#ffb7c3;
-  padding:9px 12px;border-radius:10px
-}
-.search-result{
-  display:flex;align-items:center;gap:12px;
-  border:1px solid var(--border);
-  border-radius:14px;padding:12px;margin:8px 0;
-  background:#15263a
-}
-.search-result img{
-  width:52px;height:52px;object-fit:contain;
-  border-radius:9px;background:#fff
-}
-.search-info{flex:1;min-width:0}
-.search-info strong{display:block;font-size:13px;overflow-wrap:anywhere}
-.search-info small{color:var(--muted);font-size:11px}
-.search-result button{
-  border:0;background:#29473f;color:var(--green);
-  padding:10px;border-radius:10px;font-weight:bold
-}
-.pill{
-  display:inline-block;padding:5px 9px;
-  border-radius:30px;background:#29473f;
-  color:var(--green);font-size:11px
-}
-.nutrition-summary.three{grid-template-columns:repeat(3,1fr)}
-.meal-row .row-actions{display:flex;gap:6px;flex-shrink:0}
+input:focus,select:focus{outline:none;border-color:var(--sun);box-shadow:0 0 0 4px #ffb86622}
+input::placeholder{color:#7d76a6}
+label{display:block;font-size:13px;color:var(--muted);font-weight:500}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+label.check{display:flex;gap:12px;align-items:flex-start;color:var(--soft);font-size:14px;line-height:1.55;margin:14px 0}
+label.check input{width:22px;height:22px;margin:2px 0 0;flex-shrink:0;accent-color:var(--sun)}
+.auth.consent{max-width:620px}
+.consent-list{padding-left:20px;color:var(--soft);font-size:14px;line-height:1.6}
+.consent-list li{margin:6px 0}
+.auth a,.card a{color:var(--sun)}
+.small-note{font-size:12px;margin-top:12px}
 .or-line{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:14px 0 6px}
 .or-line::before,.or-line::after{content:"";flex:1;height:1px;background:var(--border)}
-.btn.social{background:#f5f8fc;color:#111;display:flex;align-items:center;justify-content:center;gap:9px}
-.social-icon{font-weight:900;font-size:16px}
+
+/* ---------- Ernährung & Listen ---------- */
+.nutrition-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.nutrition-summary.three{grid-template-columns:repeat(3,1fr)}
+.nutrition-stat{background:var(--inset);border:1px solid var(--border);padding:15px 9px;border-radius:var(--radius-sm);text-align:center}
+.nutrition-stat strong{display:block;font-size:25px;font-weight:800;letter-spacing:-.03em}
+.nutrition-stat small{color:var(--muted);font-size:11.5px}
+.meal-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--inset);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:13px 14px;margin:8px 0
+}
+.meal-row strong{display:block;overflow-wrap:anywhere;font-weight:700}
+.meal-row small{color:var(--muted);font-size:12px}
+.meal-row button{border:0;background:var(--danger-bg);color:#ffc2d1;padding:9px 13px;border-radius:999px;font-size:13px;font-weight:600}
+.meal-row .row-actions{display:flex;gap:6px;flex-shrink:0}
+.search-result{
+  display:flex;align-items:center;gap:12px;
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:12px 14px;margin:8px 0;background:var(--inset)
+}
+.search-result img{width:52px;height:52px;object-fit:contain;border-radius:10px;background:#fff}
+.search-info{flex:1;min-width:0}
+.search-info strong{display:block;font-size:14px;overflow-wrap:anywhere}
+.search-info small{color:var(--muted);font-size:12px}
+.search-result button{border:0;background:var(--green-bg);color:var(--green);padding:10px 14px;border-radius:999px;font-weight:700}
+.scan-box{margin:12px 0;border:1px solid var(--border-strong);border-radius:var(--radius);overflow:hidden;background:#000;position:relative}
+.scan-box video{display:block;width:100%;max-height:320px;object-fit:cover}
+.scan-frame{position:absolute;left:12%;right:12%;top:33%;bottom:33%;border:2px solid var(--sun);border-radius:14px;pointer-events:none;box-shadow:0 0 0 999px #0008}
+.barcode-row{display:flex;gap:8px;align-items:flex-end}
+.barcode-row div{flex:1}
+.barcode-row button{flex-shrink:0;margin-bottom:13px}
+
+/* ---------- Tracker & Schlaf ---------- */
 .tracker-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .kv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
-.kv{background:#1d3045;border-radius:14px;padding:12px 10px}
-.kv strong{display:block;font-size:20px}
-.kv small{color:var(--muted);font-size:11px}
-.phase-bar{display:flex;height:16px;border-radius:9px;overflow:hidden;margin:10px 0 6px;background:#26374a}
+.kv{background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px}
+.kv strong{display:block;font-size:21px;font-weight:800;letter-spacing:-.02em}
+.kv small{color:var(--muted);font-size:11.5px}
+.phase-bar{display:flex;height:16px;border-radius:999px;overflow:hidden;margin:10px 0 6px;background:var(--inset)}
 .phase-bar span{display:block;height:100%}
-.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:#b8c9da}
-.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
-.contrib{display:grid;grid-template-columns:120px 1fr 34px;align-items:center;gap:8px;font-size:12px;margin:6px 0}
-.contrib .track{height:7px;border-radius:5px;background:#26374a;overflow:hidden}
-.contrib .fill{height:100%;background:linear-gradient(90deg,#319d9d,#7bf0bd)}
-.insight{background:#1a2b3e;border-left:3px solid var(--green);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:13px;color:#cfdbe8;line-height:1.5}
-.plan-ex{color:var(--muted);font-size:11px;display:block;margin-top:3px}
-#hrChart svg{width:100%;height:150px;display:block}
-.auth.consent{max-width:620px}
-.consent-list{padding-left:20px;color:#cfdbe8;font-size:14px;line-height:1.6}
-.consent-list li{margin:6px 0}
-label.check{display:flex;gap:12px;align-items:flex-start;color:#dfe8f1;font-size:14px;line-height:1.55;margin:14px 0}
-label.check input{width:22px;height:22px;margin:2px 0 0;flex-shrink:0;accent-color:var(--green)}
-.auth a,.card a{color:var(--green)}
-.small-note{font-size:12px;margin-top:12px}
-.btn.danger{background:#7a2f3b;color:#ffe3e8}
-.section-divider{
-  height:1px;background:var(--border);margin:22px 0
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--soft)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.contrib{display:grid;grid-template-columns:120px 1fr 34px;align-items:center;gap:8px;font-size:12.5px;margin:7px 0}
+.contrib .track{height:7px;border-radius:999px;background:var(--inset);overflow:hidden}
+.contrib .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#9b5cff,var(--sun))}
+.insight{background:var(--inset);border:1px solid var(--border);border-left:3px solid var(--sun);border-radius:12px;padding:11px 13px;margin:8px 0;font-size:13.5px;color:var(--soft);line-height:1.5}
+.plan-ex{color:var(--muted);font-size:12px;display:block;margin-top:3px}
+
+.section-divider{height:1px;background:var(--border);margin:22px 0}
+
+/* ---------- Tagesziele ---------- */
+.goal-rings{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 14px}
+.goal{text-align:center;min-width:0}
+.goal-ring{position:relative;width:min(100%,96px);aspect-ratio:1;margin:0 auto 6px;display:grid;place-items:center}
+.goal-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.goal-ring circle{fill:none;stroke-width:6}
+.goal-track{stroke:var(--inset)}
+.goal-fill{stroke-linecap:round;stroke-dasharray:169.65;stroke-dashoffset:169.65;transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1)}
+.goal[data-goal="kcal"] .goal-fill{stroke:var(--sun)}
+.goal[data-goal="protein"] .goal-fill{stroke:#c08bff}
+.goal[data-goal="steps"] .goal-fill{stroke:var(--green)}
+.goal.done .goal-fill{filter:drop-shadow(0 0 6px currentColor)}
+.goal-ring strong{font-size:19px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.goal small{display:block;color:var(--muted);font-size:11.5px;line-height:1.35}
+.goal-actions{display:flex;flex-wrap:wrap;gap:0 6px}
+
+/* ---------- Calisthenics ---------- */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:4px 0 16px}
+.week-day{
+  text-align:center;padding:8px 0 7px;border-radius:12px;
+  background:var(--inset);border:1px solid var(--border);
+  font-size:12px;color:var(--muted)
 }
+.week-day b{display:block;font-size:15px;margin-top:2px;color:var(--soft);font-weight:700}
+.week-day.plan{border-color:#ffb86666;color:var(--soft)}
+.week-day.plan b{color:var(--sun)}
+.week-day.done{background:#ffb8661f;border-color:var(--sun)}
+.week-day.done b{color:var(--sun)}
+.week-day.today{box-shadow:0 0 0 2px var(--text) inset}
+.day-picker{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px}
+.day-picker label{margin:0}
+.day-picker input{position:absolute;opacity:0;width:1px;height:1px}
+.day-picker span{
+  display:inline-block;min-width:44px;text-align:center;padding:10px 0;
+  border-radius:999px;border:1px solid var(--border-strong);
+  background:var(--inset);color:var(--soft);font-weight:700;font-size:13px;cursor:pointer
+}
+.day-picker input:checked + span{background:linear-gradient(90deg,var(--sun-2),var(--sun));color:var(--sun-ink);border-color:transparent}
+.day-picker input:focus-visible + span{outline:2px solid var(--sun);outline-offset:2px}
+.cx{
+  background:var(--inset);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:14px;margin:10px 0
+}
+.cx-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.cx-head strong{display:block;font-size:16px;font-weight:700}
+.cx-pattern{color:var(--muted);font-size:12px}
+.cx-level{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.cx-level button{
+  width:32px;height:32px;border-radius:50%;border:1px solid var(--border-strong);
+  background:var(--card-2);color:var(--text);font-weight:800;padding:0
+}
+.cx-level span{font-size:12px;color:var(--soft);min-width:52px;text-align:center}
+.cx-target{font-size:22px;font-weight:800;letter-spacing:-.02em;margin:8px 0 2px;color:var(--sun)}
+.cx-how{color:var(--soft);font-size:13px;line-height:1.5;margin:4px 0 10px}
+.cx-input{display:flex;align-items:center;gap:10px}
+.cx-input label{flex:1;margin:0}
+.cx-input input{width:96px;margin:0;text-align:center;font-weight:700}
+.cx-tip{margin-top:10px;padding:10px 12px;border-radius:12px;font-size:13px;background:#7ce8d41a;color:var(--green);display:flex;gap:10px;align-items:center;justify-content:space-between}
+.cx-tip button{border:0;border-radius:999px;padding:8px 12px;font-weight:700;background:var(--green-bg);color:var(--green);flex-shrink:0}
+details.cx-extra{margin:10px 0;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--inset)}
+details.cx-extra summary{cursor:pointer;padding:13px 14px;font-weight:700;list-style:none}
+details.cx-extra summary::-webkit-details-marker{display:none}
+details.cx-extra summary::after{content:"＋";float:right;color:var(--muted)}
+details.cx-extra[open] summary::after{content:"－"}
+details.cx-extra ul{margin:0;padding:0 14px 14px 32px;color:var(--soft);font-size:13.5px;line-height:1.6}
+.rest-timer{display:flex;align-items:center;gap:10px;margin:12px 0}
+.rest-timer strong{font-size:26px;font-weight:800;min-width:70px;letter-spacing:-.02em}
+.rest-timer.running strong{color:var(--sun)}
+
+/* ---------- Tages-Checkliste & Messtagebuch ---------- */
+.check-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--inset);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 14px;margin:8px 0
+}
+.check-row.complete{border-color:#7ce8d466}
+.check-icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--card-2);font-size:17px;flex-shrink:0}
+.check-main{flex:1;min-width:0}
+.check-main strong{display:block;font-size:15px}
+.check-ticks{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;align-items:center}
+.check-count{color:var(--muted);font-size:12px;margin-left:4px}
+.tick{
+  width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  border:1.5px solid var(--border-strong);font-size:12px;font-weight:800;color:transparent
+}
+.tick.on{background:var(--green);border-color:var(--green);color:#0d2b2a}
+.check-row > button{border:0;border-radius:999px;padding:9px 14px;font-weight:700;background:var(--green-bg);color:var(--green);flex-shrink:0}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--inset);border:1px solid var(--border);border-radius:999px;margin:4px 0 14px}
+.seg button{border:0;background:none;color:var(--muted);border-radius:999px;padding:10px 4px;font-weight:700;font-size:13.5px}
+.seg button[aria-selected="true"]{background:var(--card-2);color:var(--text);box-shadow:0 0 0 1px var(--border-strong) inset}
+.day-head{margin:16px 0 4px;color:var(--soft);font-size:13px;font-weight:700}
+.measure-kind{display:inline-block;min-width:24px}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px 14px}
+.settings-grid .full-span{grid-column:1/-1}
+
+/* ---------- Oft gegessen ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  border:1px solid var(--border-strong);background:var(--inset);color:var(--text);
+  border-radius:999px;padding:9px 14px;font-size:13.5px;font-weight:600;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.chip small{color:var(--muted);font-weight:500;margin-left:6px}
+.chip:active{transform:scale(.97)}
+.logout-wrap{text-align:center;margin:25px 0}
 footer{text-align:center;margin:35px 0;font-size:12px}
 footer a{color:var(--muted);margin:0 7px}
+
+/* ---------- Mobil ---------- */
 @media(max-width:760px){
   .grid{grid-template-columns:1fr}
-  .app{padding:17px 14px 115px}
-  .hero{padding:21px}
-  .hero-content{gap:15px}
-  .score-ring{width:135px;height:135px}
-  .score-center strong{font-size:43px}
-  .score-info strong{font-size:18px}
+  .app{padding:14px 14px 118px}
+  .hero{padding:22px 20px}
+  .hero-content{gap:16px}
+  .score-ring{width:138px;height:138px}
+  .score-center strong{font-size:46px}
+  .score-info strong{font-size:20px}
   .stats{gap:8px}
-  .stat{padding:13px}
-  .stat strong{font-size:22px}
+  .stat{padding:13px;min-height:120px}
+  .stat strong{font-size:24px}
   .nutrition-summary{grid-template-columns:repeat(2,1fr)}
   .nutrition-summary.three{grid-template-columns:repeat(3,1fr)}
   .tracker-grid{grid-template-columns:repeat(2,1fr)}
   .kv-grid{grid-template-columns:repeat(2,1fr)}
   .contrib{grid-template-columns:105px 1fr 30px}
-  .bottom-nav button{font-size:10px}
   .bottom-nav{
-    bottom:0;left:0;transform:none;width:100%;
-    border-radius:20px 20px 0 0;justify-content:space-around;
-    padding-bottom:max(8px,env(safe-area-inset-bottom))
+    left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));
+    transform:none;justify-content:space-around
   }
-  .bottom-nav button{min-width:0;flex:1;padding:9px 2px}
+  .bottom-nav button{min-width:0;flex:1;padding:8px 2px;font-size:10.5px}
 }
 @media(max-width:380px){
-  .score-ring{width:115px;height:115px}
-  .score-center strong{font-size:36px}
+  .score-ring{width:118px;height:118px}
+  .score-center strong{font-size:38px}
   .form-grid{gap:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
 }
 </style>
 </head>
@@ -249,7 +437,7 @@ footer a{color:var(--muted);margin:0 7px}
     <div class="logo-icon">V</div>
     <div>
       <strong>VYORA <span>AI</span></strong>
-      <small>YOUR HEALTH, IN FOCUS</small>
+      <small>Gesundheit im Blick</small>
     </div>
   </div>
   <div class="avatar hidden" id="avatar">V</div>
@@ -293,14 +481,21 @@ footer a{color:var(--muted);margin:0 7px}
 <section id="consentCard" class="card auth consent hidden">
   <div class="eyebrow">Bevor es losgeht</div>
   <h1>Deine Einwilligung</h1>
+  <p class="notice hidden" id="consentUpdateNote">
+    Neu in VYORA: Blutzucker, Insulin, Tagesziele und ein Trainingsprogramm.
+    Weil dabei weitere Gesundheitsdaten gespeichert werden können, bitten
+    wir dich, deine Einwilligung zu erneuern.
+  </p>
   <p>
     VYORA AI ist eine Gesundheits-App. Damit sie funktioniert, verarbeiten
     wir <strong>Gesundheitsdaten</strong> von dir. Das sind besonders
     geschützte Daten, deshalb brauchen wir deine ausdrückliche Einwilligung.
   </p>
   <ul class="consent-list">
-    <li><strong>Welche Daten:</strong> Mahlzeiten und Nährwerte, Trainings,
-      Gewicht, Blutdruck, Puls und Notizen, die du selbst einträgst. Wenn du
+    <li><strong>Welche Daten:</strong> Mahlzeiten und Nährwerte, Trainings
+      und Trainingsfortschritt, Tagesziele, Gewicht, Blutdruck, Puls,
+      Blutzucker, Insulin-Einträge (Einheiten, Art, Name, KE) und Notizen,
+      die du selbst einträgst. Wenn du
       einen Oura Ring verbindest, außerdem Schlaf-, Erholungs-, Aktivitäts-,
       Herzfrequenz- und Workout-Daten aus deinem Oura-Konto.</li>
     <li><strong>Wozu:</strong> nur um dir diese Werte anzuzeigen und für dich
@@ -342,13 +537,19 @@ footer a{color:var(--muted);margin:0 7px}
 
 <section id="homeView" class="view active">
   <div class="grid">
-    <div class="card hero">
-      <div class="eyebrow">Dein Gesundheitsüberblick</div>
-      <h1>Guten <span id="greeting">Tag</span> ✨</h1>
-      <p class="muted">Deine Gesundheit auf einen Blick.</p>
+    <div class="card hero" id="heroCard">
+      <h1>Guten <span id="greeting">Tag</span></h1>
+      <p class="muted">So erholt bist du heute.</p>
       <div class="hero-content">
         <div class="score-ring">
-          <svg viewBox="0 0 180 180" width="100%" height="100%">
+          <svg viewBox="0 0 180 180" width="100%" height="100%" aria-hidden="true">
+            <defs>
+              <linearGradient id="sunGradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#9b5cff"/>
+                <stop offset=".55" stop-color="#ff8a6b"/>
+                <stop offset="1" stop-color="#ffd27a"/>
+              </linearGradient>
+            </defs>
             <circle class="ring-track" cx="90" cy="90" r="72"/>
             <circle id="scoreCircle" class="ring-progress"
               cx="90" cy="90" r="72"/>
@@ -433,18 +634,50 @@ footer a{color:var(--muted);margin:0 7px}
       <div id="homeChart" class="chart"></div>
     </div>
     <div class="card">
-      <h2>🥗 Deine Ernährung heute</h2>
-      <p class="muted">Bereits eingetragene Kalorien</p>
-      <h1>
-        <span id="homeCalories">0</span>
-        <small style="font-size:15px">kcal</small>
-      </h1>
+      <h2>🎯 Deine Tagesziele</h2>
+      <div class="goal-rings">
+      <div class="goal" data-goal="kcal">
+        <div class="goal-ring">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <circle class="goal-track" cx="32" cy="32" r="27"/>
+            <circle class="goal-fill" id="goalKcalFill" cx="32" cy="32" r="27"/>
+          </svg>
+          <strong id="homeCalories">0</strong>
+        </div>
+        <small id="goalKcalText">kcal</small>
+      </div>
+      <div class="goal" data-goal="protein">
+        <div class="goal-ring">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <circle class="goal-track" cx="32" cy="32" r="27"/>
+            <circle class="goal-fill" id="goalProteinFill" cx="32" cy="32" r="27"/>
+          </svg>
+          <strong id="goalProteinValue">0</strong>
+        </div>
+        <small id="goalProteinText">g Eiweiß</small>
+      </div>
+      <div class="goal" data-goal="steps">
+        <div class="goal-ring">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <circle class="goal-track" cx="32" cy="32" r="27"/>
+            <circle class="goal-fill" id="goalStepsFill" cx="32" cy="32" r="27"/>
+          </svg>
+          <strong id="goalStepsValue">–</strong>
+        </div>
+        <small id="goalStepsText">Schritte</small>
+      </div>
+      </div>
       <p id="homeNutritionInfo" class="muted">
         Noch keine Mahlzeiten eingetragen.
       </p>
-      <button class="btn" id="goNutrition">
-        Mahlzeit eintragen +
-      </button>
+      <div class="goal-actions">
+        <button class="btn" id="goNutrition">
+          Mahlzeit eintragen +
+        </button>
+        <button class="btn secondary" id="goGoals" type="button">
+          Ziele festlegen
+        </button>
+      </div>
     </div>
   </div>
 </section>
@@ -479,8 +712,15 @@ footer a{color:var(--muted);margin:0 7px}
     </p>
   </div>
 
+  <div class="card hidden" id="frequentCard">
+    <h2>⭐ Oft gegessen</h2>
+    <p class="muted">
+      Ein Tipp übernimmt Menge und Nährwerte vom letzten Mal.
+    </p>
+    <div id="frequentList" class="chips"></div>
+  </div>
+
   <div class="card">
-    <div class="eyebrow">Neu in VYORA AI</div>
     <h2>🔎 Lebensmittel suchen</h2>
     <p class="muted">
       Suche zum Beispiel nach Haferflocken, Skyr oder Milch.
@@ -495,16 +735,41 @@ footer a{color:var(--muted);margin:0 7px}
       </button>
     </form>
 
+    <div class="or-line">oder Barcode</div>
+
+    <button id="scanButton" class="btn secondary full" type="button">
+      📷 Barcode scannen
+    </button>
+
+    <div id="scanBox" class="scan-box hidden">
+      <video id="scanVideo" muted playsinline></video>
+      <div class="scan-frame"></div>
+    </div>
+    <button id="scanStop" class="btn secondary full hidden" type="button">
+      Scannen beenden
+    </button>
+
+    <form id="barcodeForm" class="barcode-row">
+      <div>
+        <label for="barcodeInput">Barcode eintippen</label>
+        <input id="barcodeInput" inputmode="numeric"
+          pattern="[0-9]{8,14}" maxlength="14"
+          placeholder="z. B. 4000521006303" required>
+      </div>
+      <button class="btn" type="submit">Suchen</button>
+    </form>
+
     <p id="foodSearchMessage" class="message" role="status"></p>
     <div id="foodSearchResults"></div>
 
     <p class="muted">
       Datenquelle: Open Food Facts. Die Angaben stammen teilweise
       von Nutzern und können unvollständig oder fehlerhaft sein.
-      Beim Suchen werden dein Suchbegriff und deine IP-Adresse an
-      Open Food Facts (Frankreich) übertragen, Produktbilder werden
-      von dort geladen. Es werden keine Gesundheits- oder Kontodaten
-      gesendet.
+      Suchbegriffe und Barcodes werden über unseren eigenen Server
+      (Supabase, EU) an Open Food Facts weitergegeben – deine
+      IP-Adresse und dein Konto bleiben dort unbekannt. Das Kamerabild
+      wird nur auf deinem Gerät ausgewertet und weder gespeichert
+      noch hochgeladen.
     </p>
   </div>
 
@@ -588,6 +853,103 @@ footer a{color:var(--muted);margin:0 7px}
   <p class="muted">
     Übungen mit Sätzen, Wiederholungen und Gewicht eintragen.
   </p>
+
+  <div class="card" id="caliCard">
+    <h2>🤸 Calisthenics-Programm</h2>
+
+    <!-- Einrichtung -->
+    <div id="caliSetup">
+      <p class="muted">
+        Training mit dem eigenen Körpergewicht – ohne Studio. Jede Übung hat
+        Stufen von leicht bis schwer. Du startest auf deiner Stufe und
+        steigst auf, sobald du das Ziel sicher schaffst. Kein Springen,
+        gelenkschonend für den Einstieg.
+      </p>
+      <h3>An welchen Tagen willst du trainieren?</h3>
+      <p class="muted">Empfehlung: 3 Tage mit je einem Tag Pause dazwischen.</p>
+      <div class="day-picker" id="caliDays"></div>
+      <label for="caliStart">Dein Startniveau</label>
+      <select id="caliStart">
+        <option value="new">Ganz neu – sanfter Start</option>
+        <option value="some">Etwas Erfahrung – z. B. ein paar Liegestütze auf den Knien</option>
+      </select>
+      <button id="caliStartButton" class="btn full" type="button">
+        Programm starten
+      </button>
+    </div>
+
+    <!-- Laufendes Programm -->
+    <div id="caliRun" class="hidden">
+      <div class="week" id="caliWeek" aria-label="Deine Trainingswoche"></div>
+      <p id="caliToday" class="muted"></p>
+
+      <div id="caliSession">
+        <details class="cx-extra">
+          <summary>Aufwärmen (5 Minuten)</summary>
+          <ul>
+            <li>1 Min. auf der Stelle gehen, Arme locker schwingen</li>
+            <li>10× Armkreisen vorwärts und rückwärts</li>
+            <li>10× Hüftkreisen in jede Richtung</li>
+            <li>10× halbe Kniebeugen, langsam</li>
+            <li>10× Schulterblätter zusammenziehen und lösen</li>
+          </ul>
+        </details>
+
+        <div id="caliExercises"></div>
+
+        <div class="rest-timer" id="restTimer">
+          <strong id="restTime">1:30</strong>
+          <button id="restButton" class="btn secondary" type="button">
+            Pause starten
+          </button>
+        </div>
+        <p class="muted">
+          Zwischen den Sätzen 60–90 Sekunden Pause. Langsam und sauber ist
+          wichtiger als viele Wiederholungen.
+        </p>
+
+        <button id="caliSave" class="btn full" type="button">
+          Training speichern
+        </button>
+
+        <details class="cx-extra">
+          <summary>Dehnen danach (5–10 Minuten)</summary>
+          <ul>
+            <li>Brust: Unterarm an den Türrahmen, Oberkörper sanft wegdrehen – je Seite 30 s</li>
+            <li>Hüftbeuger: tiefer Ausfallschritt, Hüfte nach vorne schieben – je Seite 30 s</li>
+            <li>Oberschenkel-Rückseite: Ferse auf eine Stufe, Oberkörper gerade nach vorne – je Seite 30 s</li>
+            <li>Waden: Hände an die Wand, hinteres Bein gestreckt – je Seite 30 s</li>
+            <li>Rücken: Kindhaltung, Arme lang nach vorne – 45 s</li>
+          </ul>
+        </details>
+      </div>
+
+      <button id="caliAnyway" class="btn secondary full hidden" type="button">
+        Trotzdem heute trainieren
+      </button>
+
+      <details class="cx-extra">
+        <summary>So funktioniert der Aufstieg</summary>
+        <ul>
+          <li>Jede Übung hat ein Ziel, z. B. 3 Sätze mit 8–12 Wiederholungen.</li>
+          <li>Trag nach dem Training ein, wie viele du im schwächsten Satz geschafft hast.</li>
+          <li>Schaffst du zweimal hintereinander die obere Zahl, schlägt VYORA die nächste Stufe vor.</li>
+          <li>Schaffst du die untere Zahl nicht, geh ruhig eine Stufe zurück. Mit ▲ ▼ kannst du jederzeit selbst wechseln.</li>
+          <li>Training A und B wechseln sich ab, damit alle Muskeln drankommen.</li>
+        </ul>
+      </details>
+      <button id="caliDaysEdit" class="btn secondary" type="button">
+        Trainingstage ändern
+      </button>
+      <p class="muted small-note">
+        Bei Schmerzen die Übung abbrechen. Wenn du Beschwerden oder
+        Vorerkrankungen hast, sprich vor dem Start mit deiner Ärztin oder
+        deinem Arzt. Das Programm ist ein allgemeiner Trainingsplan, keine
+        medizinische Beratung.
+      </p>
+    </div>
+    <p id="caliMessage" class="message" role="status"></p>
+  </div>
 
   <div class="card">
     <label for="trainingDate">Datum auswählen</label>
@@ -686,8 +1048,169 @@ footer a{color:var(--muted);margin:0 7px}
   <div class="eyebrow">Deine Gesundheitswerte</div>
   <h1>Gesundheit ♡</h1>
   <p class="muted">
-    Gewicht, Blutdruck, Puls und Schlaf an einem Ort.
+    Gewicht, Blutdruck, Blutzucker, Insulin und Schlaf an einem Ort.
   </p>
+
+  <div class="card" id="checkCard">
+    <h2>✓ Heute erledigt?</h2>
+    <p class="muted" id="checkHint">
+      Leg fest, was du jeden Tag festhalten möchtest – zum Beispiel
+      Blutdruck, Blutzucker oder Insulin. Dann siehst du hier deine Häkchen.
+    </p>
+    <div id="checkList"></div>
+
+    <details class="cx-extra" id="checkSettings">
+      <summary>Checkliste anpassen</summary>
+      <form id="checkForm" class="settings-grid">
+        <div>
+          <label for="setBp">🩺 Blutdruck</label>
+          <select id="setBp">
+          <option value="0">aus</option>
+          <option value="1">1× pro Tag</option>
+          <option value="2">2× pro Tag</option>
+          <option value="3">3× pro Tag</option>
+          <option value="4">4× pro Tag</option>
+          <option value="5">5× pro Tag</option>
+          <option value="6">6× pro Tag</option>
+          </select>
+        </div>
+        <div>
+          <label for="setGlucose">🩸 Blutzucker</label>
+          <select id="setGlucose">
+          <option value="0">aus</option>
+          <option value="1">1× pro Tag</option>
+          <option value="2">2× pro Tag</option>
+          <option value="3">3× pro Tag</option>
+          <option value="4">4× pro Tag</option>
+          <option value="5">5× pro Tag</option>
+          <option value="6">6× pro Tag</option>
+          <option value="7">7× pro Tag</option>
+          <option value="8">8× pro Tag</option>
+          <option value="9">9× pro Tag</option>
+          <option value="10">10× pro Tag</option>
+          </select>
+        </div>
+        <div>
+          <label for="setInsulin">💉 Insulin</label>
+          <select id="setInsulin">
+          <option value="0">aus</option>
+          <option value="1">1× pro Tag</option>
+          <option value="2">2× pro Tag</option>
+          <option value="3">3× pro Tag</option>
+          <option value="4">4× pro Tag</option>
+          <option value="5">5× pro Tag</option>
+          <option value="6">6× pro Tag</option>
+          <option value="7">7× pro Tag</option>
+          <option value="8">8× pro Tag</option>
+          <option value="9">9× pro Tag</option>
+          <option value="10">10× pro Tag</option>
+          </select>
+        </div>
+        <div>
+          <label for="setUnit">Blutzucker-Einheit</label>
+          <select id="setUnit">
+            <option value="mg_dl">mg/dl</option>
+            <option value="mmol_l">mmol/l</option>
+          </select>
+        </div>
+        <button id="saveCheck" class="btn full full-span" type="submit">
+          Checkliste speichern
+        </button>
+      </form>
+    </details>
+    <p id="checkMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="card" id="measureCard">
+    <h2>+ Messung eintragen</h2>
+    <div class="seg" role="tablist" aria-label="Art der Messung">
+      <button type="button" role="tab" data-kind="bp" aria-selected="true">🩺 Blutdruck</button>
+      <button type="button" role="tab" data-kind="glucose" aria-selected="false">🩸 Zucker</button>
+      <button type="button" role="tab" data-kind="insulin" aria-selected="false">💉 Insulin</button>
+    </div>
+
+    <form id="measureForm">
+      <label for="measureTime">Datum und Uhrzeit</label>
+      <input id="measureTime" type="datetime-local" required>
+
+      <div data-group="bp">
+        <div class="form-grid">
+          <div>
+            <label for="mSys">Oben (mmHg)</label>
+            <input id="mSys" type="number" inputmode="numeric" min="50" max="260" step="1" placeholder="z. B. 120">
+          </div>
+          <div>
+            <label for="mDia">Unten (mmHg)</label>
+            <input id="mDia" type="number" inputmode="numeric" min="30" max="180" step="1" placeholder="z. B. 80">
+          </div>
+        </div>
+        <label for="mPulse">Puls (optional)</label>
+        <input id="mPulse" type="number" inputmode="numeric" min="25" max="250" step="1" placeholder="z. B. 65">
+      </div>
+
+      <div data-group="glucose" class="hidden">
+        <label for="mGlucose" id="mGlucoseLabel">Blutzucker (mg/dl)</label>
+        <input id="mGlucose" type="number" inputmode="decimal" step="any" placeholder="z. B. 110">
+        <label for="mContext">Zeitpunkt</label>
+        <select id="mContext">
+          <option value="nuechtern">Nüchtern</option>
+          <option value="vor_essen">Vor dem Essen</option>
+          <option value="nach_essen">Nach dem Essen</option>
+          <option value="nacht">Vor dem Schlafen / nachts</option>
+          <option value="sonstiges">Sonstiges</option>
+        </select>
+      </div>
+
+      <div data-group="insulin" class="hidden">
+        <div class="form-grid">
+          <div>
+            <label for="mUnits">Einheiten (IE)</label>
+            <input id="mUnits" type="number" inputmode="decimal" min="0.5" max="200" step="0.5" placeholder="z. B. 6">
+          </div>
+          <div>
+            <label for="mInsulinKind">Art</label>
+            <select id="mInsulinKind">
+              <option value="mahlzeit">Zur Mahlzeit</option>
+              <option value="korrektur">Korrektur</option>
+              <option value="basal">Basal (Langzeit)</option>
+              <option value="misch">Mischinsulin</option>
+              <option value="sonstiges">Sonstiges</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div>
+            <label for="mInsulinName">Insulin (optional)</label>
+            <input id="mInsulinName" maxlength="60" placeholder="Name des Insulins">
+          </div>
+          <div>
+            <label for="mKe">KE/BE (optional)</label>
+            <input id="mKe" type="number" inputmode="decimal" min="0" max="50" step="0.5" placeholder="z. B. 4">
+          </div>
+        </div>
+      </div>
+
+      <label for="mNotes">Notiz (optional)</label>
+      <input id="mNotes" maxlength="300" placeholder="z. B. nach dem Sport">
+
+      <button id="saveMeasure" class="btn full" type="submit">
+        Messung speichern
+      </button>
+    </form>
+    <p id="measureMessage" class="message" role="status"></p>
+    <p class="muted small-note">
+      VYORA speichert und zeigt deine Werte nur an. Die App bewertet keine
+      Werte und berechnet keine Insulindosis – richte dich nach deinem
+      Behandlungsplan und den Absprachen mit deiner Ärztin oder deinem Arzt.
+      Im Notfall: 112.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Dein Messtagebuch</h2>
+    <p class="muted">Letzte 7 Tage</p>
+    <div id="measureList" class="muted">Noch keine Einträge.</div>
+  </div>
 
   <div class="stats">
     <div class="card stat">
@@ -812,6 +1335,50 @@ footer a{color:var(--muted);margin:0 7px}
     </p>
   </div>
 
+  <div class="card" id="goalsCard">
+    <h2>🎯 Deine Tagesziele</h2>
+    <p class="muted">
+      Freiwillig: Lass ein Feld leer, wenn du dafür kein Ziel möchtest.
+      Die Ziele siehst du als Ringe auf der Startseite.
+    </p>
+    <form id="goalsForm">
+      <label for="goalKcalInput">Kalorien pro Tag (kcal)</label>
+      <input id="goalKcalInput" type="number" inputmode="numeric"
+        min="800" max="6000" step="1" placeholder="z. B. 2200">
+      <div class="form-grid">
+        <div>
+          <label for="goalProteinInput">Eiweiß (g)</label>
+          <input id="goalProteinInput" type="number" inputmode="numeric"
+            min="10" max="400" step="1" placeholder="z. B. 120">
+        </div>
+        <div>
+          <label for="goalStepsInput">Schritte</label>
+          <input id="goalStepsInput" type="number" inputmode="numeric"
+            min="1000" max="50000" step="100" placeholder="z. B. 8000">
+        </div>
+      </div>
+      <button id="saveGoals" class="btn full" type="submit">
+        Ziele speichern
+      </button>
+    </form>
+    <p class="muted">
+      Die Ziele sind Richtwerte, die du selbst festlegst – keine
+      medizinische Empfehlung.
+    </p>
+    <p id="goalsMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="card hidden" id="installCard">
+    <h2>📲 VYORA als App</h2>
+    <p class="muted" id="installText">
+      Leg VYORA auf deinen Startbildschirm. Dann öffnet sich die App
+      ohne Browserleiste – wie eine richtige App.
+    </p>
+    <button id="installButton" class="btn full hidden" type="button">
+      App installieren
+    </button>
+  </div>
+
   <div class="card">
     <h2>✦ KI-Coach</h2>
     <p class="muted">
@@ -826,8 +1393,8 @@ footer a{color:var(--muted);margin:0 7px}
     <h3>Meine Daten herunterladen</h3>
     <p class="muted">
       Du bekommst alle in VYORA gespeicherten Daten zu deinem Konto als
-      Datei (JSON): Mahlzeiten, Trainings, Pläne, Gesundheitswerte und
-      Einwilligungen.
+      Datei (JSON): Mahlzeiten, Trainings, Pläne, Trainingsprogramm,
+      Gesundheitswerte, Messtagebuch, Tagesziele und Einwilligungen.
     </p>
     <button id="exportButton" class="btn secondary full" type="button">
       Daten exportieren ⬇
@@ -864,7 +1431,7 @@ footer a{color:var(--muted);margin:0 7px}
   </div>
 </section>
 
-<div style="text-align:center;margin:25px 0">
+<div class="logout-wrap">
   <button id="logoutButton" class="btn secondary">
     Abmelden
   </button>
@@ -912,6 +1479,9 @@ const SUPABASE_KEY =
 
 const OURA_FUNCTION =
   SUPABASE_URL + "/functions/v1/oura-connect";
+
+const FOOD_FUNCTION =
+  SUPABASE_URL + "/functions/v1/food-search";
 
 const supabase = createClient(
   SUPABASE_URL,
@@ -977,6 +1547,11 @@ function foodMessage(text) {
 }
 
 function switchView(id) {
+  // Kamera aus, wenn die Ernährung verlassen wird.
+  if(id!=="nutritionView") {
+    try { stopScanner(); } catch(_error) {}
+  }
+
   document.querySelectorAll(".view").forEach(view => {
     view.classList.toggle("active",view.id===id);
   });
@@ -1132,7 +1707,7 @@ function renderSleep() {
     $("miniSleep").textContent = "–";
     $("scoreDate").textContent = "Letzte Messung";
     $("scoreRating").textContent = "Noch keine Daten";
-    $("scoreCircle").style.strokeDashoffset = 452.39;
+    setScoreVisual(null);
     return;
   }
 
@@ -1148,8 +1723,17 @@ function renderSleep() {
     latest.score>=60 ? "Ausbaufähig" :
     "Erholung beachten";
 
+  setScoreVisual(latest.score);
+}
+
+// Ring und "Sonne" auf der Startseite.
+function setScoreVisual(score) {
+  const value = Number.isFinite(Number(score))
+    ? Math.max(0,Math.min(100,Number(score)))
+    : 0;
   $("scoreCircle").style.strokeDashoffset =
-    452.39*(1-latest.score/100);
+    452.39*(1-value/100);
+  $("heroCard").style.setProperty("--score",String(value));
 }
 
 async function loadSleep() {
@@ -1230,8 +1814,11 @@ function renderNutrition() {
     number(sum("fat"));
 
   if($("nutritionDate").value===localDate()) {
-    $("homeCalories").textContent =
-      number(sum("calories"));
+    todayTotals = {
+      calories:sum("calories"),
+      protein:sum("protein")
+    };
+    renderGoals();
 
     $("homeNutritionInfo").textContent =
       nutritionData.length+
@@ -1276,9 +1863,1229 @@ function renderNutrition() {
       deleteMeal(item.id);
     });
 
-    row.append(info,del);
+    const again = document.createElement("button");
+    again.type = "button";
+    again.textContent = "Nochmal";
+    again.classList.add("soft-btn");
+    again.setAttribute(
+      "aria-label",
+      "Mahlzeit erneut eintragen: "+item.food_name
+    );
+    again.addEventListener("click",() => {
+      repeatMeal(item);
+    });
+
+    const actions = document.createElement("div");
+    actions.className = "row-actions";
+    actions.append(again,del);
+
+    row.append(info,actions);
     list.append(row);
   });
+}
+
+// Übernimmt eine gespeicherte Mahlzeit ins
+// Formular. Die Menge steht im Namen, z. B.
+// "Skyr (250 g)". Dann lassen sich die Werte
+// beim Ändern der Menge neu umrechnen.
+function repeatMeal(item) {
+  const match = String(item.food_name||"")
+    .match(/^(.*) \(([\d.,]+) g\)$/);
+
+  const name = match
+    ? match[1]
+    : String(item.food_name||"");
+
+  const amount = match
+    ? Number(match[2].replace(/\./g,"").replace(",","."))
+    : NaN;
+
+  $("mealType").value = item.meal_type;
+
+  if(Number.isFinite(amount) && amount>0) {
+    const per100 = field =>
+      Math.round(
+        Number(item[field]||0)*100/amount*100
+      )/100;
+
+    selectedFood = {
+      name,
+      brand:"",
+      code:"",
+      calories:per100("calories"),
+      protein:per100("protein"),
+      carbs:per100("carbs"),
+      fat:per100("fat")
+    };
+
+    $("foodName").value = name;
+    $("foodAmount").value = String(amount);
+    calculateSelectedFood();
+
+    $("selectedFoodInfo").textContent =
+      "↻ Übernommen: "+name+
+      ". Ändere bei Bedarf die Menge – die Nährwerte werden umgerechnet.";
+  } else {
+    selectedFood = null;
+    $("foodName").value = name;
+    $("foodAmount").value = "100";
+    ["calories","protein","carbs","fat"].forEach(field => {
+      $(field).value = String(Number(item[field]||0));
+    });
+    $("selectedFoodInfo").textContent =
+      "↻ Übernommen: "+name+". Bitte Werte prüfen.";
+  }
+
+  $("nutritionForm").scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+}
+
+// -----------------------------------
+// Tages-Checkliste & Messtagebuch
+// (Blutdruck, Blutzucker, Insulin – mit Uhrzeit)
+// Nur speichern und anzeigen: keine Bewertung,
+// keine Dosisberechnung.
+// -----------------------------------
+
+const MEASURE_KINDS = {
+  bp:{icon:"🩺",name:"Blutdruck"},
+  glucose:{icon:"🩸",name:"Blutzucker"},
+  insulin:{icon:"💉",name:"Insulin"}
+};
+const GLUCOSE_CONTEXT = {
+  nuechtern:"nüchtern",vor_essen:"vor dem Essen",
+  nach_essen:"nach dem Essen",nacht:"vor dem Schlafen",sonstiges:""
+};
+const INSULIN_KIND = {
+  mahlzeit:"zur Mahlzeit",korrektur:"Korrektur",basal:"Basal",
+  misch:"Mischinsulin",sonstiges:""
+};
+const MMOL_FACTOR = 18.016;
+
+let checkSettings = {bp:0,glucose:0,insulin:0,unit:"mg_dl"};
+let measureData = [];
+let measureKind = "bp";
+let measureLoadCounter = 0;
+
+function checkMessage(text) { $("checkMessage").textContent = text || ""; }
+function measureMessage(text) { $("measureMessage").textContent = text || ""; }
+
+function localDayOf(iso) {
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? "" : dayString(d);
+}
+
+function nowForInput() {
+  const d = new Date();
+  d.setSeconds(0,0);
+  return dayString(d)+"T"+
+    String(d.getHours()).padStart(2,"0")+":"+
+    String(d.getMinutes()).padStart(2,"0");
+}
+
+function glucoseText(mgdl) {
+  const v = Number(mgdl);
+  return checkSettings.unit==="mmol_l"
+    ? (Math.round(v/MMOL_FACTOR*10)/10).toLocaleString("de-DE")+" mmol/l"
+    : Math.round(v).toLocaleString("de-DE")+" mg/dl";
+}
+
+function fillCheckForm() {
+  $("setBp").value = String(checkSettings.bp);
+  $("setGlucose").value = String(checkSettings.glucose);
+  $("setInsulin").value = String(checkSettings.insulin);
+  $("setUnit").value = checkSettings.unit;
+  const mmol = checkSettings.unit==="mmol_l";
+  $("mGlucoseLabel").textContent =
+    "Blutzucker ("+(mmol ? "mmol/l" : "mg/dl")+")";
+  $("mGlucose").placeholder = mmol ? "z. B. 6,1" : "z. B. 110";
+}
+
+function selectMeasureKind(kind) {
+  measureKind = kind;
+  document.querySelectorAll("#measureCard .seg button").forEach(b => {
+    b.setAttribute("aria-selected",String(b.dataset.kind===kind));
+  });
+  document.querySelectorAll("#measureForm [data-group]").forEach(g => {
+    g.classList.toggle("hidden",g.dataset.group!==kind);
+  });
+}
+
+document.querySelectorAll("#measureCard .seg button").forEach(button => {
+  button.addEventListener("click",() => selectMeasureKind(button.dataset.kind));
+});
+
+function renderChecklist() {
+  const list = $("checkList");
+  list.replaceChildren();
+  const today = localDate();
+  const active = Object.keys(MEASURE_KINDS)
+    .filter(kind => checkSettings[kind]>0);
+
+  $("checkHint").classList.toggle("hidden",active.length>0);
+
+  active.forEach(kind => {
+    const target = checkSettings[kind];
+    const done = measureData.filter(m =>
+      m.kind===kind && localDayOf(m.measured_at)===today).length;
+
+    const row = document.createElement("div");
+    row.className = "check-row"+(done>=target ? " complete" : "");
+
+    const icon = document.createElement("div");
+    icon.className = "check-icon";
+    icon.textContent = MEASURE_KINDS[kind].icon;
+
+    const main = document.createElement("div");
+    main.className = "check-main";
+    const title = document.createElement("strong");
+    title.textContent = MEASURE_KINDS[kind].name;
+    const ticks = document.createElement("div");
+    ticks.className = "check-ticks";
+    ticks.setAttribute("aria-hidden","true");
+    for(let i=0;i<target;i++) {
+      const tick = document.createElement("span");
+      tick.className = "tick"+(i<done ? " on" : "");
+      tick.textContent = "✓";
+      ticks.append(tick);
+    }
+    const count = document.createElement("small");
+    count.className = "check-count";
+    count.textContent = Math.min(done,target)+" von "+target+
+      (done>target ? " (+"+(done-target)+")" : "");
+    ticks.removeAttribute("aria-hidden");
+    ticks.setAttribute("aria-label",count.textContent+" erledigt");
+    ticks.append(count);
+    main.append(title,ticks);
+
+    const add = document.createElement("button");
+    add.type = "button";
+    add.textContent = "+ Eintragen";
+    add.setAttribute("aria-label",MEASURE_KINDS[kind].name+" eintragen");
+    add.addEventListener("click",() => {
+      selectMeasureKind(kind);
+      $("measureTime").value = nowForInput();
+      $("measureCard").scrollIntoView({behavior:"smooth",block:"start"});
+    });
+
+    row.append(icon,main,add);
+    list.append(row);
+  });
+}
+
+function measureSummary(m) {
+  if(m.kind==="bp") {
+    return "RR "+m.systolic+"/"+m.diastolic+" mmHg"+
+      (m.pulse ? " · Puls "+m.pulse : "");
+  }
+  if(m.kind==="glucose") {
+    const ctx = GLUCOSE_CONTEXT[m.glucose_context] || "";
+    return "Blutzucker "+glucoseText(m.glucose_mg_dl)+(ctx ? " · "+ctx : "");
+  }
+  const parts = [
+    "Insulin "+Number(m.insulin_units).toLocaleString("de-DE")+" IE"
+  ];
+  if(INSULIN_KIND[m.insulin_kind]) parts.push(INSULIN_KIND[m.insulin_kind]);
+  if(m.insulin_name) parts.push(m.insulin_name);
+  if(m.carbs_ke!==null && m.carbs_ke!==undefined) {
+    parts.push(Number(m.carbs_ke).toLocaleString("de-DE")+" KE");
+  }
+  return parts.join(" · ");
+}
+
+function renderMeasureList() {
+  const list = $("measureList");
+  list.replaceChildren();
+
+  if(!measureData.length) {
+    list.textContent = "Noch keine Einträge in den letzten 7 Tagen.";
+    return;
+  }
+
+  let lastDay = "";
+  measureData.forEach(m => {
+    const day = localDayOf(m.measured_at);
+    if(day!==lastDay) {
+      lastDay = day;
+      const head = document.createElement("div");
+      head.className = "day-head";
+      head.textContent = day===localDate() ? "Heute" : formatDate(day);
+      list.append(head);
+    }
+
+    const row = document.createElement("div");
+    row.className = "meal-row";
+    const info = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = MEASURE_KINDS[m.kind].icon+" "+
+      clock(m.measured_at)+" · "+measureSummary(m);
+    const details = document.createElement("small");
+    details.textContent = m.notes || "";
+    info.append(title,details);
+    row.append(info,deleteButton(
+      "Eintrag löschen: "+MEASURE_KINDS[m.kind].name+" "+clock(m.measured_at),
+      () => deleteMeasurement(m.id)
+    ));
+    list.append(row);
+  });
+}
+
+// Neuester Blutdruck aus Messtagebuch ODER Gesundheitswerten
+function updateLatestBp() {
+  const old = latestWith("systolic");
+  const fresh = measureData.find(m => m.kind==="bp");
+  const freshDay = fresh ? localDayOf(fresh.measured_at) : "";
+
+  if(fresh && (!old || freshDay>=old.entry_date)) {
+    $("latestBp").textContent = fresh.systolic+"/"+fresh.diastolic;
+    $("latestBpDate").textContent =
+      formatDate(freshDay)+" "+clock(fresh.measured_at)+" · mmHg";
+  } else if(old) {
+    $("latestBp").textContent = old.systolic+"/"+old.diastolic;
+    $("latestBpDate").textContent = formatDate(old.entry_date)+" · mmHg";
+  } else {
+    $("latestBp").textContent = "–";
+    $("latestBpDate").textContent = "Noch keine Daten";
+  }
+}
+
+function resetMeasurements() {
+  measureData = [];
+  ++measureLoadCounter;
+  checkSettings = {bp:0,glucose:0,insulin:0,unit:"mg_dl"};
+  $("measureForm").reset();
+  $("measureTime").value = nowForInput();
+  selectMeasureKind("bp");
+  fillCheckForm();
+  renderChecklist();
+  renderMeasureList();
+  checkMessage("");
+  measureMessage("");
+}
+
+async function loadMeasurements() {
+  if(!currentUserId) return;
+  const requestId = ++measureLoadCounter;
+  const userId = currentUserId;
+
+  const since = new Date();
+  since.setDate(since.getDate()-6);
+  since.setHours(0,0,0,0);
+
+  const {data,error} = await supabase
+    .from("measurements")
+    .select("id,kind,measured_at,systolic,diastolic,pulse,glucose_mg_dl,glucose_context,insulin_units,insulin_kind,insulin_name,carbs_ke,notes")
+    .eq("user_id",userId)
+    .gte("measured_at",since.toISOString())
+    .order("measured_at",{ascending:false})
+    .limit(300);
+
+  if(requestId!==measureLoadCounter || userId!==currentUserId) return;
+
+  if(error) {
+    measureMessage("Messtagebuch konnte nicht geladen werden: "+error.message);
+    return;
+  }
+
+  measureData = data||[];
+  renderChecklist();
+  renderMeasureList();
+  updateLatestBp();
+}
+
+$("measureForm").addEventListener("submit",async event => {
+  event.preventDefault();
+  if(!currentUserId) return;
+
+  const button = $("saveMeasure");
+  button.disabled = true;
+
+  try {
+    const when = new Date($("measureTime").value);
+    if(isNaN(when.getTime())) throw new Error("Bitte Datum und Uhrzeit angeben.");
+    if(when.getTime()>Date.now()+5*60000) {
+      throw new Error("Der Zeitpunkt liegt in der Zukunft.");
+    }
+
+    const row = {
+      user_id:currentUserId,
+      kind:measureKind,
+      measured_at:when.toISOString(),
+      notes:$("mNotes").value.trim().slice(0,300) || null
+    };
+
+    if(measureKind==="bp") {
+      row.systolic = optionalNumber("mSys",50,260,"Blutdruck oben",true);
+      row.diastolic = optionalNumber("mDia",30,180,"Blutdruck unten",true);
+      row.pulse = optionalNumber("mPulse",25,250,"Puls",true);
+      if(row.systolic===null || row.diastolic===null) {
+        throw new Error("Bitte beide Blutdruckwerte eintragen.");
+      }
+    } else if(measureKind==="glucose") {
+      const mmol = checkSettings.unit==="mmol_l";
+      const value = mmol
+        ? optionalNumber("mGlucose",0.6,38.8,"Blutzucker",false)
+        : optionalNumber("mGlucose",10,700,"Blutzucker",false);
+      if(value===null) throw new Error("Bitte den Blutzuckerwert eintragen.");
+      row.glucose_mg_dl = Math.round((mmol ? value*MMOL_FACTOR : value)*10)/10;
+      row.glucose_context = $("mContext").value;
+    } else {
+      const units = optionalNumber("mUnits",0.5,200,"Einheiten",false);
+      if(units===null) throw new Error("Bitte die Insulin-Einheiten eintragen.");
+      row.insulin_units = Math.round(units*10)/10;
+      row.insulin_kind = $("mInsulinKind").value;
+      row.insulin_name = $("mInsulinName").value.trim().slice(0,60) || null;
+      row.carbs_ke = optionalNumber("mKe",0,50,"KE/BE",false);
+    }
+
+    measureMessage("Wird gespeichert ...");
+    const {error} = await supabase.from("measurements").insert(row);
+    if(error) throw error;
+
+    // Felder leeren, Art und Insulinname behalten
+    ["mSys","mDia","mPulse","mGlucose","mUnits","mKe","mNotes"]
+      .forEach(id => { $(id).value = ""; });
+    $("measureTime").value = nowForInput();
+
+    await loadMeasurements();
+    measureMessage("✓ "+MEASURE_KINDS[row.kind].name+" gespeichert.");
+  } catch(error) {
+    measureMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+async function deleteMeasurement(id) {
+  if(!confirm("Diesen Eintrag wirklich löschen?")) return;
+  const {error} = await supabase
+    .from("measurements")
+    .delete()
+    .eq("id",id)
+    .eq("user_id",currentUserId);
+  if(error) {
+    measureMessage("Löschen fehlgeschlagen: "+error.message);
+    return;
+  }
+  await loadMeasurements();
+  measureMessage("Eintrag gelöscht.");
+}
+
+$("checkForm").addEventListener("submit",async event => {
+  event.preventDefault();
+  if(!currentUserId) return;
+  const button = $("saveCheck");
+  button.disabled = true;
+
+  try {
+    const next = {
+      bp:Number($("setBp").value)||0,
+      glucose:Number($("setGlucose").value)||0,
+      insulin:Number($("setInsulin").value)||0,
+      unit:$("setUnit").value==="mmol_l" ? "mmol_l" : "mg_dl"
+    };
+
+    const {error} = await supabase
+      .from("user_goals")
+      .upsert({
+        user_id:currentUserId,
+        bp_per_day:next.bp,
+        glucose_per_day:next.glucose,
+        insulin_per_day:next.insulin,
+        glucose_unit:next.unit,
+        updated_at:new Date().toISOString()
+      },{onConflict:"user_id"});
+    if(error) throw error;
+
+    checkSettings = next;
+    fillCheckForm();
+    renderChecklist();
+    renderMeasureList();
+    $("checkSettings").open = false;
+    checkMessage("✓ Checkliste gespeichert.");
+  } catch(error) {
+    checkMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("measureTime").value = nowForInput();
+
+// -----------------------------------
+// Calisthenics-Programm
+// Stufen je Bewegung, von leicht nach schwer.
+// unit "s" = Sekunden halten, sonst Wiederholungen.
+// -----------------------------------
+
+const CALI_PATTERNS = {
+  push:{name:"Drücken",levels:[
+    {name:"Wand-Liegestütze",min:8,max:15,how:"Hände schulterbreit an die Wand, Körper gerade wie ein Brett. Brust langsam zur Wand, dann wegdrücken."},
+    {name:"Schräg-Liegestütze",min:8,max:12,how:"Hände auf eine stabile Arbeitsplatte oder Bank. Je niedriger die Ablage, desto schwerer."},
+    {name:"Knie-Liegestütze",min:6,max:12,how:"Auf den Knien, Hände etwas breiter als die Schultern. Knie, Hüfte und Schultern bilden eine Linie."},
+    {name:"Liegestütze",min:5,max:12,how:"Körper gestreckt, Bauch fest. Brust bis knapp über den Boden, Ellbogen etwa 45° vom Körper."},
+    {name:"Enge Liegestütze",min:6,max:12,how:"Hände unter den Schultern, Ellbogen eng am Körper – trainiert stärker den Trizeps."},
+    {name:"Archer-Liegestütze (je Seite)",min:3,max:8,how:"Hände sehr breit, zu einer Seite absenken, der andere Arm bleibt fast gestreckt."}
+  ]},
+  pull:{name:"Ziehen",levels:[
+    {name:"Türrahmen-Rudern (je Arm)",min:8,max:15,how:"Türrahmen mit einer Hand greifen, Füße nah am Rahmen, nach hinten lehnen und dich heranziehen."},
+    {name:"Rudern an hoher Stange",min:6,max:12,how:"Stabile Stange auf Brusthöhe (z. B. Spielplatz). Körper steil, Brust zur Stange ziehen."},
+    {name:"Rudern an hüfthoher Stange",min:6,max:12,how:"Wie vorher, aber Stange tiefer – der Körper ist flacher und muss mehr ziehen."},
+    {name:"Negative Klimmzüge",min:3,max:6,how:"Mit Hilfe (Stuhl) oben starten, dann 4–5 Sekunden kontrolliert ablassen."},
+    {name:"Klimmzüge",min:3,max:8,how:"Aus dem Hang hochziehen, bis das Kinn über der Stange ist. Langsam ablassen."}
+  ]},
+  legs:{name:"Beine",levels:[
+    {name:"Stuhl-Kniebeugen",min:8,max:15,how:"Vor einen Stuhl stellen, langsam hinsetzen, kurz antippen, wieder aufstehen. Knie zeigen in Richtung Zehen."},
+    {name:"Kniebeugen",min:10,max:20,how:"Füße schulterbreit, Gewicht auf den Fersen, so tief wie bequem möglich, Rücken gerade."},
+    {name:"Ausfallschritte rückwärts (je Bein)",min:6,max:12,how:"Einen großen Schritt nach hinten, hinteres Knie Richtung Boden, vorderes Bein drückt hoch. Festhalten ist erlaubt."},
+    {name:"Bulgarische Split Squats (je Bein)",min:6,max:12,how:"Hinterer Fuß auf einem Stuhl, vorderes Bein beugt sich tief."},
+    {name:"Pistol Squats mit Halt (je Bein)",min:3,max:8,how:"Auf einem Bein in die Hocke, dabei am Türrahmen festhalten."}
+  ]},
+  core:{name:"Rumpf",unit:"s",levels:[
+    {name:"Knie-Plank",min:15,max:30,how:"Unterarme und Knie am Boden, Bauch fest, Rücken gerade. Sekunden halten."},
+    {name:"Plank",min:20,max:45,how:"Auf Unterarmen und Zehen, Körper wie ein Brett. Nicht ins Hohlkreuz fallen."},
+    {name:"Hollow Hold (Knie angezogen)",min:15,max:30,how:"Rückenlage, unterer Rücken drückt in den Boden, Schultern und angezogene Beine leicht anheben."},
+    {name:"Hollow Hold",min:15,max:30,how:"Wie vorher, aber Beine gestreckt und Arme über dem Kopf."}
+  ]},
+  hinge:{name:"Hüfte & Po",levels:[
+    {name:"Glute Bridge",min:10,max:20,how:"Rückenlage, Füße aufgestellt. Hüfte hochdrücken, oben kurz halten, langsam ablassen."},
+    {name:"Einbeinige Glute Bridge (je Bein)",min:6,max:12,how:"Wie die Glute Bridge, aber ein Bein ist gestreckt in der Luft."},
+    {name:"Einbeiniger Hip Thrust (je Bein)",min:6,max:12,how:"Schultern auf dem Sofa, ein Fuß am Boden, Hüfte hochdrücken."}
+  ]}
+};
+
+const CALI_WORKOUTS = {
+  A:["push","pull","legs","core"],
+  B:["legs","push","pull","hinge"]
+};
+const CALI_SETS = 3;
+const WEEKDAYS = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+
+let program = null;        // gespeicherter Stand
+let programLoadCounter = 0;
+let caliWeekDone = new Set();
+let caliForceToday = false;
+
+function caliMessage(text) {
+  $("caliMessage").textContent = text || "";
+}
+
+// 1 = Montag ... 7 = Sonntag
+function isoWeekday(date) {
+  const d = date.getDay();
+  return d===0 ? 7 : d;
+}
+
+function dayString(date) {
+  return date.getFullYear()+"-"+
+    String(date.getMonth()+1).padStart(2,"0")+"-"+
+    String(date.getDate()).padStart(2,"0");
+}
+
+function weekDates() {
+  const now = new Date();
+  now.setHours(12,0,0,0);
+  const monday = new Date(now);
+  monday.setDate(now.getDate()-(isoWeekday(now)-1));
+  return Array.from({length:7},(_,i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate()+i);
+    return d;
+  });
+}
+
+function levelOf(key) {
+  const max = CALI_PATTERNS[key].levels.length-1;
+  const value = Math.round(Number(program?.levels?.[key]));
+  return Number.isFinite(value) ? Math.min(max,Math.max(0,value)) : 0;
+}
+
+function renderDayPicker(selected) {
+  const box = $("caliDays");
+  box.replaceChildren();
+  WEEKDAYS.forEach((name,index) => {
+    const label = document.createElement("label");
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = String(index+1);
+    input.checked = selected.includes(index+1);
+    input.setAttribute("aria-label",name);
+    const span = document.createElement("span");
+    span.textContent = name;
+    label.append(input,span);
+    box.append(label);
+  });
+}
+
+function selectedDays() {
+  return [...$("caliDays").querySelectorAll("input:checked")]
+    .map(input => Number(input.value));
+}
+
+// Beim Ändern der Tage wird das Startniveau nicht gebraucht.
+function setSetupMode(editing) {
+  $("caliStartButton").textContent = editing
+    ? "Trainingstage speichern"
+    : "Programm starten";
+  $("caliStart").classList.toggle("hidden",editing);
+  document.querySelector('label[for="caliStart"]')
+    .classList.toggle("hidden",editing);
+}
+
+function resetProgram() {
+  setSetupMode(false);
+  $("caliDays").replaceChildren();
+  program = null;
+  ++programLoadCounter;
+  caliWeekDone = new Set();
+  caliForceToday = false;
+  caliMessage("");
+  renderProgram();
+}
+
+function renderProgram() {
+  const has = !!program;
+  $("caliSetup").classList.toggle("hidden",has);
+  $("caliRun").classList.toggle("hidden",!has);
+
+  if(!has) {
+    if(!$("caliDays").children.length) renderDayPicker([1,3,5]);
+    return;
+  }
+
+  // Wochenleiste
+  const today = dayString(new Date());
+  const week = $("caliWeek");
+  week.replaceChildren();
+  weekDates().forEach((date,index) => {
+    const day = dayString(date);
+    const cell = document.createElement("div");
+    cell.className = "week-day";
+    const planned = program.days.includes(index+1);
+    if(planned) cell.classList.add("plan");
+    if(caliWeekDone.has(day)) cell.classList.add("done");
+    if(day===today) cell.classList.add("today");
+    cell.textContent = WEEKDAYS[index];
+    const mark = document.createElement("b");
+    mark.textContent = caliWeekDone.has(day) ? "✓" : planned ? "●" : "·";
+    cell.append(mark);
+    cell.title = caliWeekDone.has(day)
+      ? "Trainiert"
+      : planned ? "Trainingstag" : "Pause";
+    week.append(cell);
+  });
+
+  const isPlanned = program.days.includes(isoWeekday(new Date()));
+  const doneToday = caliWeekDone.has(today);
+  const showSession = (isPlanned || caliForceToday) && !doneToday;
+  const workout = program.next_workout==="B" ? "B" : "A";
+
+  $("caliToday").textContent = doneToday
+    ? "✓ Heute erledigt – stark! Als Nächstes kommt Training "+workout+"."
+    : showSession
+      ? "Heute: Training "+workout+" · "+CALI_SETS+" Sätze pro Übung · ca. 25–35 Minuten"
+      : "Heute ist Pause. Muskeln werden in der Erholung stärker. "+
+        "Optional: 20–30 Minuten spazieren gehen und 10 Minuten dehnen.";
+
+  $("caliSession").classList.toggle("hidden",!showSession);
+  $("caliAnyway").classList.toggle("hidden",showSession || doneToday);
+
+  if(showSession) renderCaliExercises(workout);
+}
+
+function renderCaliExercises(workout) {
+  const box = $("caliExercises");
+  box.replaceChildren();
+
+  CALI_WORKOUTS[workout].forEach(key => {
+    const pattern = CALI_PATTERNS[key];
+    const index = levelOf(key);
+    const level = pattern.levels[index];
+    const unit = pattern.unit==="s" ? "Sek." : "Wdh.";
+
+    const item = document.createElement("div");
+    item.className = "cx";
+    item.dataset.key = key;
+
+    const head = document.createElement("div");
+    head.className = "cx-head";
+    const title = document.createElement("div");
+    const small = document.createElement("span");
+    small.className = "cx-pattern";
+    small.textContent = pattern.name;
+    const name = document.createElement("strong");
+    name.textContent = level.name;
+    title.append(small,name);
+
+    const control = document.createElement("div");
+    control.className = "cx-level";
+    const down = document.createElement("button");
+    down.type = "button";
+    down.textContent = "▼";
+    down.disabled = index===0;
+    down.setAttribute("aria-label","Leichtere Stufe: "+pattern.name);
+    const label = document.createElement("span");
+    label.textContent = "Stufe "+(index+1)+"/"+pattern.levels.length;
+    const up = document.createElement("button");
+    up.type = "button";
+    up.textContent = "▲";
+    up.disabled = index===pattern.levels.length-1;
+    up.setAttribute("aria-label","Schwerere Stufe: "+pattern.name);
+    down.addEventListener("click",() => changeLevel(key,-1));
+    up.addEventListener("click",() => changeLevel(key,1));
+    control.append(down,label,up);
+    head.append(title,control);
+
+    const target = document.createElement("div");
+    target.className = "cx-target";
+    target.textContent =
+      CALI_SETS+" × "+level.min+"–"+level.max+" "+unit;
+
+    const how = document.createElement("p");
+    how.className = "cx-how";
+    how.textContent = level.how;
+
+    const row = document.createElement("div");
+    row.className = "cx-input";
+    const inputId = "cali-"+key;
+    const inputLabel = document.createElement("label");
+    inputLabel.htmlFor = inputId;
+    inputLabel.textContent = "Geschafft im schwächsten Satz ("+unit+")";
+    const input = document.createElement("input");
+    input.id = inputId;
+    input.type = "number";
+    input.inputMode = "numeric";
+    input.min = "0";
+    input.max = "300";
+    input.step = "1";
+    input.placeholder = String(level.min);
+    row.append(inputLabel,input);
+
+    item.append(head,target,how,row);
+
+    // Aufstiegs-Vorschlag
+    const streak = Number(program.streaks?.[key])||0;
+    if(streak>=2 && index<pattern.levels.length-1) {
+      const tip = document.createElement("div");
+      tip.className = "cx-tip";
+      const text = document.createElement("span");
+      text.textContent =
+        "🎉 Zweimal das Ziel geschafft! Bereit für: "+
+        pattern.levels[index+1].name;
+      const go = document.createElement("button");
+      go.type = "button";
+      go.textContent = "Aufsteigen";
+      go.addEventListener("click",() => changeLevel(key,1));
+      tip.append(text,go);
+      item.append(tip);
+    }
+
+    box.append(item);
+  });
+}
+
+async function saveProgram(changes) {
+  const next = {...program,...changes};
+  const {error} = await supabase
+    .from("training_program")
+    .upsert({
+      user_id:currentUserId,
+      program:"calisthenics-basis",
+      days:next.days,
+      levels:next.levels,
+      streaks:next.streaks,
+      next_workout:next.next_workout,
+      started_at:next.started_at,
+      updated_at:new Date().toISOString()
+    },{onConflict:"user_id"});
+  if(error) throw error;
+  program = next;
+}
+
+async function changeLevel(key,step) {
+  if(!program) return;
+  const max = CALI_PATTERNS[key].levels.length-1;
+  const value = Math.min(max,Math.max(0,levelOf(key)+step));
+  try {
+    await saveProgram({
+      levels:{...program.levels,[key]:value},
+      streaks:{...program.streaks,[key]:0}
+    });
+    caliMessage("");
+    renderProgram();
+  } catch(error) {
+    caliMessage("Stufe konnte nicht gespeichert werden: "+error.message);
+  }
+}
+
+async function loadCaliWeek() {
+  if(!currentUserId) return;
+  const dates = weekDates();
+  const {data,error} = await supabase
+    .from("workout_entries")
+    .select("entry_date,notes")
+    .eq("user_id",currentUserId)
+    .gte("entry_date",dayString(dates[0]));
+  if(error) throw error;
+  caliWeekDone = new Set(
+    (data||[])
+      .filter(x => String(x.notes||"").startsWith("Calisthenics"))
+      .map(x => x.entry_date)
+  );
+}
+
+async function loadProgram() {
+  if(!currentUserId) return;
+  const requestId = ++programLoadCounter;
+  const userId = currentUserId;
+
+  try {
+    const {data,error} = await supabase
+      .from("training_program")
+      .select("days,levels,streaks,next_workout,started_at")
+      .eq("user_id",userId)
+      .maybeSingle();
+
+    if(requestId!==programLoadCounter || userId!==currentUserId) return;
+    if(error) throw error;
+
+    program = data ? {
+      days:(Array.isArray(data.days) ? data.days : [1,3,5]).map(Number),
+      levels:data.levels || {},
+      streaks:data.streaks || {},
+      next_workout:data.next_workout==="B" ? "B" : "A",
+      started_at:data.started_at
+    } : null;
+
+    if(program) await loadCaliWeek();
+    if(requestId!==programLoadCounter) return;
+    renderProgram();
+  } catch(error) {
+    if(requestId===programLoadCounter) {
+      caliMessage("Programm konnte nicht geladen werden: "+error.message);
+    }
+  }
+}
+
+$("caliStartButton").addEventListener("click",async () => {
+  if(!currentUserId) return;
+  const days = selectedDays();
+  if(!days.length) {
+    caliMessage("Bitte mindestens einen Trainingstag wählen.");
+    return;
+  }
+
+  const some = $("caliStart").value==="some";
+  const button = $("caliStartButton");
+  button.disabled = true;
+
+  // Beim Ändern der Tage bleibt der Fortschritt erhalten.
+  const existing = program;
+
+  try {
+    program = existing || {
+      levels:some
+        ? {push:2,pull:1,legs:1,core:1,hinge:0}
+        : {push:0,pull:0,legs:0,core:0,hinge:0},
+      streaks:{},
+      next_workout:"A",
+      started_at:localDate()
+    };
+    await saveProgram({days});
+    await loadCaliWeek().catch(() => {});
+    setSetupMode(false);
+    caliMessage(existing
+      ? "✓ Trainingstage gespeichert."
+      : "✓ Programm gestartet. Viel Spaß beim ersten Training!");
+    renderProgram();
+  } catch(error) {
+    program = existing;
+    caliMessage("Speichern fehlgeschlagen: "+error.message);
+    renderProgram();
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("caliDaysEdit").addEventListener("click",() => {
+  if(!program) return;
+  renderDayPicker(program.days);
+  setSetupMode(true);
+  $("caliSetup").classList.remove("hidden");
+  $("caliRun").classList.add("hidden");
+});
+
+$("caliAnyway").addEventListener("click",() => {
+  caliForceToday = true;
+  renderProgram();
+});
+
+$("caliSave").addEventListener("click",async () => {
+  if(!program || !currentUserId) return;
+  const workout = program.next_workout==="B" ? "B" : "A";
+  const keys = CALI_WORKOUTS[workout];
+  const results = [];
+
+  for(const key of keys) {
+    const raw = $("cali-"+key).value.trim();
+    if(raw==="") continue;
+    const value = Math.round(Number(raw));
+    if(!Number.isFinite(value) || value<0 || value>300) {
+      caliMessage("Bitte gültige Zahlen eintragen (0 bis 300).");
+      return;
+    }
+    if(value>0) results.push({key,value});
+  }
+
+  if(!results.length) {
+    caliMessage("Trag bei mindestens einer Übung ein, wie viele du geschafft hast.");
+    return;
+  }
+
+  const button = $("caliSave");
+  button.disabled = true;
+  caliMessage("Training wird gespeichert ...");
+
+  try {
+    const today = localDate();
+    const rows = results.map(({key,value}) => {
+      const pattern = CALI_PATTERNS[key];
+      const index = levelOf(key);
+      return {
+        user_id:currentUserId,
+        entry_date:today,
+        exercise:(pattern.levels[index].name+
+          (pattern.unit==="s" ? " (Sekunden)" : "")).slice(0,120),
+        sets:CALI_SETS,
+        reps:value,
+        weight_kg:null,
+        notes:"Calisthenics "+workout+" · Stufe "+(index+1)
+      };
+    });
+
+    const {error} = await supabase
+      .from("workout_entries")
+      .insert(rows);
+    if(error) throw error;
+
+    // Fortschritt: obere Zahl geschafft -> Serie +1,
+    // sonst Serie zurück auf 0.
+    const streaks = {...program.streaks};
+    const hints = [];
+    for(const {key,value} of results) {
+      const level = CALI_PATTERNS[key].levels[levelOf(key)];
+      streaks[key] = value>=level.max ? (Number(streaks[key])||0)+1 : 0;
+      if(value<level.min && levelOf(key)>0) {
+        hints.push(CALI_PATTERNS[key].name);
+      }
+    }
+
+    await saveProgram({
+      streaks,
+      next_workout:workout==="A" ? "B" : "A"
+    });
+
+    caliWeekDone.add(today);
+    caliForceToday = false;
+    renderProgram();
+
+    if($("trainingDate").value===today) loadTraining();
+
+    caliMessage(
+      "✓ Training "+workout+" gespeichert." +
+      (hints.length
+        ? " Tipp: Bei "+hints.join(", ")+" ruhig eine Stufe zurück (▼) – sauber ist besser als schwer."
+        : "")
+    );
+  } catch(error) {
+    caliMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+// Pausentimer (90 Sekunden, Vibration am Ende)
+let restTimerId = null;
+
+function showRest(seconds) {
+  const m = Math.floor(seconds/60);
+  const s = String(seconds%60).padStart(2,"0");
+  $("restTime").textContent = m+":"+s;
+}
+
+function stopRest(done) {
+  clearInterval(restTimerId);
+  restTimerId = null;
+  $("restTimer").classList.remove("running");
+  $("restButton").textContent = "Pause starten";
+  showRest(90);
+  if(done) {
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    caliMessage("⏱ Pause vorbei – nächster Satz!");
+  }
+}
+
+$("restButton").addEventListener("click",() => {
+  if(restTimerId) {
+    stopRest(false);
+    return;
+  }
+  const end = Date.now()+90000;
+  $("restTimer").classList.add("running");
+  $("restButton").textContent = "Stopp";
+  showRest(90);
+  restTimerId = setInterval(() => {
+    const left = Math.max(0,Math.round((end-Date.now())/1000));
+    showRest(left);
+    if(left<=0) stopRest(true);
+  },250);
+});
+
+renderProgram();
+
+// -----------------------------------
+// Tagesziele
+// -----------------------------------
+
+let userGoals = {kcal:null,protein_g:null,steps:null};
+let todayTotals = {calories:0,protein:0};
+let todaySteps = null;
+let goalsLoadCounter = 0;
+const GOAL_CIRCLE = 169.65;
+
+function goalsMessage(text) {
+  $("goalsMessage").textContent = text || "";
+}
+
+function setGoalRing(fillId,value,goal) {
+  const fill = $(fillId);
+  const share = goal ? Math.min(1,Math.max(0,value/goal)) : 0;
+  fill.style.strokeDashoffset =
+    String(GOAL_CIRCLE*(1-share));
+  fill.closest(".goal").classList.toggle(
+    "done",
+    !!goal && value>=goal
+  );
+}
+
+function wholeNumber(value) {
+  return Math.round(Number(value)||0)
+    .toLocaleString("de-DE");
+}
+
+function renderGoals() {
+  const g = userGoals;
+
+  $("homeCalories").textContent =
+    wholeNumber(todayTotals.calories);
+  $("goalKcalText").textContent = g.kcal
+    ? "von "+wholeNumber(g.kcal)+" kcal"
+    : "kcal";
+  setGoalRing("goalKcalFill",todayTotals.calories,g.kcal);
+
+  $("goalProteinValue").textContent =
+    wholeNumber(todayTotals.protein);
+  $("goalProteinText").textContent = g.protein_g
+    ? "von "+wholeNumber(g.protein_g)+" g Eiweiß"
+    : "g Eiweiß";
+  setGoalRing("goalProteinFill",todayTotals.protein,g.protein_g);
+
+  const hasSteps = todaySteps!==null;
+  $("goalStepsValue").textContent = hasSteps
+    ? (todaySteps>=10000
+        ? (Math.floor(todaySteps/100)/10).toLocaleString("de-DE")+"k"
+        : wholeNumber(todaySteps))
+    : "–";
+  $("goalStepsText").textContent = g.steps
+    ? "von "+wholeNumber(g.steps)+" Schritten"
+    : hasSteps ? "Schritte" : "Schritte (Tracker)";
+  setGoalRing("goalStepsFill",hasSteps ? todaySteps : 0,g.steps);
+}
+
+function fillGoalsForm() {
+  $("goalKcalInput").value = userGoals.kcal ?? "";
+  $("goalProteinInput").value = userGoals.protein_g ?? "";
+  $("goalStepsInput").value = userGoals.steps ?? "";
+}
+
+async function loadGoals() {
+  if(!currentUserId) return;
+  const requestId = ++goalsLoadCounter;
+  const userId = currentUserId;
+
+  try {
+    const {data,error} = await supabase
+      .from("user_goals")
+      .select("kcal,protein_g,steps,bp_per_day,glucose_per_day,insulin_per_day,glucose_unit")
+      .eq("user_id",userId)
+      .maybeSingle();
+
+    if(requestId!==goalsLoadCounter || userId!==currentUserId) return;
+    if(error) throw error;
+
+    userGoals = {
+      kcal:data?.kcal ?? null,
+      protein_g:data?.protein_g ?? null,
+      steps:data?.steps ?? null
+    };
+    checkSettings = {
+      bp:Number(data?.bp_per_day)||0,
+      glucose:Number(data?.glucose_per_day)||0,
+      insulin:Number(data?.insulin_per_day)||0,
+      unit:data?.glucose_unit==="mmol_l" ? "mmol_l" : "mg_dl"
+    };
+    fillGoalsForm();
+    renderGoals();
+    fillCheckForm();
+    renderChecklist();
+    renderMeasureList();
+  } catch(error) {
+    if(requestId===goalsLoadCounter) {
+      goalsMessage("Ziele konnten nicht geladen werden: "+error.message);
+    }
+  }
+}
+
+function readGoal(id,min,max,label) {
+  const raw = $(id).value.trim();
+  if(raw==="") return null;
+  const value = Math.round(Number(raw));
+  if(!Number.isFinite(value) || value<min || value>max) {
+    throw new Error(
+      label+" muss zwischen "+min.toLocaleString("de-DE")+
+      " und "+max.toLocaleString("de-DE")+" liegen."
+    );
+  }
+  return value;
+}
+
+$("goalsForm").addEventListener("submit",async event => {
+  event.preventDefault();
+  if(!currentUserId) return;
+
+  const button = $("saveGoals");
+  button.disabled = true;
+
+  try {
+    const goals = {
+      kcal:readGoal("goalKcalInput",800,6000,"Kalorien"),
+      protein_g:readGoal("goalProteinInput",10,400,"Eiweiß"),
+      steps:readGoal("goalStepsInput",1000,50000,"Schritte")
+    };
+
+    goalsMessage("Ziele werden gespeichert ...");
+
+    const {error} = await supabase
+      .from("user_goals")
+      .upsert({
+        user_id:currentUserId,
+        ...goals,
+        updated_at:new Date().toISOString()
+      },{onConflict:"user_id"});
+
+    if(error) throw error;
+
+    userGoals = goals;
+    renderGoals();
+    goalsMessage("✓ Ziele gespeichert.");
+  } catch(error) {
+    goalsMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("goGoals").addEventListener("click",() => {
+  switchView("moreView");
+  setTimeout(() => {
+    $("goalsCard").scrollIntoView({behavior:"smooth",block:"start"});
+    $("goalKcalInput").focus({preventScroll:true});
+  },50);
+});
+
+renderGoals();
+
+// -----------------------------------
+// Oft gegessen (aus den eigenen Einträgen
+// der letzten 60 Tage, nichts Neues gespeichert)
+// -----------------------------------
+
+let frequentCounter = 0;
+
+function mealBaseName(name) {
+  return String(name||"").replace(/ \([\d.,]+ g\)$/,"").trim();
+}
+
+function renderFrequentFoods(items) {
+  const list = $("frequentList");
+  list.replaceChildren();
+  $("frequentCard").classList.toggle("hidden",!items.length);
+
+  items.forEach(({item,count}) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.textContent = mealBaseName(item.food_name);
+    const times = document.createElement("small");
+    times.textContent = count+"×";
+    chip.append(times);
+    chip.setAttribute(
+      "aria-label",
+      mealBaseName(item.food_name)+" übernehmen, "+count+" Mal gegessen"
+    );
+    chip.addEventListener("click",() => repeatMeal(item));
+    list.append(chip);
+  });
+}
+
+async function loadFrequentFoods() {
+  if(!currentUserId) return;
+  const requestId = ++frequentCounter;
+  const userId = currentUserId;
+
+  const since = new Date();
+  since.setDate(since.getDate()-60);
+  const sinceDay =
+    since.getFullYear()+"-"+
+    String(since.getMonth()+1).padStart(2,"0")+"-"+
+    String(since.getDate()).padStart(2,"0");
+
+  try {
+    const {data,error} = await supabase
+      .from("nutrition_entries")
+      .select("meal_type,food_name,calories,protein,carbs,fat,entry_date,created_at")
+      .eq("user_id",userId)
+      .gte("entry_date",sinceDay)
+      .order("created_at",{ascending:false})
+      .limit(400);
+
+    if(requestId!==frequentCounter || userId!==currentUserId) return;
+    if(error) throw error;
+
+    // Gruppieren nach Name (ohne Mengenangabe).
+    // Das jüngste Exemplar liefert Menge und Werte.
+    const groups = new Map();
+    for(const item of data||[]) {
+      const key = mealBaseName(item.food_name).toLowerCase();
+      if(!key) continue;
+      const group = groups.get(key);
+      if(group) group.count++;
+      else groups.set(key,{item,count:1});
+    }
+
+    const items = [...groups.values()]
+      .filter(g => g.count>=2)
+      .sort((a,b) =>
+        b.count-a.count ||
+        String(b.item.created_at).localeCompare(String(a.item.created_at)))
+      .slice(0,8);
+
+    renderFrequentFoods(items);
+  } catch(_error) {
+    if(requestId===frequentCounter) renderFrequentFoods([]);
+  }
 }
 
 async function loadNutrition() {
@@ -1314,6 +3121,7 @@ async function loadNutrition() {
 
   nutritionData = data||[];
   renderNutrition();
+  loadFrequentFoods();
   nutritionMessage("");
 }
 
@@ -1347,8 +3155,13 @@ function normalizeFood(product) {
   );
 
   if(calories===null) {
-    const kj = validNutrient(nutrients.energy_100g);
-    if(kj!==null && kj<=4000) {
+    // kJ-Werte liegen oft über 1000, darum
+    // hier eine eigene Prüfung (max. 4000 kJ).
+    const rawKj = nutrients.energy_100g;
+    const kj = rawKj===null || rawKj===undefined || rawKj===""
+      ? NaN
+      : Number(rawKj);
+    if(Number.isFinite(kj) && kj>=0 && kj<=4000) {
       calories = Math.round(kj/4.184*10)/10;
     }
   }
@@ -1389,7 +3202,6 @@ function normalizeFood(product) {
   return {
     name:name.slice(0,200),
     brand:String(product.brands||"").slice(0,100),
-    image:product.image_front_small_url || "",
     code:String(product.code||""),
     calories,
     protein,
@@ -1505,15 +3317,6 @@ function renderFoodResults(foods) {
     const row = document.createElement("div");
     row.className = "search-result";
 
-    if(food.image) {
-      const image = document.createElement("img");
-      image.src = food.image;
-      image.alt = "";
-      image.loading = "lazy";
-      image.referrerPolicy = "no-referrer";
-      row.append(image);
-    }
-
     const info = document.createElement("div");
     info.className = "search-info";
 
@@ -1547,20 +3350,81 @@ function renderFoodResults(foods) {
   });
 }
 
-// WICHTIG (geprüft am 21.11.2026):
-// - /api/v2/search ignoriert "search_terms" und liefert
-//   beliebige Produkte. Darum hier die Volltextsuche
-//   /cgi/search.pl.
-// - Bei Überlastung (Limit: ca. 10 Suchen pro Minute)
-//   antwortet der Server ohne CORS-Header. Der Browser
-//   meldet dann nur "Failed to fetch" und merkt sich
-//   den Fehler im Cache. Deshalb: cache "no-store",
-//   eigener Zwischenspeicher und mehrere Versuche.
+// Die Lebensmittelsuche läuft über unsere eigene
+// Supabase-Funktion "food-search". Sie fragt Open Food
+// Facts an (mit Wiederholungen und Zwischenspeicher).
+// Vorteil: Open Food Facts sieht keine IP-Adressen
+// unserer Nutzer, und Überlastungsfehler ohne CORS
+// treten im Browser nicht mehr auf.
 
 const foodSearchCache = new Map();
 
 function wait(ms) {
   return new Promise(resolve => setTimeout(resolve,ms));
+}
+
+async function foodRequest(body) {
+  const {data,error} =
+    await supabase.auth.getSession();
+
+  if(error || !data.session) {
+    throw new Error("Bitte erneut anmelden.");
+  }
+
+  let lastError = null;
+
+  // Ein zweiter Versuch, falls die Funktion
+  // gerade erst startet oder kurz hängt.
+  for(let attempt=1; attempt<=2; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(
+      () => controller.abort(),
+      30000
+    );
+
+    try {
+      const response = await fetch(FOOD_FUNCTION,{
+        method:"POST",
+        cache:"no-store",
+        signal:controller.signal,
+        headers:{
+          Authorization:
+            "Bearer "+data.session.access_token,
+          apikey:SUPABASE_KEY,
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify(body)
+      });
+
+      const result = await response.json()
+        .catch(() => ({}));
+
+      if(response.ok) return result;
+
+      lastError = new Error(
+        response.status===401
+          ? "Bitte erneut anmelden."
+          : result.error || "HTTP "+response.status
+      );
+
+      // Eingabefehler oder fehlende Anmeldung:
+      // ein neuer Versuch bringt nichts.
+      if(response.status<500) {
+        lastError.final = true;
+        throw lastError;
+      }
+
+    } catch(error) {
+      lastError = error;
+      if(error.final) throw error;
+    } finally {
+      clearTimeout(timer);
+    }
+
+    if(attempt<2) await wait(1500);
+  }
+
+  throw lastError;
 }
 
 async function fetchFoodProducts(query) {
@@ -1570,80 +3434,364 @@ async function fetchFoodProducts(query) {
     return foodSearchCache.get(key);
   }
 
-  const endpoint = new URL(
-    "https://world.openfoodfacts.org/cgi/search.pl"
-  );
+  const result = await foodRequest({
+    action:"search",
+    q:query
+  });
 
-  endpoint.searchParams.set("search_terms",query);
-  endpoint.searchParams.set("search_simple","1");
-  endpoint.searchParams.set("action","process");
-  endpoint.searchParams.set("json","1");
-  endpoint.searchParams.set("page_size","24");
-  endpoint.searchParams.set(
-    "fields",
-    [
-      "code",
-      "product_name",
-      "product_name_de",
-      "brands",
-      "image_front_small_url",
-      "nutriments"
-    ].join(",")
-  );
+  const products = Array.isArray(result.products)
+    ? result.products
+    : [];
 
-  let lastError = null;
+  foodSearchCache.set(key,products);
+  return products;
+}
 
-  // Der Suchserver weist im Test etwa jede zweite
-  // Anfrage sofort ab. Darum bis zu 4 Versuche
-  // mit wachsender Pause (1 s, 2 s, 3 s).
-  const maxAttempts = 4;
+// Prüfziffer von EAN-8/EAN-13/UPC (GTIN).
+// Verhindert, dass falsch gelesene Barcodes
+// gesucht werden.
+function validBarcode(code) {
+  if(!/^\d{8,14}$/.test(code)) return false;
 
-  for(let attempt=1; attempt<=maxAttempts; attempt++) {
-    // Verhindert, dass ein alter Fehler
-    // aus dem Browser-Cache wiederkommt.
-    endpoint.searchParams.set("_",String(Date.now()));
+  const digits = code.split("").map(Number);
+  const check = digits.pop();
+  let sum = 0;
 
-    const controller = new AbortController();
-    const timer = setTimeout(
-      () => controller.abort(),
-      12000
+  digits.reverse().forEach((digit,index) => {
+    sum += digit*(index%2===0 ? 3 : 1);
+  });
+
+  return (10-sum%10)%10===check;
+}
+
+async function lookupBarcode(code) {
+  code = String(code||"").replace(/\D/g,"");
+
+  if(!validBarcode(code)) {
+    foodMessage(
+      "Dieser Barcode ist ungültig. Bitte prüfe die Ziffern."
+    );
+    return;
+  }
+
+  const requestId = ++foodSearchCounter;
+  $("foodSearchResults").replaceChildren();
+  foodMessage("Barcode "+code+" wird gesucht ...");
+
+  try {
+    const result = await foodRequest({
+      action:"barcode",
+      code
+    });
+
+    if(requestId!==foodSearchCounter) return;
+
+    if(!result.product) {
+      foodMessage(
+        "Zu Barcode "+code+" gibt es noch keinen Eintrag bei Open Food Facts. Du kannst das Lebensmittel unten manuell eintragen."
+      );
+      return;
+    }
+
+    const food = normalizeFood(result.product);
+
+    if(!food) {
+      const name =
+        result.product.product_name_de ||
+        result.product.product_name ||
+        "Produkt";
+
+      clearFoodSelection();
+      $("foodName").value = String(name).slice(0,200);
+      foodMessage(
+        "Gefunden: "+name+
+        " – aber ohne vollständige Nährwerte. Bitte trage die Werte von der Verpackung selbst ein."
+      );
+      $("nutritionForm").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+      return;
+    }
+
+    renderFoodResults([food]);
+    chooseFood(food);
+    foodMessage(
+      "✓ Gefunden: "+food.name+
+      ". Bitte Menge und Nährwerte prüfen."
     );
 
+  } catch(error) {
+    if(requestId===foodSearchCounter) {
+      foodMessage(
+        "Suche fehlgeschlagen: "+error.message+
+        " Du kannst das Lebensmittel manuell eintragen."
+      );
+    }
+  }
+}
+
+$("barcodeForm").addEventListener(
+  "submit",
+  event => {
+    event.preventDefault();
+    lookupBarcode($("barcodeInput").value.trim());
+  }
+);
+
+// -----------------------------------
+// Barcode-Scanner (Kamera)
+// Das Bild wird nur im Browser ausgewertet.
+// Es wird nichts gespeichert oder hochgeladen.
+// -----------------------------------
+
+const ZXING_SRC =
+  "./vendor/zxing-library-0.21.3.min.js";
+
+let scanStream = null;
+let scanRun = 0;
+let zxingPromise = null;
+
+function loadZxing() {
+  if(window.ZXing) return Promise.resolve(window.ZXing);
+
+  if(!zxingPromise) {
+    zxingPromise = new Promise((resolve,reject) => {
+      const script = document.createElement("script");
+      script.src = ZXING_SRC;
+      script.async = true;
+      script.onload = () =>
+        window.ZXing
+          ? resolve(window.ZXing)
+          : reject(new Error("Scanner fehlt"));
+      script.onerror = () => {
+        zxingPromise = null;
+        reject(new Error("Scanner konnte nicht geladen werden"));
+      };
+      document.head.append(script);
+    });
+  }
+
+  return zxingPromise;
+}
+
+async function createDecoder() {
+  // 1. Eingebaute Barcode-Erkennung
+  //    (Chrome/Android, Edge, Samsung Internet)
+  if("BarcodeDetector" in window) {
     try {
-      const response = await fetch(endpoint,{
-        cache:"no-store",
-        signal:controller.signal
-      });
+      const supported =
+        await window.BarcodeDetector.getSupportedFormats();
+      const formats = [
+        "ean_13","ean_8","upc_a","upc_e"
+      ].filter(f => supported.includes(f));
 
-      if(!response.ok) {
-        throw new Error("HTTP "+response.status);
+      if(formats.length) {
+        const detector =
+          new window.BarcodeDetector({formats});
+        return async video => {
+          const codes = await detector.detect(video);
+          return codes.length ? codes[0].rawValue : null;
+        };
       }
-
-      const result = await response.json();
-
-      const products = Array.isArray(result.products)
-        ? result.products
-        : [];
-
-      foodSearchCache.set(key,products);
-      return products;
-
-    } catch(error) {
-      lastError = error;
-      if(attempt<maxAttempts) {
-        foodMessage(
-          "Datenbank antwortet nicht, neuer Versuch ("+
-          (attempt+1)+"/"+maxAttempts+") ..."
-        );
-        await wait(attempt*1000);
-      }
-    } finally {
-      clearTimeout(timer);
+    } catch(_error) {
+      // weiter mit dem Ersatz-Scanner
     }
   }
 
-  throw lastError;
+  // 2. Ersatz für iPhone/Firefox: ZXing,
+  //    liegt als Datei in unserem Repository.
+  const ZXing = await loadZxing();
+
+  const hints = new Map();
+  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[
+    ZXing.BarcodeFormat.EAN_13,
+    ZXing.BarcodeFormat.EAN_8,
+    ZXing.BarcodeFormat.UPC_A,
+    ZXing.BarcodeFormat.UPC_E
+  ]);
+  hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+
+  const reader = new ZXing.MultiFormatReader();
+  reader.setHints(hints);
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d",{
+    willReadFrequently:true
+  });
+
+  return async video => {
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+    if(!width || !height) return null;
+
+    // Für die Geschwindigkeit verkleinern.
+    const scale = Math.min(1,800/width);
+    canvas.width = Math.round(width*scale);
+    canvas.height = Math.round(height*scale);
+    context.drawImage(
+      video,0,0,canvas.width,canvas.height
+    );
+
+    try {
+      const source =
+        new ZXing.HTMLCanvasElementLuminanceSource(canvas);
+      const bitmap = new ZXing.BinaryBitmap(
+        new ZXing.HybridBinarizer(source)
+      );
+      return reader.decode(bitmap).getText();
+    } catch(_notFound) {
+      return null;
+    } finally {
+      reader.reset();
+    }
+  };
 }
+
+function stopScanner() {
+  scanRun++;
+
+  if(scanStream) {
+    scanStream.getTracks().forEach(track => track.stop());
+    scanStream = null;
+  }
+
+  const video = $("scanVideo");
+  video.pause();
+  video.srcObject = null;
+
+  $("scanBox").classList.add("hidden");
+  $("scanStop").classList.add("hidden");
+  $("scanButton").classList.remove("hidden");
+}
+
+async function startScanner() {
+  if(
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ) {
+    foodMessage(
+      "Dein Browser erlaubt hier keinen Kamerazugriff. Bitte tippe den Barcode unten ein."
+    );
+    return;
+  }
+
+  stopScanner();
+  const run = scanRun;
+
+  $("scanButton").classList.add("hidden");
+  $("scanStop").classList.remove("hidden");
+  foodMessage("Kamera wird gestartet ...");
+
+  let decode;
+  let stream = null;
+
+  try {
+    // Scanner zuerst laden: Schlägt das fehl,
+    // wird die Kamera gar nicht erst geöffnet.
+    decode = await createDecoder();
+    if(run!==scanRun) return;
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio:false,
+      video:{
+        facingMode:{ideal:"environment"},
+        width:{ideal:1280},
+        height:{ideal:720}
+      }
+    });
+
+    if(run!==scanRun) {
+      stream.getTracks().forEach(t => t.stop());
+      return;
+    }
+
+    scanStream = stream;
+
+    const video = $("scanVideo");
+    video.srcObject = stream;
+    $("scanBox").classList.remove("hidden");
+    await video.play();
+
+  } catch(error) {
+    // Kamera in jedem Fall wieder freigeben.
+    if(stream && stream!==scanStream) {
+      stream.getTracks().forEach(t => t.stop());
+    }
+    if(run!==scanRun) return;
+    stopScanner();
+
+    const denied =
+      error && (
+        error.name==="NotAllowedError" ||
+        error.name==="SecurityError"
+      );
+
+    foodMessage(
+      denied
+        ? "Kamerazugriff wurde nicht erlaubt. Du kannst ihn in den Browser-Einstellungen freigeben oder den Barcode unten eintippen."
+        : "Kamera oder Scanner konnte nicht gestartet werden. Bitte tippe den Barcode unten ein."
+    );
+    return;
+  }
+
+  foodMessage(
+    "Halte den Barcode in den grünen Rahmen ..."
+  );
+
+  // Ein Treffer zählt erst, wenn derselbe Code
+  // zweimal hintereinander gelesen wurde.
+  let lastCode = "";
+  const started = Date.now();
+
+  while(run===scanRun) {
+    const video = $("scanVideo");
+
+    if(video.readyState>=2) {
+      let code = null;
+
+      try {
+        code = await decode(video);
+      } catch(_error) {
+        code = null;
+      }
+
+      if(run!==scanRun) return;
+
+      if(code && validBarcode(code)) {
+        if(code===lastCode) {
+          if(navigator.vibrate) navigator.vibrate(80);
+          stopScanner();
+          $("barcodeInput").value = code;
+          lookupBarcode(code);
+          return;
+        }
+        lastCode = code;
+      }
+    }
+
+    if(Date.now()-started>60000) {
+      stopScanner();
+      foodMessage(
+        "Kein Barcode erkannt. Versuche es mit mehr Licht oder tippe die Ziffern unten ein."
+      );
+      return;
+    }
+
+    await wait(180);
+  }
+}
+
+$("scanButton").addEventListener("click",startScanner);
+$("scanStop").addEventListener("click",() => {
+  stopScanner();
+  foodMessage("");
+});
+
+// Kamera nicht im Hintergrund weiterlaufen lassen.
+document.addEventListener("visibilitychange",() => {
+  if(document.hidden && scanStream) stopScanner();
+});
 
 function sortFoods(foods,query) {
   const q = query.toLowerCase();
@@ -1709,11 +3857,13 @@ $("foodSearchForm").addEventListener(
         const reason =
           error.name==="AbortError"
             ? "Die Datenbank hat zu lange nicht geantwortet."
-            : "Die Lebensmitteldatenbank ist gerade überlastet oder nicht erreichbar.";
+            : String(error.message).startsWith("Bitte")
+              ? error.message
+              : "Die Lebensmitteldatenbank ist gerade überlastet oder nicht erreichbar.";
 
         foodMessage(
           reason+
-          " Bitte in etwa einer Minute erneut versuchen."+
+          " Bitte gleich erneut versuchen."+
           " Du kannst Lebensmittel weiterhin manuell eingeben."
         );
       }
@@ -2005,8 +4155,7 @@ function renderTraining() {
     const again = document.createElement("button");
     again.type = "button";
     again.textContent = "Nochmal";
-    again.style.background = "#29473f";
-    again.style.color = "var(--green)";
+    again.classList.add("soft-btn");
     again.setAttribute(
       "aria-label","Übung als Vorlage nehmen: "+item.exercise
     );
@@ -2244,10 +4393,7 @@ function renderHealth() {
   $("latestWeightDate").textContent = w
     ? formatDate(w.entry_date) : "Noch keine Daten";
 
-  $("latestBp").textContent = bp
-    ? bp.systolic+"/"+bp.diastolic : "–";
-  $("latestBpDate").textContent = bp
-    ? formatDate(bp.entry_date)+" · mmHg" : "Noch keine Daten";
+  updateLatestBp();
 
   $("latestPulse").textContent = p ? p.pulse : "–";
   $("latestPulseDate").textContent = p
@@ -2574,10 +4720,10 @@ function renderSleepAnalysis() {
 
   // Schlafphasen
   const phases = [
-    ["Tiefschlaf",Number(last.deep_sleep_duration)||0,"#4a6cf7"],
-    ["REM",Number(last.rem_sleep_duration)||0,"#a46cf0"],
-    ["Leichtschlaf",Number(last.light_sleep_duration)||0,"#4fb7c9"],
-    ["Wach",Number(last.awake_time)||0,"#e7a35a"]
+    ["Tiefschlaf",Number(last.deep_sleep_duration)||0,"#6b5cf0"],
+    ["REM",Number(last.rem_sleep_duration)||0,"#c08bff"],
+    ["Leichtschlaf",Number(last.light_sleep_duration)||0,"#6fd6e8"],
+    ["Wach",Number(last.awake_time)||0,"#ffb866"]
   ];
   const total = phases.reduce((t,p)=>t+p[1],0);
 
@@ -2744,7 +4890,7 @@ function renderHrChart() {
   line.setAttribute("points",
     points.map((p,i)=>x(times[i]).toFixed(1)+","+y(p.bpm).toFixed(1)).join(" "));
   line.setAttribute("fill","none");
-  line.setAttribute("stroke","#70efbd");
+  line.style.stroke = "var(--sun)";
   line.setAttribute("stroke-width","2");
   line.setAttribute("vector-effect","non-scaling-stroke");
   svg.append(line);
@@ -2753,7 +4899,7 @@ function renderHrChart() {
     const t = document.createElementNS(NS,"text");
     t.setAttribute("x","2");
     t.setAttribute("y",String(y(b)+4));
-    t.setAttribute("fill","#9aacc2");
+    t.style.fill = "var(--muted)";
     t.setAttribute("font-size","11");
     t.textContent = b;
     svg.append(t);
@@ -2838,6 +4984,9 @@ function renderTracker() {
         (HR_SOURCES[live.source] ? " · "+HR_SOURCES[live.source] : "")
       : "Aktuelle HF";
     $("trkReadiness").textContent = r && r.score!=null ? r.score : "–";
+    todaySteps = a && a.day===today && a.steps!=null
+      ? Number(a.steps) : null;
+    renderGoals();
     $("trkSteps").textContent = a && a.steps!=null
       ? Number(a.steps).toLocaleString("de-DE") : "–";
     $("trkKcal").textContent = a && a.active_calories!=null
@@ -2931,8 +5080,7 @@ function renderPlans() {
     const start = document.createElement("button");
     start.type = "button";
     start.textContent = "Starten";
-    start.style.background = "#29473f";
-    start.style.color = "var(--green)";
+    start.classList.add("soft-btn");
     start.setAttribute("aria-label","Plan starten: "+plan.name);
     start.addEventListener("click",() => startPlan(plan.name,exercises));
     actions.append(start);
@@ -3116,7 +5264,7 @@ setupSocialLogin();
 
 // Bei inhaltlichen Änderungen des Einwilligungstextes die Version
 // erhöhen – dann wird die Einwilligung erneut abgefragt.
-const CONSENT_VERSION = "2026-11-21";
+const CONSENT_VERSION = "2026-11-21.2";
 
 let consentConfirmedFor = null;
 let consentInfo = null;
@@ -3222,6 +5370,9 @@ $("exportButton").addEventListener("click",async () => {
       ["mahlzeiten","nutrition_entries"],
       ["trainings","workout_entries"],
       ["trainingsplaene","workout_plans"],
+      ["tagesziele","user_goals"],
+      ["trainingsprogramm","training_program"],
+      ["messtagebuch","measurements"],
       ["gesundheitswerte","health_entries"],
       ["einwilligungen","user_consents"],
       ["oura_verbindung","oura_connections"]
@@ -3353,6 +5504,7 @@ async function refreshUI() {
     nutritionData = [];
     ++nutritionLoadCounter;
     ++foodSearchCounter;
+    try { stopScanner(); } catch(_error) {}
     resetTrainingAndHealth();
     resetTrackerAndPlans();
     consentConfirmedFor = null;
@@ -3385,6 +5537,11 @@ async function refreshUI() {
       resetTrainingAndHealth();
       resetTrackerAndPlans();
       showConsentGate(true);
+      // Wer schon einmal zugestimmt hat, erfährt, warum erneut gefragt wird.
+      $("consentUpdateNote").classList.toggle(
+        "hidden",
+        !(row && row.granted===true)
+      );
       return;
     }
 
@@ -3411,13 +5568,19 @@ async function refreshUI() {
     $("mainScore").textContent = "–";
     $("miniSleep").textContent = "–";
 
-    $("scoreCircle").style.strokeDashoffset =
-      452.39;
+    setScoreVisual(null);
 
     $("scoreRating").textContent =
       "Noch keine Daten";
 
-    $("homeCalories").textContent = "0";
+    todayTotals = {calories:0,protein:0};
+    todaySteps = null;
+    userGoals = {kcal:null,protein_g:null,steps:null};
+    resetProgram();
+    resetMeasurements();
+    fillGoalsForm();
+    renderGoals();
+    renderFrequentFoods([]);
 
     $("homeNutritionInfo").textContent =
       "Noch keine Mahlzeiten eingetragen.";
@@ -3468,6 +5631,9 @@ async function refreshUI() {
   );
 
   if(changed) {
+    loadGoals();
+    loadProgram();
+    loadMeasurements();
     loadNutrition();
     loadTraining();
     loadHealth();
@@ -3653,6 +5819,71 @@ supabase.auth.onAuthStateChange(() => {
 });
 
 refreshUI();
+
+// -----------------------------------
+// App-Installation (PWA)
+// Der Service Worker speichert nur App-Dateien
+// (keine persönlichen Daten), damit VYORA schnell
+// startet und auch bei schlechtem Netz öffnet.
+// -----------------------------------
+
+let installPrompt = null;
+
+const isStandalone = () =>
+  window.matchMedia("(display-mode: standalone)").matches ||
+  window.navigator.standalone===true;
+
+function setupInstallCard() {
+  if(isStandalone()) {
+    $("installCard").classList.add("hidden");
+    return;
+  }
+
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+
+  if(installPrompt) {
+    $("installButton").classList.remove("hidden");
+    $("installCard").classList.remove("hidden");
+  } else if(ios) {
+    $("installText").textContent =
+      "So legst du VYORA auf deinen Startbildschirm: In Safari unten auf "+
+      "„Teilen“ tippen (Quadrat mit Pfeil) und dann "+
+      "„Zum Home-Bildschirm“ wählen.";
+    $("installCard").classList.remove("hidden");
+  }
+}
+
+window.addEventListener("beforeinstallprompt",event => {
+  event.preventDefault();
+  installPrompt = event;
+  setupInstallCard();
+});
+
+window.addEventListener("appinstalled",() => {
+  installPrompt = null;
+  $("installCard").classList.add("hidden");
+});
+
+$("installButton").addEventListener("click",async () => {
+  if(!installPrompt) return;
+  const prompt = installPrompt;
+  installPrompt = null;
+  $("installButton").classList.add("hidden");
+  await prompt.prompt();
+  setupInstallCard();
+});
+
+setupInstallCard();
+
+if(
+  "serviceWorker" in navigator &&
+  location.protocol==="https:"
+) {
+  navigator.serviceWorker
+    .register("./sw.js",{scope:"./"})
+    .catch(() => {});
+}
 </script>
 </body>
 </html>
