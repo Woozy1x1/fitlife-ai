@@ -526,6 +526,122 @@ function repeatMeal(item) {
 }
 
 // -----------------------------------
+// Offline eintragen
+// Ohne Internet werden neue Einträge auf diesem Gerät vorgemerkt
+// (nur für das angemeldete Konto) und automatisch übertragen,
+// sobald wieder Verbindung besteht. Jeder Eintrag bekommt vorher
+// eine feste ID – so wird nichts doppelt gespeichert.
+// -----------------------------------
+
+const OFFLINE_MSG = "📴 Offline gespeichert – wird automatisch übertragen, sobald du wieder online bist.";
+const offlineKey = uid => "vyora_offline_"+uid;
+const CONSENT_OK_KEY = "vyora_consent_ok";
+let offlineFlushing = false;
+
+function isNetworkError(error) {
+  const text = String(error?.message || error || "");
+  return !navigator.onLine ||
+    /failed to fetch|networkerror|load failed|network request failed|fetch failed|internet connection appears/i.test(text);
+}
+
+function readQueue(uid) {
+  if(!uid) return [];
+  try { return JSON.parse(localStorage.getItem(offlineKey(uid))||"[]"); }
+  catch(_error) { return []; }
+}
+
+function writeQueue(uid,queue) {
+  try {
+    if(queue.length) localStorage.setItem(offlineKey(uid),JSON.stringify(queue));
+    else localStorage.removeItem(offlineKey(uid));
+  } catch(_error) {}
+  renderOfflineBanner();
+}
+
+function renderOfflineBanner() {
+  const box = $("offlineBanner");
+  if(!box) return;
+  const waiting = readQueue(currentUserId).length;
+  const offline = !navigator.onLine;
+  box.classList.toggle("hidden",!offline && !waiting);
+  box.textContent = offline
+    ? "📴 Du bist offline. Neue Einträge werden auf diesem Gerät vorgemerkt und automatisch übertragen."+
+      (waiting ? " Wartend: "+waiting+"." : "")
+    : "⏳ "+waiting+(waiting===1 ? " Eintrag wird" : " Einträge werden")+" übertragen ...";
+}
+
+// Speichert sofort – oder merkt den Eintrag vor, wenn keine Verbindung besteht.
+// opts.onConflict: Schlüssel für "überschreiben statt neu" (z. B. "user_id,day").
+async function saveOrQueue(table,row,opts={}) {
+  const uid = currentUserId;
+  const item = {table,row:{...row},onConflict:opts.onConflict||"id",t:Date.now()};
+  if(!opts.onConflict && !item.row.id) item.row.id = crypto.randomUUID();
+
+  if(navigator.onLine) {
+    const {error} = opts.onConflict
+      ? await supabase.from(table).upsert(item.row,{onConflict:opts.onConflict})
+      : await supabase.from(table).insert(item.row);
+    if(!error) return {queued:false};
+    if(!isNetworkError(error)) throw error;
+  }
+
+  const queue = readQueue(uid);
+  if(opts.onConflict) {
+    // gleicher Tag/Schlüssel: nur den neuesten Stand behalten
+    const keys = opts.onConflict.split(",");
+    for(let i=queue.length-1;i>=0;i--) {
+      if(queue[i].table===table && keys.every(k => String(queue[i].row[k])===String(item.row[k]))) queue.splice(i,1);
+    }
+  }
+  queue.push(item);
+  while(queue.length>500) queue.shift();
+  writeQueue(uid,queue);
+  return {queued:true};
+}
+
+async function flushQueue() {
+  const uid = currentUserId;
+  if(!uid || offlineFlushing || !navigator.onLine) { renderOfflineBanner(); return; }
+  let queue = readQueue(uid);
+  if(!queue.length) { renderOfflineBanner(); return; }
+
+  offlineFlushing = true;
+  let sent = 0, dropped = 0;
+  renderOfflineBanner();
+  try {
+    while(queue.length && uid===currentUserId) {
+      const item = queue[0];
+      const {error} = item.onConflict==="id"
+        ? await supabase.from(item.table).upsert(item.row,{onConflict:"id",ignoreDuplicates:true})
+        : await supabase.from(item.table).upsert(item.row,{onConflict:item.onConflict});
+      if(error) {
+        if(isNetworkError(error)) break;
+        dropped += 1; // z. B. ungültiger Wert – nicht endlos wiederholen
+      } else {
+        sent += 1;
+      }
+      queue.shift();
+      writeQueue(uid,queue);
+    }
+  } finally {
+    offlineFlushing = false;
+  }
+
+  if(uid!==currentUserId) return;
+  renderOfflineBanner();
+  if(sent || dropped) {
+    message(dropped
+      ? "✓ "+sent+" vorgemerkte Einträge übertragen. "+dropped+" konnten nicht gespeichert werden."
+      : "✓ "+sent+(sent===1 ? " vorgemerkter Eintrag" : " vorgemerkte Einträge")+" übertragen.");
+    loadNutrition(); loadTraining(); loadHealth(); loadMeasurements();
+    loadMetrics(); loadWater(); scheduleInsights();
+  }
+}
+
+window.addEventListener("online",() => { renderOfflineBanner(); flushQueue(); });
+window.addEventListener("offline",renderOfflineBanner);
+
+// -----------------------------------
 // Tageswerte ohne Oura: Schlaf selbst eintragen
 // und Apple Health per iPhone-Kurzbefehl
 // -----------------------------------
@@ -705,9 +821,7 @@ $("manualSleepForm").addEventListener("submit",async event => {
     }
 
     const quality = $("msQuality").value;
-    const {error} = await supabase
-      .from("daily_metrics")
-      .upsert({
+    const saved = await saveOrQueue("daily_metrics",{
         user_id:currentUserId,
         day,
         source:"manual",
@@ -717,7 +831,7 @@ $("manualSleepForm").addEventListener("submit",async event => {
         waketime:wake.toISOString(),
         updated_at:new Date().toISOString()
       },{onConflict:"user_id,day,source"});
-    if(error) throw error;
+    if(saved.queued) { msMessage(OFFLINE_MSG); return; }
 
     await loadMetrics();
     msMessage("✓ Schlaf gespeichert: "+hoursText(minutes)+".");
@@ -1127,13 +1241,13 @@ $("measureForm").addEventListener("submit",async event => {
     }
 
     measureMessage("Wird gespeichert ...");
-    const {error} = await supabase.from("measurements").insert(row);
-    if(error) throw error;
+    const saved = await saveOrQueue("measurements",row);
 
     // Felder leeren, Art und Insulinname behalten
     ["mSys","mDia","mPulse","mGlucose","mUnits","mKe","mNotes"]
       .forEach(id => { $(id).value = ""; });
     $("measureTime").value = nowForInput();
+    if(saved.queued) { measureMessage(OFFLINE_MSG); return; }
 
     await loadMeasurements();
     measureMessage("✓ "+MEASURE_KINDS[row.kind].name+" gespeichert.");
@@ -2656,11 +2770,14 @@ function changeWater(step) {
 
   const userId = currentUserId, day = waterDay, value = next;
   waterSaving = waterSaving.then(async () => {
-    const {error} = await supabase.from("water_log").upsert({
-      user_id:userId, day, glasses:value, updated_at:new Date().toISOString()
-    },{onConflict:"user_id,day"});
-    if(error && userId===currentUserId) {
-      $("homeNutritionInfo").textContent = "Wasser konnte nicht gespeichert werden: "+error.message;
+    try {
+      await saveOrQueue("water_log",{
+        user_id:userId, day, glasses:value, updated_at:new Date().toISOString()
+      },{onConflict:"user_id,day"});
+    } catch(error) {
+      if(userId===currentUserId) {
+        $("homeNutritionInfo").textContent = "Wasser konnte nicht gespeichert werden: "+error.message;
+      }
     }
   }).catch(() => {});
 }
@@ -3564,10 +3681,10 @@ $("nutritionForm").addEventListener(
     );
 
     try {
-      const {data:{user},error:userError} =
-        await supabase.auth.getUser();
+      // Offline reicht die angemeldete Sitzung auf diesem Gerät.
+      const user = currentUserId ? {id:currentUserId} : null;
 
-      if(userError || !user) {
+      if(!user) {
         throw new Error(
           "Bitte erneut anmelden."
         );
@@ -3641,9 +3758,7 @@ $("nutritionForm").addEventListener(
       const date =
         $("nutritionDate").value;
 
-      const {error} = await supabase
-        .from("nutrition_entries")
-        .insert({
+      const saved = await saveOrQueue("nutrition_entries",{
           user_id:user.id,
           meal_type:$("mealType").value,
           food_name:savedName,
@@ -3651,9 +3766,8 @@ $("nutritionForm").addEventListener(
           ...values
         });
 
-      if(error) throw error;
-
       clearFoodSelection();
+      if(saved.queued) { nutritionMessage(OFFLINE_MSG); return; }
 
       await loadNutrition();
 
@@ -3950,9 +4064,7 @@ $("workoutForm").addEventListener("submit",async event => {
     const weight = optionalNumber("weight",0,1000,"Gewicht",false);
     const notes = $("workoutNotes").value.trim().slice(0,500);
 
-    const {error} = await supabase
-      .from("workout_entries")
-      .insert({
+    const saved = await saveOrQueue("workout_entries",{
         user_id:currentUserId,
         entry_date:$("trainingDate").value,
         exercise,
@@ -3962,11 +4074,10 @@ $("workoutForm").addEventListener("submit",async event => {
         notes:notes||null
       });
 
-    if(error) throw error;
-
     // Übung, Sätze und Wdh. bleiben stehen,
     // damit man den nächsten Satz schnell erfassen kann.
     $("workoutNotes").value = "";
+    if(saved.queued) { workoutMessage(OFFLINE_MSG); return; }
 
     await loadTraining();
     loadExerciseSuggestions();
@@ -4178,9 +4289,7 @@ $("healthForm").addEventListener("submit",async event => {
 
     const notes = $("healthNotes").value.trim().slice(0,500);
 
-    const {error} = await supabase
-      .from("health_entries")
-      .insert({
+    const saved = await saveOrQueue("health_entries",{
         user_id:currentUserId,
         entry_date:date,
         weight_kg:weight===null ? null : Math.round(weight*10)/10,
@@ -4190,10 +4299,9 @@ $("healthForm").addEventListener("submit",async event => {
         notes:notes||null
       });
 
-    if(error) throw error;
-
     ["bodyWeight","systolic","diastolic","pulse","healthNotes"]
       .forEach(id => $(id).value = "");
+    if(saved.queued) { healthMessage(OFFLINE_MSG); return; }
 
     await loadHealth();
     healthMessage("✓ Werte gespeichert.");
@@ -5021,6 +5129,7 @@ $("consentForm").addEventListener("submit",async event => {
 });
 
 $("consentDecline").addEventListener("click",async () => {
+  try { localStorage.removeItem(CONSENT_OK_KEY); } catch(_e) {}
   await supabase.auth.signOut();
   consentConfirmedFor = null;
   showConsentGate(false);
@@ -5129,7 +5238,11 @@ $("deleteButton").addEventListener("click",async () => {
     return;
   }
 
-  // Das Konto existiert nicht mehr – lokale Sitzung entfernen.
+  // Das Konto existiert nicht mehr – lokale Sitzung und Vormerkungen entfernen.
+  try {
+    if(currentUserId) localStorage.removeItem(offlineKey(currentUserId));
+    localStorage.removeItem(CONSENT_OK_KEY);
+  } catch(_e) {}
   await supabase.auth.signOut({scope:"local"}).catch(() => {});
   consentConfirmedFor = null;
   consentInfo = null;
@@ -5146,8 +5259,15 @@ $("deleteButton").addEventListener("click",async () => {
 async function refreshUI() {
   const counter = ++refreshCounter;
 
-  const {data,error} =
+  let {data,error} =
     await supabase.auth.getUser();
+
+  // Offline: Server nicht erreichbar → angemeldete Sitzung auf diesem Gerät nutzen
+  if(error && isNetworkError(error)) {
+    const local = await supabase.auth.getSession();
+    data = {user:local.data?.session?.user || null};
+    error = null;
+  }
 
   if(counter!==refreshCounter) return;
 
@@ -5199,10 +5319,18 @@ async function refreshUI() {
       row = await loadConsent(user.id);
     } catch(error) {
       if(counter!==refreshCounter) return;
-      showConsentGate(true);
-      consentMessage("Einwilligung konnte nicht geprüft werden: "+
-        error.message);
-      return;
+      // Offline: Wurde die aktuelle Einwilligung auf diesem Gerät schon
+      // bestätigt, darf die App weiterlaufen (Prüfung folgt online).
+      let ok = null;
+      try { ok = JSON.parse(localStorage.getItem(CONSENT_OK_KEY)||"null"); } catch(_e) {}
+      if(isNetworkError(error) && ok && ok.uid===user.id && ok.v===CONSENT_VERSION) {
+        row = {consent_type:"health_data",version:CONSENT_VERSION,granted:true,created_at:ok.at};
+      } else {
+        showConsentGate(true);
+        consentMessage("Einwilligung konnte nicht geprüft werden: "+
+          error.message);
+        return;
+      }
     }
 
     if(counter!==refreshCounter) return;
@@ -5225,11 +5353,15 @@ async function refreshUI() {
 
     consentConfirmedFor = user.id;
     consentInfo = row;
+    try {
+      localStorage.setItem(CONSENT_OK_KEY,JSON.stringify({uid:user.id,v:CONSENT_VERSION,at:row.created_at}));
+    } catch(_e) {}
   }
 
   showConsentGate(false);
   $("dashboard").classList.remove("hidden");
   renderConsentStatus();
+  setTimeout(flushQueue,0);
 
   const changed =
     currentUserId!==user.id;
@@ -5399,6 +5531,7 @@ async function autoRefresh() {
     }
   }
 
+  flushQueue();
   if(Date.now()-lastTrackerLoad < AUTO_MIN_GAP) return;
 
   autoBusy = true;
