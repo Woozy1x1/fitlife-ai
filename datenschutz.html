@@ -23,9 +23,11 @@
 <p>VYORA AI verarbeitet folgende Daten, die du selbst einträgst:</p>
 <ul>
 <li><strong>Ernährung:</strong> Lebensmittel, Menge, Mahlzeit, Datum, Kalorien und Nährwerte</li>
-<li><strong>Training:</strong> Übungen, Sätze, Wiederholungen, Gewichte, Notizen und eigene Trainingspläne</li>
-<li><strong>Gesundheitswerte:</strong> Körpergewicht, Blutdruck, Puls und Notizen</li>
+<li><strong>Training:</strong> Übungen, Sätze, Wiederholungen, Gewichte, Notizen, eigene Trainingspläne sowie dein Calisthenics-Programm (Trainingstage, Übungsstufen, Fortschritt)</li>
+<li><strong>Gesundheitswerte:</strong> Körpergewicht, Blutdruck, Puls, Blutzucker und Insulin-Einträge (Einheiten, Art, optional Name des Insulins und KE/BE), jeweils mit Datum und gegebenenfalls Uhrzeit, sowie Notizen</li>
+<li><strong>Tagesziele:</strong> deine selbst gewählten Ziele für Kalorien, Eiweiß und Schritte sowie wie oft du Werte in der Tages-Checkliste festhalten möchtest</li>
 </ul>
+<p>VYORA zeigt diese Werte nur an. Die App bewertet Blutdruck-, Blutzucker- oder Insulinwerte nicht und berechnet keine Insulin- oder Medikamentendosis. Die Liste „Oft gegessen“ wird nur aus deinen bereits gespeicherten Mahlzeiten berechnet; dafür wird nichts zusätzlich gespeichert.</p>
 <p>Diese Angaben sind Gesundheitsdaten im Sinne von Art. 9 DSGVO. Wir verarbeiten sie ausschließlich, um sie dir anzuzeigen, zusammenzurechnen und für dich auszuwerten (z. B. Tagesbilanzen, Verläufe, Schlafanalyse).</p>
 <p><strong>Rechtsgrundlage:</strong> deine ausdrückliche Einwilligung nach Art. 9 Abs. 2 lit. a in Verbindung mit Art. 6 Abs. 1 lit. a DSGVO. Wir fragen sie nach der ersten Anmeldung ab, bevor Gesundheitsdaten verarbeitet werden. Zum Nachweis speichern wir Zeitpunkt, Art und Version deiner Einwilligung.</p>
 <p><strong>Widerruf:</strong> Du kannst die Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen, in der App unter „Mehr → Datenschutz &amp; Konto“ oder per E-Mail. Da die App ohne Gesundheitsdaten nicht nutzbar ist, wird dabei dein Konto mit allen Daten gelöscht. Die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung bleibt unberührt.</p>
@@ -40,9 +42,10 @@
 <p>Die Oura-Werte werden über eine Server-Funktion bei Supabase abgerufen und direkt an deinen Browser weitergegeben. Sie werden nicht dauerhaft in unserer Datenbank gespeichert.</p>
 <p><strong>Rechtsgrundlage:</strong> deine ausdrückliche Einwilligung (Art. 9 Abs. 2 lit. a DSGVO, siehe Abschnitt 5). Die Verbindung kannst du jederzeit in deinem Oura-Konto bei den verbundenen Apps trennen. Beim Löschen deines VYORA-Kontos werden die gespeicherten Zugangsschlüssel gelöscht. Für die Verarbeitung bei Oura gilt die <a href="https://ouraring.com/de/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung von Oura</a>.</p>
 
-<h2>7. Lebensmittelsuche (Open Food Facts)</h2>
-<p>Wenn du die Lebensmittelsuche nutzt, sendet dein Browser den Suchbegriff direkt an Open Food Facts, eine gemeinnützige Vereinigung (21 rue des Iles, 94100 Saint-Maur-des-Fossés, Frankreich). Dabei erhält Open Food Facts deine IP-Adresse und technische Browserdaten. Produktbilder werden ebenfalls von dort geladen. Es werden keine Konto- oder Gesundheitsdaten übermittelt.</p>
-<p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (von dir angeforderte Funktion). Siehe auch die <a href="https://world.openfoodfacts.org/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Open Food Facts</a>. Die Suche ist freiwillig. Du kannst Werte auch von Hand eingeben.</p>
+<h2>7. Lebensmittelsuche und Barcode-Scanner (Open Food Facts)</h2>
+<p>Wenn du nach einem Lebensmittel suchst oder einen Barcode eingibst, schickt die App den Suchbegriff bzw. die Barcode-Nummer an unseren eigenen Server bei Supabase (Rechenzentrum in Irland, EU). Erst dieser Server fragt die Produktdaten bei Open Food Facts ab, einer gemeinnützigen Vereinigung (21 rue des Iles, 94100 Saint-Maur-des-Fossés, Frankreich). Open Food Facts erhält dabei nur den Suchbegriff bzw. die Barcode-Nummer – nicht deine IP-Adresse, deinen Namen, dein Konto oder Gesundheitsdaten. Damit nur angemeldete Nutzer die Suche verwenden, prüft unser Server deine Anmeldung. Suchbegriffe werden höchstens 10 Minuten im Arbeitsspeicher des Servers zwischengespeichert, damit wiederholte Suchen schneller gehen; sie werden nicht dauerhaft gespeichert und nicht deinem Konto zugeordnet. Produktbilder werden nicht geladen.</p>
+<p><strong>Kamera:</strong> Für den Barcode-Scanner fragt dein Browser um Erlaubnis für die Kamera. Das Kamerabild wird ausschließlich auf deinem Gerät ausgewertet, um die Ziffern des Barcodes zu erkennen. Es wird weder gespeichert noch an uns oder Dritte übertragen. Die Kamera wird beendet, sobald ein Barcode erkannt wurde, du auf „Scannen beenden“ tippst oder den Bereich verlässt. Du kannst den Barcode auch von Hand eintippen.</p>
+<p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (von dir angeforderte Funktion). Siehe auch die <a href="https://world.openfoodfacts.org/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Open Food Facts</a>. Suche und Scanner sind freiwillig. Du kannst Werte auch von Hand eingeben.</p>
 
 <h2>8. Datenbank und Server (Supabase)</h2>
 <p>Konto, Einwilligungen und alle von dir eingetragenen Daten speichern wir bei Supabase (Supabase Pte. Ltd., Singapur, mit der Supabase, Inc., USA). Die Datenbank liegt in der Region <strong>EU-West (Irland)</strong>. Supabase ist als Auftragsverarbeiter nach Art. 28 DSGVO tätig. Grundlage ist der Auftragsverarbeitungsvertrag (Data Processing Addendum) von Supabase einschließlich der Standardvertragsklauseln der EU-Kommission für mögliche Zugriffe aus Drittländern, z. B. im Rahmen von Support oder durch Unterauftragnehmer.</p>
@@ -50,6 +53,7 @@
 
 <h2>9. Speicherung im Browser</h2>
 <p>Damit du angemeldet bleibst, speichert die App deine Anmeldesitzung im lokalen Speicher deines Browsers (Local Storage). Das ist für den von dir gewünschten Dienst unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG) und erfordert daher keine Einwilligung. Weitere Cookies, Tracking- oder Analyse-Technologien setzen wir nicht ein. Beim Abmelden wird die Sitzung entfernt.</p>
+<p><strong>App-Dateien (Offline-Speicher):</strong> Damit VYORA schnell startet und auch als App auf dem Startbildschirm funktioniert, speichert dein Browser die Programmdateien der App (Seiten, Skripte, Symbole, Schrift) in einem eigenen Speicher („Service Worker“). Dort liegen keine persönlichen Daten: Deine Einträge, Gesundheitsdaten und Anmeldedaten werden darüber weder gespeichert noch zwischengespeichert. Dieser Speicher ist technisch erforderlich, damit die von dir genutzte App funktioniert (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst ihn jederzeit über die Website-Daten in deinen Browser-Einstellungen löschen.</p>
 
 <h2>10. Empfänger</h2>
 <p>Deine Daten erhalten nur die oben genannten Dienstleister im jeweils beschriebenen Umfang. Wir verkaufen keine Daten, geben keine Daten zu Werbezwecken weiter und übermitteln keine Gesundheitsdaten an Dritte, außer an Supabase als Auftragsverarbeiter. Eine Weitergabe an Behörden erfolgt nur, wenn wir gesetzlich dazu verpflichtet sind.</p>
@@ -76,5 +80,5 @@
 
 <h2>15. Änderungen</h2>
 <p>Wir passen diese Erklärung an, wenn sich die App oder die Datenverarbeitung ändert. Bei wesentlichen Änderungen der Gesundheitsdaten-Verarbeitung fragen wir deine Einwilligung erneut ab.</p>
-<p><strong>Stand: 21. November 2026</strong></p>
+<p><strong>Stand: 22. November 2026</strong></p>
 </main><footer>© VYORA AI · Moritz Friedrich</footer></body></html>
