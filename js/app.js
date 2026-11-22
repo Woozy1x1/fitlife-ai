@@ -901,8 +901,8 @@ function renderSleepFallback() {
     ? "Gefühlt: "+SLEEP_QUALITY[last.sleep_quality]
     : "Letzte Nacht";
   $("scoreSource").textContent = last.source==="apple_health"
-    ? "Aus Apple Health. Der Ring zeigt die Dauer im Verhältnis zu 8 Stunden."
-    : "Selbst eingetragen. Der Ring zeigt die Dauer im Verhältnis zu 8 Stunden.";
+    ? "Aus Apple Health. Der Ring zeigt die Dauer im Verhältnis zu 8 Stunden; empfohlen sind mindestens 7."
+    : "Selbst eingetragen. Der Ring zeigt die Dauer im Verhältnis zu 8 Stunden; empfohlen sind mindestens 7.";
   setScoreVisual(Math.min(100,Number(last.sleep_minutes)/480*100));
 }
 
@@ -2902,6 +2902,13 @@ $("calcForm")?.addEventListener("submit",async event => {
   } finally {
     button.disabled = false;
   }
+});
+
+// Richtwerte (Schritte 7.000, Wasser 6 Gläser) ins Formular übernehmen
+$("goalsUseGuide")?.addEventListener("click",() => {
+  $("goalStepsInput").value = 7000;
+  if($("goalWaterInput")) $("goalWaterInput").value = 6;
+  goalsMessage("Schritte 7.000 und 6 Gläser Wasser eingetragen – tippe auf „Ziele speichern“.");
 });
 
 // Neu rechnen, wenn ein neueres Gewicht da ist oder ein neues Lebensjahr begonnen hat
