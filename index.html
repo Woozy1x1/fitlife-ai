@@ -1635,6 +1635,8 @@ let refreshCounter = 0;
 let sleepData = [];
 let nutritionData = [];
 let loadingSleep = false;
+let ouraConnected = false;
+let lastTrackerLoad = 0;
 let selectedFood = null;
 let foodSearchCounter = 0;
 let nutritionLoadCounter = 0;
@@ -1719,6 +1721,7 @@ $("goNutrition").addEventListener("click",() => {
 });
 
 function setConnected(connected) {
+  ouraConnected = connected;
   $("ouraDot").classList.toggle("connected",connected);
 
   $("ouraStatus").textContent = connected
@@ -1881,14 +1884,14 @@ function setScoreVisual(score) {
   $("heroCard").style.setProperty("--score",String(value));
 }
 
-async function loadSleep() {
+async function loadSleep(quiet=false) {
   if(loadingSleep) return;
 
   loadingSleep = true;
   const userId = currentUserId;
 
   $("sleepButton").disabled = true;
-  ouraMessage("Schlafdaten werden geladen ...");
+  if(!quiet) ouraMessage("Schlafdaten werden geladen ...");
 
   try {
     const result = await authenticatedRequest("daily");
@@ -1916,7 +1919,9 @@ async function loadSleep() {
       .sort((a,b) => a.day.localeCompare(b.day));
 
     renderSleep();
-    ouraMessage("✓ Schlafdaten aktualisiert.");
+    lastTrackerLoad = Date.now();
+    ouraMessage("✓ Aktualisiert um "+
+      new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})+" Uhr.");
 
     // Detaildaten erst NACH "daily" laden (nicht gleichzeitig),
     // damit sich zwei Token-Erneuerungen nicht in die Quere kommen.
@@ -6456,6 +6461,10 @@ async function refreshUI() {
     ) {
       await loadSleep();
     }
+    if(changed) {
+      lastTrackerLoad = Date.now();
+      autoDay = localDate();
+    }
 
   } catch(error) {
     if(counter!==refreshCounter) return;
@@ -6473,6 +6482,59 @@ async function refreshUI() {
     );
   }
 }
+
+// -----------------------------------
+// Automatisch aktualisieren
+// Beim Zurückkehren in die App (z. B. als installierte App im
+// Hintergrund) und alle 15 Minuten, solange sie sichtbar ist.
+// Höchstens alle 3 Minuten, damit Oura nicht unnötig abgefragt wird.
+// -----------------------------------
+
+const AUTO_MIN_GAP = 3*60*1000;
+const AUTO_INTERVAL = 15*60*1000;
+let autoDay = localDate();
+let autoBusy = false;
+
+function appReady() {
+  return !!currentUserId && consentConfirmedFor===currentUserId;
+}
+
+async function autoRefresh() {
+  if(document.hidden || autoBusy || !appReady()) return;
+
+  // Über Mitternacht offen geblieben: alles für den neuen Tag laden,
+  // aber nicht, während gerade etwas eingetippt oder gedehnt wird.
+  if(localDate()!==autoDay) {
+    const typing = document.activeElement &&
+      /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+    if(!typing && !stretchTimer && !scanStream) {
+      location.reload();
+      return;
+    }
+  }
+
+  if(Date.now()-lastTrackerLoad < AUTO_MIN_GAP) return;
+
+  autoBusy = true;
+  try {
+    lastTrackerLoad = Date.now();
+    await loadMetrics();
+    if(ouraConnected) await loadSleep(true);
+  } catch(_error) {
+    // still: der nächste Versuch kommt beim nächsten Öffnen
+  } finally {
+    autoBusy = false;
+  }
+}
+
+document.addEventListener("visibilitychange",() => {
+  if(document.visibilityState==="visible") autoRefresh();
+});
+window.addEventListener("pageshow",event => {
+  if(event.persisted) autoRefresh();
+});
+window.addEventListener("online",autoRefresh);
+setInterval(autoRefresh,AUTO_INTERVAL);
 
 $("loginForm").addEventListener(
   "submit",
