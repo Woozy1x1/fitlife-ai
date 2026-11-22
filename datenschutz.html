@@ -27,7 +27,9 @@
 <li><strong>Gesundheitswerte:</strong> Körpergewicht, Blutdruck, Puls, Blutzucker und Insulin-Einträge (Einheiten, Art, optional Name des Insulins und KE/BE), jeweils mit Datum und gegebenenfalls Uhrzeit, sowie Notizen</li>
 <li><strong>Tagesziele:</strong> deine selbst gewählten Ziele für Kalorien, Eiweiß und Schritte sowie wie oft du Werte in der Tages-Checkliste festhalten möchtest</li>
 <li><strong>Schlaf (selbst eingetragen):</strong> Datum, Zubettgeh- und Aufstehzeit, daraus berechnete Schlafdauer und optional deine Einschätzung, wie gut du geschlafen hast</li>
+<li><strong>Wasser:</strong> Anzahl der getrunkenen Gläser pro Tag und dein selbst gewähltes Tagesziel</li>
 </ul>
+<p><strong>Wochenrückblick und Verläufe:</strong> Die Vergleiche der letzten 7 Tage und die Verlaufsdiagramme werden in deinem Browser aus deinen bereits gespeicherten Einträgen (und, falls verbunden, den Oura-Werten) berechnet. Dafür wird nichts zusätzlich gespeichert. Für die Einführung beim ersten Start speichern wir nur, ob und wann du sie abgeschlossen hast.</p>
 <p><strong>Apple Health (freiwillig):</strong> Wenn du in der App einen Import-Schlüssel erstellst und einen iPhone-Kurzbefehl einrichtest, schickt dein iPhone die Tageswerte Schritte, Schlafdauer, Ruhepuls und aktive Kalorien direkt an unseren Server (Supabase, EU). Welche Werte übertragen werden und wann, legst du im Kurzbefehl selbst fest. Apple erhält von uns keine Daten. Vom Schlüssel speichern wir nur einen nicht umkehrbaren Hash-Wert sowie Erstellungs- und letzten Nutzungszeitpunkt. Ohne gültige Einwilligung nimmt der Server keine Werte an. Du kannst die Verbindung in der App jederzeit trennen; übertragene Werte kannst du dort einzeln löschen.</p>
 <p>VYORA zeigt diese Werte nur an. Die App bewertet Blutdruck-, Blutzucker- oder Insulinwerte nicht und berechnet keine Insulin- oder Medikamentendosis. Die Liste „Oft gegessen“ wird nur aus deinen bereits gespeicherten Mahlzeiten berechnet; dafür wird nichts zusätzlich gespeichert.</p>
 <p>Diese Angaben sind Gesundheitsdaten im Sinne von Art. 9 DSGVO. Wir verarbeiten sie ausschließlich, um sie dir anzuzeigen, zusammenzurechnen und für dich auszuwerten (z. B. Tagesbilanzen, Verläufe, Schlafanalyse).</p>
@@ -56,6 +58,12 @@
 <h2>9. Speicherung im Browser</h2>
 <p>Damit du angemeldet bleibst, speichert die App deine Anmeldesitzung im lokalen Speicher deines Browsers (Local Storage). Das ist für den von dir gewünschten Dienst unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG) und erfordert daher keine Einwilligung. Weitere Cookies, Tracking- oder Analyse-Technologien setzen wir nicht ein. Beim Abmelden wird die Sitzung entfernt.</p>
 <p><strong>App-Dateien (Offline-Speicher):</strong> Damit VYORA schnell startet und auch als App auf dem Startbildschirm funktioniert, speichert dein Browser die Programmdateien der App (Seiten, Skripte, Symbole, Schrift) in einem eigenen Speicher („Service Worker“). Dort liegen keine persönlichen Daten: Deine Einträge, Gesundheitsdaten und Anmeldedaten werden darüber weder gespeichert noch zwischengespeichert. Dieser Speicher ist technisch erforderlich, damit die von dir genutzte App funktioniert (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst ihn jederzeit über die Website-Daten in deinen Browser-Einstellungen löschen.</p>
+<p><strong>Einträge ohne Internet:</strong> Wenn du ohne Verbindung etwas einträgst (z. B. Wasser, Messwerte, Mahlzeiten oder Schlaf), legt die App diesen Eintrag vorübergehend im lokalen Speicher deines Browsers ab und überträgt ihn automatisch, sobald wieder eine Verbindung besteht. Danach wird er auf dem Gerät gelöscht. Zusätzlich merkt sich die App auf dem Gerät, dass deine Einwilligung bereits erteilt ist (Konto-Kennung, Version, Zeitpunkt), damit sie auch offline startet. Beides ist für die von dir genutzte Funktion erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Beim Löschen des Kontos oder Widerruf der Einwilligung entfernt die App diese Daten von dem Gerät, auf dem du das tust. Auf anderen Geräten kannst du sie über die Website-Daten in den Browser-Einstellungen löschen.</p>
+
+<h2>9a. Erinnerungen per Benachrichtigung (optional)</h2>
+<p>Du kannst dich an Messungen, Training, Schlaf-Eintrag oder Trinken erinnern lassen. Dazu speichern wir, welche Erinnerungen du eingeschaltet hast, die gewählte Uhrzeit, deine Zeitzone und den Tag der letzten Erinnerung. Wenn du Benachrichtigungen auf einem Gerät erlaubst, erzeugt dein Browser eine Empfangsadresse beim Push-Dienst des Browser- bzw. Geräteherstellers. Diese Adresse und die zugehörigen technischen Schlüssel speichern wir, um dir die Erinnerung schicken zu können.</p>
+<p>Je nach Gerät läuft die Zustellung über den Push-Dienst von Google (Chrome, Android), Apple (Safari, iPhone), Mozilla (Firefox) oder Microsoft (Edge). Dieser Dienst erhält die Nachricht, die Empfangsadresse, den Zeitpunkt sowie technische Daten wie die IP-Adresse unseres Servers. Der Inhalt der Nachricht ist Ende-zu-Ende verschlüsselt (RFC 8291) und für den Push-Dienst nicht lesbar. Eine Verarbeitung in den USA ist dabei möglich; die Anbieter stützen solche Übermittlungen nach eigenen Angaben auf das EU-US Data Privacy Framework bzw. die Standardvertragsklauseln.</p>
+<p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. b DSGVO (von dir eingeschaltete Funktion); für das Speichern der Empfangsadresse auf deinem Gerät deine Erlaubnis im Browser (§ 25 Abs. 1 TDDDG). Soweit eine Erinnerung einen Bezug zu Gesundheitswerten hat (z. B. Blutzucker messen), gilt zusätzlich deine Einwilligung nach Abschnitt 5. Du kannst Erinnerungen in der App jederzeit ausschalten oder unter „Auf diesem Gerät aus“ abmelden, und Benachrichtigungen in den Browser- bzw. Geräte-Einstellungen widerrufen. Ungültig gewordene Empfangsadressen löschen wir automatisch.</p>
 
 <h2>10. Empfänger</h2>
 <p>Deine Daten erhalten nur die oben genannten Dienstleister im jeweils beschriebenen Umfang. Wir verkaufen keine Daten, geben keine Daten zu Werbezwecken weiter und übermitteln keine Gesundheitsdaten an Dritte, außer an Supabase als Auftragsverarbeiter. Eine Weitergabe an Behörden erfolgt nur, wenn wir gesetzlich dazu verpflichtet sind.</p>
@@ -64,6 +72,8 @@
 <ul>
 <li>Konto, Einträge, Pläne und Einwilligungsnachweise: bis du einzelne Einträge oder dein Konto löschst oder deine Einwilligung widerrufst</li>
 <li>Oura-Zugangsschlüssel: bis zur Kontolöschung; abgerufene Oura-Werte werden nicht dauerhaft gespeichert</li>
+<li>Erinnerungs-Einstellungen: bis du sie änderst oder dein Konto löschst; Empfangsadressen für Benachrichtigungen: bis du sie auf dem Gerät ausschaltest, der Push-Dienst sie für ungültig erklärt oder du dein Konto löschst</li>
+<li>Offline vorgemerkte Einträge auf dem Gerät: bis zur Übertragung an den Server</li>
 <li>Technische Protokolle bei GitHub und Supabase: nach den Vorgaben der jeweiligen Anbieter, in der Regel nur für kurze Zeit</li>
 </ul>
 
@@ -78,7 +88,7 @@
 <p>VYORA AI richtet sich an Personen ab 16 Jahren. Jüngere Personen dürfen die App nicht nutzen.</p>
 
 <h2>14. Pflicht zur Bereitstellung</h2>
-<p>Für ein Konto ist die Angabe einer E-Mail-Adresse erforderlich. Ohne Einwilligung in die Verarbeitung von Gesundheitsdaten kann die App nicht genutzt werden, da dies ihr einziger Zweck ist. Die Verbindung mit Oura und die Lebensmittelsuche sind freiwillig.</p>
+<p>Für ein Konto ist die Angabe einer E-Mail-Adresse erforderlich. Ohne Einwilligung in die Verarbeitung von Gesundheitsdaten kann die App nicht genutzt werden, da dies ihr einziger Zweck ist. Die Verbindung mit Oura, Apple Health, die Lebensmittelsuche und Erinnerungen per Benachrichtigung sind freiwillig.</p>
 
 <h2>15. Änderungen</h2>
 <p>Wir passen diese Erklärung an, wenn sich die App oder die Datenverarbeitung ändert. Bei wesentlichen Änderungen der Gesundheitsdaten-Verarbeitung fragen wir deine Einwilligung erneut ab.</p>
