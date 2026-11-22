@@ -642,6 +642,216 @@ window.addEventListener("online",() => { renderOfflineBanner(); flushQueue(); })
 window.addEventListener("offline",renderOfflineBanner);
 
 // -----------------------------------
+// Push-Erinnerungen
+// Abo wird im Browser erzeugt; der Server sendet zur gewählten Zeit.
+// -----------------------------------
+
+const PUSH_FUNCTION = SUPABASE_URL + "/functions/v1/push-reminders";
+const REMINDERS = [
+  {kind:"bp",label:"🩺 Blutdruck messen",def:"08:00"},
+  {kind:"glucose",label:"🩸 Blutzucker messen",def:"07:30"},
+  {kind:"training",label:"🏋️ Training",def:"18:00"},
+  {kind:"sleep",label:"😴 Schlaf eintragen",def:"09:00"},
+  {kind:"water",label:"💧 Wasser trinken",def:"14:00"}
+];
+let remindCounter = 0;
+
+function remindMessage(text) { if($("remindMessage")) $("remindMessage").textContent = text || ""; }
+
+function pushSupported() {
+  return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+}
+
+function isIosBrowserTab() {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const standalone = window.navigator.standalone===true ||
+    window.matchMedia?.("(display-mode: standalone)").matches;
+  return ios && !standalone;
+}
+
+function renderReminderRows(saved={}) {
+  const list = $("remindList");
+  if(!list) return;
+  list.replaceChildren();
+  REMINDERS.forEach(r => {
+    const row = document.createElement("div");
+    row.className = "remind-row";
+    const label = document.createElement("label");
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.id = "rem-"+r.kind;
+    box.checked = !!saved[r.kind]?.enabled;
+    const span = document.createElement("span");
+    span.textContent = r.label;
+    label.append(box,span);
+    const time = document.createElement("input");
+    time.type = "time";
+    time.id = "remt-"+r.kind;
+    time.value = saved[r.kind]?.at_time ? String(saved[r.kind].at_time).slice(0,5) : r.def;
+    time.setAttribute("aria-label","Uhrzeit für "+r.label.replace(/^\S+\s/,""));
+    row.append(label,time);
+    list.append(row);
+  });
+}
+
+async function currentPushSub() {
+  if(!pushSupported()) return null;
+  try {
+    const reg = await navigator.serviceWorker.getRegistration();
+    return reg ? await reg.pushManager.getSubscription() : null;
+  } catch(_e) { return null; }
+}
+
+async function renderPushStatus() {
+  if(!$("pushStatus")) return;
+  const sub = await currentPushSub();
+  let text, canEnable = false;
+  if(!pushSupported()) {
+    text = "Dieser Browser unterstützt keine Benachrichtigungen.";
+  } else if(isIosBrowserTab()) {
+    text = "Auf dem iPhone: Erst „Teilen → Zum Home-Bildschirm“ wählen und VYORA von dort öffnen. Dann kannst du Erinnerungen erlauben.";
+  } else if(Notification.permission==="denied") {
+    text = "Benachrichtigungen sind in den Browser-Einstellungen blockiert. Erlaube sie dort für diese Seite.";
+  } else if(sub) {
+    text = "✓ Benachrichtigungen auf diesem Gerät aktiv.";
+  } else {
+    text = "Auf diesem Gerät noch nicht aktiviert.";
+    canEnable = true;
+  }
+  $("pushStatus").textContent = text;
+  $("pushEnable").classList.toggle("hidden",!canEnable);
+  $("pushTest").classList.toggle("hidden",!sub);
+  $("pushOff").classList.toggle("hidden",!sub);
+}
+
+function resetReminders() {
+  ++remindCounter;
+  renderReminderRows({});
+  remindMessage("");
+}
+
+async function loadReminders() {
+  if(!currentUserId) return;
+  const requestId = ++remindCounter;
+  const userId = currentUserId;
+  renderPushStatus();
+  const {data,error} = await supabase
+    .from("reminders")
+    .select("kind,at_time,enabled")
+    .eq("user_id",userId);
+  if(requestId!==remindCounter || userId!==currentUserId || error) return;
+  renderReminderRows(Object.fromEntries((data||[]).map(r => [r.kind,r])));
+}
+
+function keyToBytes(b64) {
+  const s = b64.replace(/-/g,"+").replace(/_/g,"/");
+  const bin = atob(s+"===".slice((s.length+3)%4));
+  return Uint8Array.from(bin,c => c.charCodeAt(0));
+}
+
+$("pushEnable")?.addEventListener("click",async () => {
+  if(!currentUserId) return;
+  const button = $("pushEnable");
+  button.disabled = true;
+  try {
+    const permission = await Notification.requestPermission();
+    if(permission!=="granted") throw new Error("Benachrichtigungen wurden nicht erlaubt.");
+    const res = await fetch(PUSH_FUNCTION+"?action=key",{method:"POST"});
+    const {publicKey} = await res.json();
+    if(!publicKey) throw new Error("Server-Schlüssel fehlt.");
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:keyToBytes(publicKey)
+    });
+    const j = sub.toJSON();
+    const {error} = await supabase.from("push_subscriptions").upsert({
+      user_id:currentUserId,
+      endpoint:j.endpoint,
+      p256dh:j.keys.p256dh,
+      auth:j.keys.auth
+    },{onConflict:"endpoint"});
+    if(error) throw error;
+    remindMessage("✓ Aktiviert. Wähle jetzt deine Erinnerungen und speichere sie.");
+  } catch(error) {
+    remindMessage("Aktivieren fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+    renderPushStatus();
+  }
+});
+
+$("remindSave")?.addEventListener("click",async () => {
+  if(!currentUserId) return;
+  const button = $("remindSave");
+  button.disabled = true;
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Berlin";
+    const rows = REMINDERS.map(r => {
+      const time = $("remt-"+r.kind).value || r.def;
+      if(!/^\d{2}:\d{2}$/.test(time)) throw new Error("Bitte gültige Uhrzeiten wählen.");
+      return {
+        user_id:currentUserId, kind:r.kind, at_time:time, tz,
+        enabled:$("rem-"+r.kind).checked, updated_at:new Date().toISOString()
+      };
+    });
+    const {error} = await supabase.from("reminders").upsert(rows,{onConflict:"user_id,kind"});
+    if(error) throw error;
+    const count = rows.filter(r => r.enabled).length;
+    const sub = await currentPushSub();
+    remindMessage(count
+      ? "✓ "+count+(count===1 ? " Erinnerung" : " Erinnerungen")+" gespeichert."+
+        (sub ? "" : " Tipp: Erlaube oben noch Benachrichtigungen auf diesem Gerät.")
+      : "✓ Gespeichert – alle Erinnerungen sind aus.");
+  } catch(error) {
+    remindMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("pushTest")?.addEventListener("click",async () => {
+  const button = $("pushTest");
+  button.disabled = true;
+  try {
+    const {data} = await supabase.auth.getSession();
+    const res = await fetch(PUSH_FUNCTION+"?action=test",{
+      method:"POST",
+      headers:{Authorization:"Bearer "+(data?.session?.access_token||""),apikey:SUPABASE_KEY}
+    });
+    const result = await res.json();
+    if(!res.ok || !result.ok) throw new Error(result.error || "Nicht zugestellt");
+    remindMessage("✓ Test gesendet – die Benachrichtigung sollte gleich erscheinen.");
+  } catch(error) {
+    remindMessage("Test fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("pushOff")?.addEventListener("click",async () => {
+  const sub = await currentPushSub();
+  if(sub) {
+    await supabase.from("push_subscriptions").delete().eq("endpoint",sub.endpoint);
+    try { await sub.unsubscribe(); } catch(_e) {}
+  }
+  remindMessage("Benachrichtigungen auf diesem Gerät ausgeschaltet.");
+  renderPushStatus();
+});
+
+// Tippen auf eine Benachrichtigung öffnet den passenden Bereich
+function openViewFromHash() {
+  const id = (location.hash||"").slice(1);
+  if(id && document.getElementById(id)?.classList.contains("view")) switchView(id);
+}
+navigator.serviceWorker?.addEventListener("message",event => {
+  const view = event.data?.type==="open-view" ? event.data.view : null;
+  if(view && document.getElementById(view)?.classList.contains("view")) switchView(view);
+});
+window.addEventListener("hashchange",openViewFromHash);
+setTimeout(openViewFromHash,0);
+
+// -----------------------------------
 // Tageswerte ohne Oura: Schlaf selbst eintragen
 // und Apple Health per iPhone-Kurzbefehl
 // -----------------------------------
@@ -5160,6 +5370,8 @@ $("exportButton").addEventListener("click",async () => {
       ["messtagebuch","measurements"],
       ["tageswerte","daily_metrics"],
       ["import_schluessel","import_tokens"],
+      ["erinnerungen","reminders"],
+      ["push_geraete","push_subscriptions"],
       ["gesundheitswerte","health_entries"],
       ["einwilligungen","user_consents"],
       ["oura_verbindung","oura_connections"]
@@ -5392,6 +5604,7 @@ async function refreshUI() {
     resetStretch();
     resetMeasurements();
     resetMetrics();
+    resetReminders();
     resetInsights();
     fillGoalsForm();
     renderGoals();
@@ -5448,6 +5661,7 @@ async function refreshUI() {
   if(changed) {
     loadMetrics();
     loadAppleStatus();
+    loadReminders();
     loadGoals();
     loadWater();
     loadProgram();
