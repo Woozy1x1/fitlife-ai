@@ -3,7 +3,7 @@
 // Persönliche Daten und alle Anfragen an Supabase/Oura werden NICHT
 // angefasst oder zwischengespeichert.
 
-const CACHE = "vyora-app-v1";
+const CACHE = "vyora-app-v2";
 
 const APP_FILES = [
   "./",
@@ -72,10 +72,13 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Feste Dateien (Skripte mit Versionsnummer, Icons, Schrift):
+  // Feste Dateien (Skripte mit Versionsnummer, Icons, Schrift,
+  // App-Design und App-Code mit ?v=Prüfsumme):
   // sofort aus dem Speicher, im Hintergrund aktualisieren.
   const cacheable =
     url.pathname.includes("/vendor/") ||
+    url.pathname.includes("/css/") ||
+    url.pathname.includes("/js/") ||
     url.pathname.includes("/icons/") ||
     url.pathname.endsWith(".webmanifest");
 
