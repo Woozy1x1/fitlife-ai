@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=6d8aac50c3">
+<link rel="stylesheet" href="css/app.css?v=e529ce6f49">
 </head>
 <body>
 <div class="app">
@@ -313,6 +313,11 @@
         <button id="waterMinus" type="button" aria-label="Ein Glas Wasser weniger">−</button>
         <span id="waterInfo" aria-live="polite">💧 0 Gläser · 0,0 l</span>
         <button id="waterPlus" class="plus" type="button" aria-label="Ein Glas Wasser getrunken">+</button>
+      </div>
+      <div class="water-row">
+        <button id="vegMinus" type="button" aria-label="Eine Portion Obst oder Gemüse weniger">−</button>
+        <span id="vegInfo" aria-live="polite">🥦 0/5 Obst &amp; Gemüse</span>
+        <button id="vegPlus" class="plus" type="button" aria-label="Eine Portion Obst oder Gemüse gegessen">+</button>
       </div>
       <p id="homeNutritionInfo" class="muted">
         Noch keine Mahlzeiten eingetragen.
@@ -728,8 +733,78 @@
   <div class="eyebrow">Deine Gesundheitswerte</div>
   <h1>Gesundheit ♡</h1>
   <p class="muted">
-    Gewicht, Blutdruck, Blutzucker, Insulin und Schlaf an einem Ort.
+    Wohlbefinden, Gewicht, Blutdruck, Blutzucker, Insulin und Schlaf an einem Ort.
   </p>
+
+  <div class="card" id="wellCard">
+    <h2>🌿 Wie geht's dir heute?</h2>
+    <p class="muted">Ein kurzer Check-in – nur für dich. VYORA bewertet nichts und stellt keine Diagnosen.</p>
+    <form id="wellForm">
+      <fieldset class="rate">
+        <legend>Stimmung</legend>
+        <div class="day-picker rate-row">
+          <label><input type="radio" name="wellMood" value="1"><span aria-label="sehr schlecht">😣</span></label>
+          <label><input type="radio" name="wellMood" value="2"><span aria-label="eher schlecht">🙁</span></label>
+          <label><input type="radio" name="wellMood" value="3"><span aria-label="mittel">😐</span></label>
+          <label><input type="radio" name="wellMood" value="4"><span aria-label="eher gut">🙂</span></label>
+          <label><input type="radio" name="wellMood" value="5"><span aria-label="sehr gut">😄</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="rate">
+        <legend>Energie <small>(1 = erschöpft, 5 = voller Energie)</small></legend>
+        <div class="day-picker rate-row">
+          <label><input type="radio" name="wellEnergy" value="1"><span>1</span></label>
+          <label><input type="radio" name="wellEnergy" value="2"><span>2</span></label>
+          <label><input type="radio" name="wellEnergy" value="3"><span>3</span></label>
+          <label><input type="radio" name="wellEnergy" value="4"><span>4</span></label>
+          <label><input type="radio" name="wellEnergy" value="5"><span>5</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="rate">
+        <legend>Stress <small>(1 = entspannt, 5 = sehr gestresst)</small></legend>
+        <div class="day-picker rate-row">
+          <label><input type="radio" name="wellStress" value="1"><span>1</span></label>
+          <label><input type="radio" name="wellStress" value="2"><span>2</span></label>
+          <label><input type="radio" name="wellStress" value="3"><span>3</span></label>
+          <label><input type="radio" name="wellStress" value="4"><span>4</span></label>
+          <label><input type="radio" name="wellStress" value="5"><span>5</span></label>
+        </div>
+      </fieldset>
+      <label for="wellNote">Notiz (optional)</label>
+      <textarea id="wellNote" rows="2" maxlength="500" placeholder="z. B. gut geschlafen, viel Arbeit"></textarea>
+      <button id="wellSave" class="btn full" type="submit">Check-in speichern</button>
+    </form>
+    <p id="wellMessage" class="message" role="status"></p>
+    <div id="wellWeek" class="well-week" aria-label="Stimmung der letzten 7 Tage"></div>
+    <p class="muted small-note">
+      Geht es dir über längere Zeit nicht gut, sprich mit jemandem, dem du
+      vertraust, oder mit deiner Hausarztpraxis. Kostenlos und rund um die Uhr:
+      TelefonSeelsorge <a href="tel:08001110111">0800 111 0 111</a> oder
+      <a href="tel:08001110222">0800 111 0 222</a>. Im Notfall: <a href="tel:112">112</a>.
+    </p>
+  </div>
+
+  <div class="card" id="breathCard">
+    <h2>🫁 Ruhig atmen</h2>
+    <p class="muted">
+      Langsames Atmen – etwa 6 Atemzüge pro Minute – hilft vielen, zur Ruhe
+      zu kommen. Atme 4 Sekunden durch die Nase ein und 6 Sekunden langsam aus.
+    </p>
+    <div class="day-picker pill-picker" role="radiogroup" aria-label="Dauer">
+      <label><input type="radio" name="breathMin" value="1"><span>1 Min.</span></label>
+      <label><input type="radio" name="breathMin" value="3" checked><span>3 Min.</span></label>
+      <label><input type="radio" name="breathMin" value="5"><span>5 Min.</span></label>
+    </div>
+    <div class="breath-stage">
+      <div class="breath-circle" id="breathCircle" aria-hidden="true"></div>
+      <div class="breath-label">
+        <strong id="breathText" aria-live="polite">Bereit?</strong>
+        <small id="breathTime"></small>
+      </div>
+    </div>
+    <button id="breathStart" class="btn full" type="button">Starten</button>
+    <p class="muted small-note">Wird dir schwindlig, atme einfach normal weiter. Es wird nichts gespeichert.</p>
+  </div>
 
   <div class="card" id="checkCard">
     <h2>✓ Heute erledigt?</h2>
@@ -1357,7 +1432,7 @@
 </footer>
 </div>
 
-<script type="module" src="js/app.js?v=10aa4cf31d"></script>
+<script type="module" src="js/app.js?v=c4755937ec"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
