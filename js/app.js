@@ -634,7 +634,7 @@ async function flushQueue() {
       ? "✓ "+sent+" vorgemerkte Einträge übertragen. "+dropped+" konnten nicht gespeichert werden."
       : "✓ "+sent+(sent===1 ? " vorgemerkter Eintrag" : " vorgemerkte Einträge")+" übertragen.");
     loadNutrition(); loadTraining(); loadHealth(); loadMeasurements();
-    loadMetrics(); loadWater(); scheduleInsights();
+    loadMetrics(); loadWater(); loadVeg(); loadWellbeing(); scheduleInsights();
   }
 }
 
@@ -3179,6 +3179,214 @@ function changeWater(step) {
 $("waterPlus")?.addEventListener("click",() => changeWater(1));
 $("waterMinus")?.addEventListener("click",() => changeWater(-1));
 
+// -----------------------------------
+// "5 am Tag": Portionen Obst & Gemüse (Richtwert DGE)
+// -----------------------------------
+
+const VEG_GOAL = 5;
+let vegDay = localDate();
+let vegPortions = 0;
+let vegLoadCounter = 0;
+let vegSaving = Promise.resolve();
+
+function renderVeg() {
+  if(!$("vegInfo")) return;
+  if(vegDay!==localDate()) { vegDay = localDate(); vegPortions = 0; }
+  $("vegInfo").textContent = "🥦 "+vegPortions+"/"+VEG_GOAL+" Obst & Gemüse"+(vegPortions>=VEG_GOAL ? " ✓" : "");
+  $("vegInfo").setAttribute("aria-label",vegPortions+" von "+VEG_GOAL+" Portionen Obst und Gemüse heute");
+  $("vegMinus").disabled = vegPortions<=0;
+}
+
+function resetVeg() {
+  ++vegLoadCounter;
+  vegPortions = 0;
+  vegDay = localDate();
+  renderVeg();
+}
+
+async function loadVeg() {
+  if(!currentUserId || !$("vegInfo")) return;
+  const requestId = ++vegLoadCounter;
+  const userId = currentUserId;
+  const day = localDate();
+  const {data,error} = await supabase
+    .from("veg_log")
+    .select("portions")
+    .eq("user_id",userId)
+    .eq("day",day)
+    .maybeSingle();
+  if(requestId!==vegLoadCounter || userId!==currentUserId || error) return;
+  vegDay = day;
+  vegPortions = Number(data?.portions)||0;
+  renderVeg();
+}
+
+function changeVeg(step) {
+  if(!currentUserId) return;
+  if(vegDay!==localDate()) { vegDay = localDate(); vegPortions = 0; }
+  const next = Math.min(20,Math.max(0,vegPortions+step));
+  if(next===vegPortions) return;
+  vegPortions = next;
+  renderVeg();
+  if(step>0) try { navigator.vibrate && navigator.vibrate(30); } catch(_e) {}
+  const userId = currentUserId, day = vegDay, value = next;
+  vegSaving = vegSaving.then(async () => {
+    try {
+      await saveOrQueue("veg_log",{
+        user_id:userId, day, portions:value, updated_at:new Date().toISOString()
+      },{onConflict:"user_id,day"});
+    } catch(error) {
+      if(userId===currentUserId) {
+        $("homeNutritionInfo").textContent = "Obst & Gemüse konnte nicht gespeichert werden: "+error.message;
+      }
+    }
+  }).catch(() => {});
+}
+
+$("vegPlus")?.addEventListener("click",() => changeVeg(1));
+$("vegMinus")?.addEventListener("click",() => changeVeg(-1));
+
+// -----------------------------------
+// Wohlbefinden-Tagebuch (Stimmung, Energie, Stress)
+// Nur Selbstbeobachtung – keine Bewertung, keine Diagnose.
+// -----------------------------------
+
+const MOOD_EMOJI = ["","😣","🙁","😐","🙂","😄"];
+let wellRows = new Map();
+let wellLoadCounter = 0;
+
+function wellMessage(text) { if($("wellMessage")) $("wellMessage").textContent = text || ""; }
+
+function setRadio(name,value) {
+  document.querySelectorAll('input[name="'+name+'"]').forEach(i => { i.checked = value!=null && i.value===String(value); });
+}
+function readRadio(name) {
+  const v = document.querySelector('input[name="'+name+'"]:checked')?.value;
+  return v ? Number(v) : null;
+}
+
+function renderWellbeing() {
+  if(!$("wellForm")) return;
+  const today = wellRows.get(localDate());
+  setRadio("wellMood",today?.mood);
+  setRadio("wellEnergy",today?.energy);
+  setRadio("wellStress",today?.stress);
+  $("wellNote").value = today?.note || "";
+  const week = $("wellWeek");
+  week.replaceChildren();
+  for(let i=6;i>=0;i--) {
+    const day = daysAgo(i);
+    const row = wellRows.get(day);
+    const cell = document.createElement("div");
+    const face = document.createElement("span");
+    face.textContent = row?.mood ? MOOD_EMOJI[row.mood] : "·";
+    const label = document.createElement("small");
+    label.textContent = i===0 ? "heute" : new Date(day+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short"});
+    cell.title = row?.mood ? "Stimmung "+row.mood+" von 5" : "kein Check-in";
+    cell.append(face,label);
+    week.append(cell);
+  }
+}
+
+function resetWellbeing() {
+  ++wellLoadCounter;
+  wellRows = new Map();
+  wellMessage("");
+  renderWellbeing();
+}
+
+async function loadWellbeing() {
+  if(!currentUserId || !$("wellForm")) return;
+  const requestId = ++wellLoadCounter;
+  const userId = currentUserId;
+  const {data,error} = await supabase
+    .from("wellbeing_log")
+    .select("day,mood,energy,stress,note")
+    .eq("user_id",userId)
+    .gte("day",daysAgo(6))
+    .order("day",{ascending:true});
+  if(requestId!==wellLoadCounter || userId!==currentUserId || error) return;
+  wellRows = new Map((data||[]).map(r => [r.day,r]));
+  renderWellbeing();
+}
+
+$("wellForm")?.addEventListener("submit",async event => {
+  event.preventDefault();
+  if(!currentUserId) return;
+  const row = {
+    user_id:currentUserId,
+    day:localDate(),
+    mood:readRadio("wellMood"),
+    energy:readRadio("wellEnergy"),
+    stress:readRadio("wellStress"),
+    note:$("wellNote").value.trim().slice(0,500) || null,
+    updated_at:new Date().toISOString()
+  };
+  if(row.mood==null && row.energy==null && row.stress==null && !row.note) {
+    wellMessage("Wähl mindestens einen Wert aus oder schreib eine Notiz.");
+    return;
+  }
+  const button = $("wellSave");
+  button.disabled = true;
+  try {
+    const {queued} = await saveOrQueue("wellbeing_log",row,{onConflict:"user_id,day"});
+    wellRows.set(row.day,row);
+    renderWellbeing();
+    wellMessage(queued ? "✓ Vorgemerkt – wird übertragen, sobald du wieder online bist." : "✓ Check-in gespeichert.");
+  } catch(error) {
+    wellMessage("Speichern fehlgeschlagen: "+error.message);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+// -----------------------------------
+// Atemübung: 4 s ein, 6 s aus (ca. 6 Atemzüge pro Minute)
+// Läuft nur im Browser, speichert nichts.
+// -----------------------------------
+
+const BREATH_IN = 4, BREATH_OUT = 6;
+let breathTimer = null;
+
+function stopBreathing(done=false) {
+  if(breathTimer) clearInterval(breathTimer);
+  breathTimer = null;
+  if(!$("breathStart")) return;
+  $("breathCircle").classList.remove("in");
+  $("breathText").textContent = done ? "Fertig – gut gemacht." : "Bereit?";
+  $("breathTime").textContent = "";
+  $("breathStart").textContent = done ? "Noch einmal" : "Starten";
+}
+
+function startBreathing() {
+  const minutes = Number(document.querySelector('input[name="breathMin"]:checked')?.value) || 3;
+  const total = minutes*60;
+  const started = Date.now();
+  let phase = "";
+  $("breathStart").textContent = "Beenden";
+  const tick = () => {
+    const elapsed = (Date.now()-started)/1000;
+    if(elapsed>=total) { stopBreathing(true); return; }
+    const inCycle = elapsed % (BREATH_IN+BREATH_OUT);
+    const next = inCycle<BREATH_IN ? "in" : "out";
+    if(next!==phase) {
+      phase = next;
+      const circle = $("breathCircle");
+      circle.style.transitionDuration = (next==="in" ? BREATH_IN : BREATH_OUT)+"s";
+      circle.classList.toggle("in",next==="in");
+      $("breathText").textContent = next==="in" ? "Einatmen …" : "Ausatmen …";
+    }
+    const left = Math.ceil(total-elapsed);
+    $("breathTime").textContent = "noch "+Math.floor(left/60)+":"+String(left%60).padStart(2,"0");
+  };
+  tick();
+  breathTimer = setInterval(tick,250);
+}
+
+$("breathStart")?.addEventListener("click",() => {
+  if(breathTimer) stopBreathing(false); else startBreathing();
+});
+
 $("goGoals").addEventListener("click",() => {
   switchView("moreView");
   setTimeout(() => {
@@ -5552,6 +5760,8 @@ $("exportButton").addEventListener("click",async () => {
       ["trainingsplaene","workout_plans"],
       ["tagesziele","user_goals"],
       ["wasser","water_log"],
+      ["obst_gemuese","veg_log"],
+      ["wohlbefinden","wellbeing_log"],
       ["trainingsprogramm","training_program"],
       ["messtagebuch","measurements"],
       ["tageswerte","daily_metrics"],
@@ -5789,6 +5999,9 @@ async function refreshUI() {
     calcMessage("");
     fillCalcForm();
     resetWater();
+    resetVeg();
+    resetWellbeing();
+    stopBreathing();
     if($("tourDialog")?.open) $("tourDialog").close();
     resetProgram();
     resetStretch();
@@ -5854,6 +6067,8 @@ async function refreshUI() {
     loadReminders();
     loadGoals();
     loadWater();
+    loadVeg();
+    loadWellbeing();
     loadProgram();
     loadMeasurements();
     loadNutrition();
@@ -5942,6 +6157,7 @@ async function autoRefresh() {
   try {
     lastTrackerLoad = Date.now();
     loadWater();
+    loadVeg();
     scheduleInsights();
     await loadMetrics();
     if(ouraConnected) await loadSleep(true);
