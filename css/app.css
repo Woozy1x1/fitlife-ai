@@ -724,3 +724,17 @@ input[type=range]{padding:0;height:36px;accent-color:var(--sun);background:none;
 .sp-import-row strong{font-size:14px}
 .sp-import-row small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
 #spImport .btn{margin-top:8px}
+.shift-table{width:100%;border-collapse:collapse;font-size:13px}
+.shift-table th,.shift-table td{padding:7px 6px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+.shift-table th[scope=row],.shift-table thead th:first-child{text-align:left;font-weight:700}
+.shift-table thead th{color:var(--muted);font-weight:600;font-size:12px}
+.table-wrap{overflow-x:auto;margin:8px 0}
+#wpShiftBox{margin:12px 0 4px}
+.sw-day.k-frueh{background:#ffd16a22;border-color:#ffd16a66}
+.sw-day.k-spaet{background:#ff9a6a22;border-color:#ff9a6a66}
+.sw-day.k-nacht{background:#8f9bff26;border-color:#8f9bff77}
+.sw-day.k-frei{background:#7ce8d41c;border-color:#7ce8d455}
+.sw-day.k-sonder{background:#c9a2ff22;border-color:#c9a2ff66}
+.shift-table{font-size:12.5px}
+.shift-table th,.shift-table td{padding:7px 4px}
+.shift-table th[scope=row] small{display:block;font-weight:400;color:var(--muted);font-size:11px}
