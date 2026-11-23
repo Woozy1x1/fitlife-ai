@@ -13,7 +13,13 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=1d245806a1">
+<!-- Design: Reihenfolge ist wichtig, siehe css/LIESMICH.md -->
+<link rel="stylesheet" href="css/basis.css?v=28e97c5155">
+<link rel="stylesheet" href="css/formulare-listen.css?v=d295400225">
+<link rel="stylesheet" href="css/mobil.css?v=883a3949b2">
+<link rel="stylesheet" href="css/gesundheit.css?v=8d2cc85fb7">
+<link rel="stylesheet" href="css/erweiterungen.css?v=80b91af01b">
+<link rel="stylesheet" href="css/schichtdienst.css?v=5e59bcf2dd">
 </head>
 <body>
 <div class="app">
@@ -1950,24 +1956,28 @@
 
 <!-- App-Code: Reihenfolge ist wichtig, siehe js/app/LIESMICH.md -->
 <script type="module" src="js/app/00-supabase.js?v=65f70b2038"></script>
-<script defer src="js/app/01-grundlagen.js?v=912cd50b2c"></script>
-<script defer src="js/app/02-offline-und-erinnerungen.js?v=dcc883eb92"></script>
-<script defer src="js/app/03-schlaf.js?v=4d6c0e3700"></script>
-<script defer src="js/app/04-messtagebuch.js?v=f708dfb359"></script>
-<script defer src="js/app/05-calisthenics.js?v=7c0844e259"></script>
-<script defer src="js/app/06-dehnen.js?v=c41ea73ece"></script>
-<script defer src="js/app/07-woche-und-ziele.js?v=471ec3377e"></script>
-<script defer src="js/app/08-alltag.js?v=7d7eed8925"></script>
-<script defer src="js/app/09-lebensmittelsuche.js?v=d3757a9825"></script>
-<script defer src="js/app/10-barcode-scanner.js?v=891a9239a5"></script>
-<script defer src="js/app/11-mahlzeiten.js?v=18cd8a5a28"></script>
-<script defer src="js/app/12-training.js?v=00c28ee4e5"></script>
-<script defer src="js/app/13-gesundheitswerte.js?v=d287cf6106"></script>
-<script defer src="js/app/14-tracker.js?v=e8b51378be"></script>
-<script defer src="js/app/15-trainingsplaene.js?v=23baccc44a"></script>
-<script defer src="js/app/16-einwilligung-und-2fa.js?v=9b4df1df7e"></script>
-<script defer src="js/app/17-anmeldung.js?v=770df696e1"></script>
-<script defer src="js/app/18-start.js?v=48bf37e251"></script>
+<script defer src="js/app/01-grundlagen.js?v=96a1abe3e8"></script>
+<script defer src="js/app/01b-anzeige.js?v=d3ec959bab"></script>
+<script defer src="js/app/02-offline-und-erinnerungen.js?v=46edd828fb"></script>
+<script defer src="js/app/03-schlaf.js?v=530711e0dd"></script>
+<script defer src="js/app/04-messtagebuch.js?v=5ba48e6355"></script>
+<script defer src="js/app/05-calisthenics.js?v=0a3478464e"></script>
+<script defer src="js/app/05b-calisthenics-training.js?v=9a3d5f283a"></script>
+<script defer src="js/app/06-dehnen.js?v=a3e9308daf"></script>
+<script defer src="js/app/07-woche-und-ziele.js?v=5c79ac0b9a"></script>
+<script defer src="js/app/07b-tagesziele-und-bedarf.js?v=bd9699d055"></script>
+<script defer src="js/app/08-alltag.js?v=30986dc96f"></script>
+<script defer src="js/app/09-lebensmittelsuche.js?v=3aba88f66e"></script>
+<script defer src="js/app/09b-lebensmittelsuche.js?v=ed6da5f0aa"></script>
+<script defer src="js/app/10-barcode-scanner.js?v=0c5abef34b"></script>
+<script defer src="js/app/11-mahlzeiten.js?v=d6d8d467d5"></script>
+<script defer src="js/app/12-training.js?v=5c8d62c371"></script>
+<script defer src="js/app/13-gesundheitswerte.js?v=7e3a51c578"></script>
+<script defer src="js/app/14-tracker.js?v=a80708a2a5"></script>
+<script defer src="js/app/15-trainingsplaene.js?v=b2810481b6"></script>
+<script defer src="js/app/16-einwilligung-und-2fa.js?v=62bef6b7c3"></script>
+<script defer src="js/app/17-anmeldung.js?v=e8a9e1d260"></script>
+<script defer src="js/app/18-start.js?v=e6b7531ab5"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
