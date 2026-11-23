@@ -91,8 +91,16 @@ const mealNames = {
   snack:"Snack"
 };
 
+// Schichtarbeit: Der Tag kann erst um 1–6 Uhr beginnen (Einstellung in „Mehr“).
+let dayStartHour = Math.min(6,Math.max(0,
+  Math.round(Number(localStorage.getItem("vyora_day_start"))||0)));
+
+function shiftedNow() {
+  return new Date(Date.now()-dayStartHour*3600000);
+}
+
 function localDate() {
-  const d = new Date();
+  const d = shiftedNow();
   const y = d.getFullYear();
   const m = String(d.getMonth()+1).padStart(2,"0");
   const day = String(d.getDate()).padStart(2,"0");
@@ -1403,6 +1411,7 @@ async function loadMeasurements() {
   renderMeasureList();
   updateLatestBp();
   scheduleInsights();
+  vyEmit("measures");
 }
 
 $("measureForm").addEventListener("submit",async event => {
@@ -1720,7 +1729,7 @@ function renderProgram() {
   if(!restTimerId) showRest(caliDiff().rest);
 
   // Wochenleiste
-  const today = dayString(new Date());
+  const today = localDate();
   const week = $("caliWeek");
   week.replaceChildren();
   weekDates().forEach((date,index) => {
@@ -2425,7 +2434,7 @@ const TREND_DEFS = {
 };
 
 function daysAgo(n) {
-  const d = new Date();
+  const d = shiftedNow();
   d.setHours(12,0,0,0);
   d.setDate(d.getDate()-n);
   return dayString(d);
@@ -4600,6 +4609,7 @@ async function loadTraining() {
   renderTraining();
   scheduleInsights();
   workoutMessage("");
+  vyEmit("training");
 }
 
 // Zeigt, was du bei dieser Übung zuletzt
@@ -5651,10 +5661,70 @@ setupSocialLogin();
 
 // Bei inhaltlichen Änderungen des Einwilligungstextes die Version
 // erhöhen – dann wird die Einwilligung erneut abgefragt.
-const CONSENT_VERSION = "2026-11-22";
+const CONSENT_VERSION = "2026-11-23";
 
 let consentConfirmedFor = null;
 let consentInfo = null;
+
+// -----------------------------------
+// Zwei-Faktor-Anmeldung (Code aus einer Authenticator-App)
+// -----------------------------------
+
+async function needsMfa(user) {
+  if(!user || !supabase.auth.mfa) return false;
+  try {
+    const {data,error} = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if(error || !data) return false;
+    return data.nextLevel==="aal2" && data.currentLevel!=="aal2";
+  } catch(_error) {
+    return false;
+  }
+}
+
+function showMfaGate(show) {
+  const card = $("mfaCard");
+  if(!card) return;
+  card.classList.toggle("hidden",!show);
+  if(show) {
+    $("mfaMessage").textContent = "";
+    $("mfaCode").value = "";
+    setTimeout(() => $("mfaCode").focus(),50);
+  }
+}
+
+$("mfaForm")?.addEventListener("submit",async event => {
+  event.preventDefault();
+  const code = $("mfaCode").value.replace(/\s+/g,"");
+  if(!/^\d{6}$/.test(code)) {
+    $("mfaMessage").textContent = "Bitte den 6-stelligen Code aus deiner Authenticator-App eingeben.";
+    return;
+  }
+  const button = $("mfaButton");
+  button.disabled = true;
+  $("mfaMessage").textContent = "Code wird geprüft ...";
+  try {
+    const {data:list,error:listError} = await supabase.auth.mfa.listFactors();
+    if(listError) throw listError;
+    const factor = (list?.totp||[]).find(f => f.status==="verified");
+    if(!factor) throw new Error("Kein bestätigter zweiter Faktor gefunden.");
+    const {error} = await supabase.auth.mfa.challengeAndVerify({factorId:factor.id,code});
+    if(error) throw error;
+    $("mfaMessage").textContent = "";
+    await refreshUI();
+  } catch(error) {
+    $("mfaMessage").textContent = /invalid|expired|code/i.test(String(error?.message))
+      ? "Der Code stimmt nicht oder ist abgelaufen. Bitte den aktuellen Code eingeben."
+      : "Prüfung fehlgeschlagen: "+(error?.message||error);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+$("mfaLogout")?.addEventListener("click",async () => {
+  await supabase.auth.signOut();
+  showMfaGate(false);
+  await refreshUI();
+});
 
 function consentMessage(text) {
   $("consentMessage").textContent = text || "";
@@ -5762,6 +5832,10 @@ $("exportButton").addEventListener("click",async () => {
       ["wasser","water_log"],
       ["obst_gemuese","veg_log"],
       ["wohlbefinden","wellbeing_log"],
+      ["medikamente","medications"],
+      ["medikamenten_einnahmen","medication_intakes"],
+      ["symptome","symptom_log"],
+      ["laborwerte","lab_results"],
       ["trainingsprogramm","training_program"],
       ["messtagebuch","measurements"],
       ["tageswerte","daily_metrics"],
@@ -5916,8 +5990,25 @@ async function refreshUI() {
     consentConfirmedFor = null;
     consentInfo = null;
     showConsentGate(false);
+    showMfaGate(false);
+    vyEmit("reset");
     return;
   }
+
+  // Zwei-Faktor-Anmeldung: erst den Code bestätigen, dann geht es weiter.
+  if(await needsMfa(user)) {
+    if(counter!==refreshCounter) return;
+    currentUserId = null;
+    resetTrainingAndHealth();
+    resetTrackerAndPlans();
+    vyEmit("reset");
+    showConsentGate(false);
+    $("dashboard").classList.add("hidden");
+    showMfaGate(true);
+    return;
+  }
+  if(counter!==refreshCounter) return;
+  showMfaGate(false);
 
   // Ohne gültige Einwilligung werden KEINE Gesundheitsdaten
   // geladen oder abgerufen (auch nicht von Oura).
@@ -5950,6 +6041,7 @@ async function refreshUI() {
       ++nutritionLoadCounter;
       resetTrainingAndHealth();
       resetTrackerAndPlans();
+      vyEmit("reset");
       showConsentGate(true);
       // Wer schon einmal zugestimmt hat, erfährt, warum erneut gefragt wird.
       $("consentUpdateNote").classList.toggle(
@@ -6022,6 +6114,7 @@ async function refreshUI() {
     renderNutrition();
     resetTrainingAndHealth();
     resetTrackerAndPlans();
+    vyEmit("reset");
   }
 
   const params =
@@ -6076,6 +6169,7 @@ async function refreshUI() {
     loadHealth();
     loadExerciseSuggestions();
     loadPlans();
+    vyEmit("user");
   }
 
   try {
@@ -6159,6 +6253,7 @@ async function autoRefresh() {
     loadWater();
     loadVeg();
     scheduleInsights();
+    vyEmit("refresh");
     await loadMetrics();
     if(ouraConnected) await loadSleep(true);
   } catch(_error) {
@@ -6431,3 +6526,48 @@ if(
     .register("./sw.js",{scope:"./"})
     .catch(() => {});
 }
+
+// -----------------------------------
+// Erweiterungs-Module (js/plus.js)
+// Neue Funktionen liegen in eigenen Dateien. Sie bekommen über VY
+// gezielt Zugriff auf die App und werden über Ereignisse informiert
+// ("user", "reset", "refresh", "training", "measures").
+// -----------------------------------
+
+function vyEmit(name,detail) {
+  for(const fn of (vyEmit.hooks?.[name]||[])) {
+    try { fn(detail); } catch(error) { console.error("VYORA-Modul",name,error); }
+  }
+}
+
+const VY = {
+  supabase,
+  $,
+  get uid() { return currentUserId; },
+  get dayStartHour() { return dayStartHour; },
+  setDayStartHour(h) {
+    dayStartHour = Math.min(6,Math.max(0,Math.round(Number(h))||0));
+    try { localStorage.setItem("vyora_day_start",String(dayStartHour)); } catch(_e) {}
+  },
+  localDate,
+  daysAgo,
+  dayString,
+  saveOrQueue,
+  switchView,
+  get workoutData() { return workoutData; },
+  get healthData() { return healthData; },
+  get metricsData() { return metricsData; },
+  get measureData() { return measureData; },
+  get trackerData() { return trackerData; },
+  get glucoseUnit() { return checkSettings?.unit==="mmol_l" ? "mmol_l" : "mg_dl"; },
+  on(name,fn) {
+    vyEmit.hooks = vyEmit.hooks || {};
+    (vyEmit.hooks[name] = vyEmit.hooks[name] || []).push(fn);
+  },
+  refresh: () => refreshUI()
+};
+
+import("./plus.js?v=ecf62aa7e4")
+  .then(mod => mod.init(VY))
+  .catch(error => console.error("VYORA-Erweiterung konnte nicht geladen werden",error));
+
