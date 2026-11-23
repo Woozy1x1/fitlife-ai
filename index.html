@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=3ee847086b">
+<link rel="stylesheet" href="css/app.css?v=1d245806a1">
 </head>
 <body>
 <div class="app">
@@ -549,6 +549,12 @@
     </div>
   </div>
 
+  <div class="card hidden" id="shiftFoodCard">
+    <h2>🍽️ Essen &amp; Koffein im Schichtdienst</h2>
+    <div id="shiftFoodBox"></div>
+    <p class="muted small-note">Allgemeine Tipps nach den Empfehlungen der BAuA zu Ernährung bei Nacht- und Schichtarbeit – keine Ernährungs- oder Therapieberatung. Bei Diabetes oder anderen Erkrankungen: Essens- und Medikamentenzeiten mit deinem Arzt abstimmen.</p>
+  </div>
+
   <div class="card" id="kitchenCard">
     <h2>🍲 Rezepte, Wochenplan &amp; Einkauf</h2>
     <div class="seg" id="kitchenTabs" role="tablist" aria-label="Bereich">
@@ -664,12 +670,19 @@
   <div class="card" id="recoveryCard">
     <h2>🔋 Erholung heute</h2>
     <div id="recoveryBox"><p class="muted">Wird geladen ...</p></div>
+    <div id="recoveryShift"></div>
   </div>
 
   <div class="card" id="weekPlanCard">
     <h2>🗓️ Wochenplanung</h2>
     <p class="muted" id="weekPlanLabel"></p>
     <div id="weekPlanBox"></div>
+    <div id="wpShiftBox" class="hidden">
+      <span class="label">Deine Dienste diese Woche</span>
+      <div id="wpShiftRow"></div>
+      <button id="wpShiftSuggest" class="btn secondary full" type="button">Trainingstage passend zu den Diensten vorschlagen</button>
+      <p id="wpShiftMessage" class="message" role="status"></p>
+    </div>
     <button id="weekPlanSave" class="btn full" type="button">Plan speichern</button>
     <p id="weekPlanMessage" class="message" role="status"></p>
   </div>
@@ -985,6 +998,11 @@
       Dein Einnahmeplan – so, wie er auf deinem Medikationsplan oder dem
       Beipackzettel steht. Hake ab, was du genommen hast. VYORA rechnet
       keine Dosis aus und gibt keine Empfehlungen.
+    </p>
+    <p class="notice hidden" id="medShiftNote">
+      Schichtdienst: VYORA erinnert immer zur eingestellten Uhrzeit – auch nach dem Nachtdienst.
+      Ob du Einnahmezeiten an deine Dienste anpassen kannst, besprich bitte mit deiner Ärztin,
+      deinem Arzt oder in der Apotheke.
     </p>
     <div id="medToday"></div>
     <details class="cx-extra" id="medManage">
@@ -1517,6 +1535,7 @@
       <label class="check"><input type="checkbox" name="reportPart" value="labs" checked><span>Laborwerte</span></label>
       <label class="check"><input type="checkbox" name="reportPart" value="wellbeing"><span>Wohlbefinden</span></label>
       <label class="check"><input type="checkbox" name="reportPart" value="sleep"><span>Schlaf</span></label>
+      <label class="check"><input type="checkbox" name="reportPart" value="shift"><span>Dienstplan (Schichtdienst)</span></label>
     </fieldset>
     <button id="reportPrint" class="btn full" type="button">Bericht erstellen</button>
     <p id="reportMessage" class="message" role="status"></p>
@@ -1795,6 +1814,8 @@
         <span>🌙 Nacht</span><input type="time" id="st-nacht-s" aria-label="Nachtdienst Beginn"><span>bis</span><input type="time" id="st-nacht-e" aria-label="Nachtdienst Ende">
       </div>
       <label class="check"><input type="checkbox" id="shiftQuiet" checked><span>Nach dem Nachtdienst keine Erinnerungen, während ich schlafe (8 Stunden nach Dienstende; Medikamenten-Erinnerungen kommen trotzdem)</span></label>
+      <label class="check"><input type="checkbox" id="shiftQuietWork"><span>Während des Dienstes keine Erinnerungen (Medikamenten-Erinnerungen kommen trotzdem)</span></label>
+      <label class="check"><input type="checkbox" id="shiftAutoday" checked><span>Im Nachtdienst zählt der Tag weiter: Essen, Wasser und Häkchen bis 2 Stunden nach Dienstende gehören zum Tag, an dem der Dienst begonnen hat</span></label>
     </div>
     <button id="shiftSave" class="btn full" type="button">Schichtdienst speichern</button>
     <p id="shiftMessage" class="message" role="status"></p>
@@ -1929,7 +1950,7 @@
 
 <!-- App-Code: Reihenfolge ist wichtig, siehe js/app/LIESMICH.md -->
 <script type="module" src="js/app/00-supabase.js?v=65f70b2038"></script>
-<script defer src="js/app/01-grundlagen.js?v=0fcffc5616"></script>
+<script defer src="js/app/01-grundlagen.js?v=912cd50b2c"></script>
 <script defer src="js/app/02-offline-und-erinnerungen.js?v=dcc883eb92"></script>
 <script defer src="js/app/03-schlaf.js?v=4d6c0e3700"></script>
 <script defer src="js/app/04-messtagebuch.js?v=f708dfb359"></script>
@@ -1946,7 +1967,7 @@
 <script defer src="js/app/15-trainingsplaene.js?v=23baccc44a"></script>
 <script defer src="js/app/16-einwilligung-und-2fa.js?v=9b4df1df7e"></script>
 <script defer src="js/app/17-anmeldung.js?v=770df696e1"></script>
-<script defer src="js/app/18-start.js?v=8aa21b64fc"></script>
+<script defer src="js/app/18-start.js?v=48bf37e251"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
