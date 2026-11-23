@@ -132,6 +132,11 @@ export function init(api) {
   VY.on("training",schedulePrs);
 
   if(VY.uid) loadAll();
+
+  // Weitere Module: Zusammenhänge, Küche, Motivation
+  for(const path of ["./trends.js?v=a22f3ad0a8","./kitchen.js?v=1b1eec2920","./motivation.js?v=0cc42f7492"]) {
+    import(path).then(mod => mod.init(api)).catch(error => console.error("VYORA-Modul konnte nicht geladen werden",path,error));
+  }
 }
 
 function loadAll() {

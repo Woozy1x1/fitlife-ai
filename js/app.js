@@ -404,6 +404,15 @@ function renderNutrition() {
   $("totalFat").textContent =
     number(sum("fat"));
 
+  if($("fiberInfo")) {
+    const known = nutritionData.filter(item => item.fiber_g!=null);
+    const missing = nutritionData.length-known.length;
+    $("fiberInfo").textContent = !nutritionData.length ? "" :
+      "🌾 Ballaststoffe: "+number(sum("fiber_g"))+" g"+
+      (missing ? " (bei "+missing+(missing===1 ? " Eintrag" : " Einträgen")+" unbekannt)" : "")+
+      " · Orientierung für Erwachsene (DGE): mindestens 30 g am Tag.";
+  }
+
   if($("nutritionDate").value===localDate()) {
     todayTotals = {
       calories:sum("calories"),
@@ -506,7 +515,8 @@ function repeatMeal(item) {
       calories:per100("calories"),
       protein:per100("protein"),
       carbs:per100("carbs"),
-      fat:per100("fat")
+      fat:per100("fat"),
+      fiber:item.fiber_g==null ? null : per100("fiber_g")
     };
 
     $("foodName").value = name;
@@ -523,6 +533,7 @@ function repeatMeal(item) {
     ["calories","protein","carbs","fat"].forEach(field => {
       $(field).value = String(Number(item[field]||0));
     });
+    if($("fiber")) $("fiber").value = item.fiber_g==null ? "" : String(Number(item.fiber_g));
     $("selectedFoodInfo").textContent =
       "↻ Übernommen: "+name+". Bitte Werte prüfen.";
   }
@@ -660,7 +671,8 @@ const REMINDERS = [
   {kind:"glucose",label:"🩸 Blutzucker messen",def:"07:30"},
   {kind:"training",label:"🏋️ Training",def:"18:00"},
   {kind:"sleep",label:"😴 Schlaf eintragen",def:"09:00"},
-  {kind:"water",label:"💧 Wasser trinken",def:"14:00"}
+  {kind:"water",label:"💧 Wasser trinken",def:"14:00"},
+  {kind:"weekly",label:"📊 Wochenrückblick",def:"18:00",weekly:true}
 ];
 let remindCounter = 0;
 
@@ -698,7 +710,26 @@ function renderReminderRows(saved={}) {
     time.value = saved[r.kind]?.at_time ? String(saved[r.kind].at_time).slice(0,5) : r.def;
     time.setAttribute("aria-label","Uhrzeit für "+r.label.replace(/^\S+\s/,""));
     row.append(label,time);
-    list.append(row);
+    // Wochentage: alle an = jeden Tag; beim Wochenrückblick genau ein Tag
+    const days = saved[r.kind]?.days?.length ? saved[r.kind].days.map(Number) : (r.weekly ? [7] : [1,2,3,4,5,6,7]);
+    const picker = document.createElement("div");
+    picker.className = "day-picker remind-days";
+    picker.id = "remd-"+r.kind;
+    picker.setAttribute("role",r.weekly ? "radiogroup" : "group");
+    picker.setAttribute("aria-label",(r.weekly ? "Wochentag für " : "Wochentage für ")+r.label.replace(/^\S+\s/,""));
+    WEEKDAYS.forEach((name,i) => {
+      const l = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = r.weekly ? "radio" : "checkbox";
+      input.name = "remd-"+r.kind;
+      input.value = String(i+1);
+      input.checked = days.includes(i+1);
+      const t = document.createElement("span");
+      t.textContent = name;
+      l.append(input,t);
+      picker.append(l);
+    });
+    list.append(row,picker);
   });
 }
 
@@ -745,7 +776,7 @@ async function loadReminders() {
   renderPushStatus();
   const {data,error} = await supabase
     .from("reminders")
-    .select("kind,at_time,enabled")
+    .select("kind,at_time,enabled,days")
     .eq("user_id",userId);
   if(requestId!==remindCounter || userId!==currentUserId || error) return;
   renderReminderRows(Object.fromEntries((data||[]).map(r => [r.kind,r])));
@@ -798,9 +829,12 @@ $("remindSave")?.addEventListener("click",async () => {
     const rows = REMINDERS.map(r => {
       const time = $("remt-"+r.kind).value || r.def;
       if(!/^\d{2}:\d{2}$/.test(time)) throw new Error("Bitte gültige Uhrzeiten wählen.");
+      const days = [...document.querySelectorAll("#remd-"+r.kind+" input:checked")].map(i => Number(i.value));
+      if(!days.length) throw new Error("Bitte für „"+r.label.replace(/^\S+\s/,"")+"“ mindestens einen Tag wählen.");
       return {
         user_id:currentUserId, kind:r.kind, at_time:time, tz,
-        enabled:$("rem-"+r.kind).checked, updated_at:new Date().toISOString()
+        enabled:$("rem-"+r.kind).checked, updated_at:new Date().toISOString(),
+        days:days.length===7 ? null : days
       };
     });
     const {error} = await supabase.from("reminders").upsert(rows,{onConflict:"user_id,kind"});
@@ -3454,7 +3488,7 @@ async function loadFrequentFoods() {
   try {
     const {data,error} = await supabase
       .from("nutrition_entries")
-      .select("meal_type,food_name,calories,protein,carbs,fat,entry_date,created_at")
+      .select("meal_type,food_name,calories,protein,carbs,fat,fiber_g,entry_date,created_at")
       .eq("user_id",userId)
       .gte("entry_date",sinceDay)
       .order("created_at",{ascending:false})
@@ -3499,7 +3533,7 @@ async function loadNutrition() {
   const {data,error} = await supabase
     .from("nutrition_entries")
     .select(
-      "id,meal_type,food_name,calories,protein,carbs,fat,entry_date,created_at"
+      "id,meal_type,food_name,calories,protein,carbs,fat,fiber_g,entry_date,created_at"
     )
     .eq("user_id",userId)
     .eq("entry_date",date)
@@ -3578,6 +3612,11 @@ function normalizeFood(product) {
     nutrients.fat_100g
   );
 
+  // Ballaststoffe sind freiwillig angegeben – fehlen sie, bleibt das Feld leer.
+  const fiber = validNutrient(
+    nutrients.fiber_100g
+  );
+
   const name = String(
     product.product_name_de ||
     product.product_name ||
@@ -3606,7 +3645,8 @@ function normalizeFood(product) {
     calories,
     protein,
     carbs,
-    fat
+    fat,
+    fiber
   };
 }
 
@@ -3653,6 +3693,9 @@ function calculateSelectedFood() {
 
   $("fat").value =
     rounded(selectedFood.fat);
+
+  if($("fiber")) $("fiber").value =
+    selectedFood.fiber==null ? "" : rounded(selectedFood.fiber);
 }
 
 $("foodAmount").addEventListener(
@@ -4325,6 +4368,16 @@ $("nutritionForm").addEventListener(
         }
 
         values[field] = value;
+      }
+
+      // Ballaststoffe: freiwillig
+      const fiberRaw = $("fiber") ? $("fiber").value.trim() : "";
+      if(fiberRaw!=="") {
+        const fiber = Number(fiberRaw);
+        if(!Number.isFinite(fiber) || fiber<0 || fiber>999) {
+          throw new Error("Bitte gültige Ballaststoffe eingeben (oder leer lassen).");
+        }
+        values.fiber_g = fiber;
       }
 
       const foodName =
@@ -5836,6 +5889,11 @@ $("exportButton").addEventListener("click",async () => {
       ["medikamenten_einnahmen","medication_intakes"],
       ["symptome","symptom_log"],
       ["laborwerte","lab_results"],
+      ["rezepte","recipes"],
+      ["essensplan","meal_plan"],
+      ["einkaufsliste","shopping_items"],
+      ["challenges","user_challenges"],
+      ["wochenplanung","week_plans"],
       ["trainingsprogramm","training_program"],
       ["messtagebuch","measurements"],
       ["tageswerte","daily_metrics"],
@@ -6560,6 +6618,12 @@ const VY = {
   get measureData() { return measureData; },
   get trackerData() { return trackerData; },
   get glucoseUnit() { return checkSettings?.unit==="mmol_l" ? "mmol_l" : "mg_dl"; },
+  get goals() { return userGoals; },
+  sleepMinutesByDay,
+  stepsByDay,
+  get nutritionDate() { return $("nutritionDate")?.value || localDate(); },
+  reloadNutrition: () => loadNutrition(),
+  searchFoods: async query => (await fetchFoodProducts(query)).map(normalizeFood).filter(Boolean),
   on(name,fn) {
     vyEmit.hooks = vyEmit.hooks || {};
     (vyEmit.hooks[name] = vyEmit.hooks[name] || []).push(fn);
@@ -6567,7 +6631,7 @@ const VY = {
   refresh: () => refreshUI()
 };
 
-import("./plus.js?v=ecf62aa7e4")
+import("./plus.js?v=d99b0119b2")
   .then(mod => mod.init(VY))
   .catch(error => console.error("VYORA-Erweiterung konnte nicht geladen werden",error));
 
