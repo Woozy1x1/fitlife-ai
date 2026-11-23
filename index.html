@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=172a0155fc">
+<link rel="stylesheet" href="css/app.css?v=0739593a74">
 </head>
 <body>
 <div class="app">
@@ -910,20 +910,17 @@
   <div class="eyebrow">Deine Gesundheitswerte</div>
   <h1>Gesundheit ♡</h1>
   <p class="muted">
-    Wohlbefinden, Gewicht, Blutdruck, Blutzucker, Insulin und Schlaf an einem Ort.
+    Alles rund um deine Gesundheit – in vier Bereiche aufgeteilt. Unter „Arzt“ findest du Symptome, Laborwerte und den Bericht für den Arzttermin.
   </p>
 
-  <div class="subnav" id="healthSubnav" role="navigation" aria-label="Bereiche auf dieser Seite">
-    <button type="button" data-target="wellCard">Check-in</button>
-    <button type="button" data-target="medCard">Medikamente</button>
-    <button type="button" data-target="symptomCard">Symptome</button>
-    <button type="button" data-target="measureCard">Messtagebuch</button>
-    <button type="button" data-target="bpWeekCard">Blutdruck-Woche</button>
-    <button type="button" data-target="labCard">Labor</button>
-    <button type="button" data-target="reportCard">Arztbericht</button>
-    <button type="button" data-target="manualSleepCard">Schlaf</button>
+  <div class="htabs" id="healthTabs" role="tablist" aria-label="Bereiche in Gesundheit">
+    <button type="button" role="tab" id="htab-heute" data-htab="heute" aria-controls="hpanel-heute" aria-selected="true" tabindex="0">Heute</button>
+    <button type="button" role="tab" id="htab-messen" data-htab="messen" aria-controls="hpanel-messen" aria-selected="false" tabindex="-1">Messwerte</button>
+    <button type="button" role="tab" id="htab-schlaf" data-htab="schlaf" aria-controls="hpanel-schlaf" aria-selected="false" tabindex="-1">Schlaf</button>
+    <button type="button" role="tab" id="htab-arzt" data-htab="arzt" aria-controls="hpanel-arzt" aria-selected="false" tabindex="-1">Arzt</button>
   </div>
 
+  <div class="hpanel" id="hpanel-heute" role="tabpanel" aria-labelledby="htab-heute">
   <div class="card" id="wellCard">
     <h2>🌿 Wie geht's dir heute?</h2>
     <p class="muted">Ein kurzer Check-in – nur für dich. VYORA bewertet nichts und stellt keine Diagnosen.</p>
@@ -1012,51 +1009,6 @@
     <p id="medMessage" class="message" role="status"></p>
   </div>
 
-  <div class="card" id="symptomCard">
-    <h2>📝 Symptom-Tagebuch</h2>
-    <p class="muted">
-      Halte fest, was dir auffällt – das hilft beim nächsten Arztgespräch.
-      VYORA wertet nichts aus und stellt keine Diagnosen.
-    </p>
-    <form id="symptomForm">
-      <div class="form-grid">
-        <div>
-          <label for="symDay">Datum</label>
-          <input id="symDay" type="date" required>
-        </div>
-        <div>
-          <label for="symName">Was?</label>
-          <input id="symName" list="symSuggest" maxlength="60" required autocomplete="off" placeholder="z. B. Kopfschmerzen">
-        </div>
-      </div>
-      <datalist id="symSuggest">
-        <option value="Kopfschmerzen"><option value="Rückenschmerzen">
-        <option value="Gelenkschmerzen"><option value="Muskelkater">
-        <option value="Müdigkeit"><option value="Schwindel">
-        <option value="Übelkeit"><option value="Bauchschmerzen">
-        <option value="Verdauungsbeschwerden"><option value="Schlafprobleme">
-        <option value="Husten"><option value="Schnupfen">
-        <option value="Halsschmerzen"><option value="Allergie-Beschwerden">
-        <option value="Herzklopfen"><option value="Unruhe">
-      </datalist>
-      <label for="symIntensity">Wie stark empfindest du es?
-        <output id="symIntensityOut" for="symIntensity">5</output> von 10</label>
-      <input id="symIntensity" type="range" min="0" max="10" step="1" value="5"
-        aria-describedby="symScale">
-      <div class="range-scale" id="symScale"><span>0 = kaum</span><span>10 = sehr stark</span></div>
-      <label for="symNote">Notiz (optional)</label>
-      <input id="symNote" maxlength="300" autocomplete="off" placeholder="z. B. seit dem Nachmittag">
-      <button id="symSave" class="btn full" type="submit">Eintragen</button>
-    </form>
-    <p id="symMessage" class="message" role="status"></p>
-    <div id="symRecent"></div>
-    <p class="muted small-note">
-      Bei starken, plötzlichen oder anhaltenden Beschwerden wende dich an
-      deine Ärztin oder deinen Arzt, außerhalb der Sprechzeiten an den
-      ärztlichen Bereitschaftsdienst 116 117 – im Notfall an die 112.
-    </p>
-  </div>
-
   <div class="card" id="breathCard">
     <h2>🫁 Ruhig atmen</h2>
     <p class="muted">
@@ -1077,6 +1029,29 @@
     </div>
     <button id="breathStart" class="btn full" type="button">Starten</button>
     <p class="muted small-note">Wird dir schwindlig, atme einfach normal weiter. Es wird nichts gespeichert.</p>
+  </div>
+  </div>
+
+  <div class="hpanel hidden" id="hpanel-messen" role="tabpanel" aria-labelledby="htab-messen">
+  <div class="stats">
+    <div class="card stat">
+      <div class="stat-icon">⚖</div>
+      <small>Gewicht</small>
+      <strong id="latestWeight">–</strong>
+      <small id="latestWeightDate">Noch keine Daten</small>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon">🩺</div>
+      <small>Blutdruck</small>
+      <strong id="latestBp">–</strong>
+      <small id="latestBpDate">Noch keine Daten</small>
+    </div>
+    <div class="card stat">
+      <div class="stat-icon">♡</div>
+      <small>Puls</small>
+      <strong id="latestPulse">–</strong>
+      <small id="latestPulseDate">Noch keine Daten</small>
+    </div>
   </div>
 
   <div class="card" id="checkCard">
@@ -1245,6 +1220,68 @@
     </p>
   </div>
 
+  <div class="card">
+    <h2>+ Werte eintragen</h2>
+    <p class="muted">
+      Fülle nur aus, was du gemessen hast. Mindestens ein Wert ist nötig.
+    </p>
+    <form id="healthForm">
+      <label for="healthDate">Datum</label>
+      <input id="healthDate" type="date" required>
+
+      <label for="bodyWeight">Gewicht (kg)</label>
+      <input id="bodyWeight" type="number" min="20" max="400"
+        step="0.1" placeholder="z. B. 78,5">
+
+      <div class="form-grid">
+        <div>
+          <label for="systolic">Blutdruck oben (mmHg)</label>
+          <input id="systolic" type="number" min="50" max="260"
+            step="1" placeholder="z. B. 120">
+        </div>
+        <div>
+          <label for="diastolic">Blutdruck unten (mmHg)</label>
+          <input id="diastolic" type="number" min="30" max="180"
+            step="1" placeholder="z. B. 80">
+        </div>
+      </div>
+
+      <label for="pulse">Puls (Schläge/Minute)</label>
+      <input id="pulse" type="number" min="25" max="250"
+        step="1" placeholder="z. B. 65">
+
+      <label for="healthNotes">Notiz (optional)</label>
+      <input id="healthNotes" maxlength="500"
+        placeholder="z. B. morgens nüchtern gemessen">
+
+      <button id="saveHealth" class="btn full" type="submit">
+        Werte speichern
+      </button>
+    </form>
+    <p id="healthMessage" class="message" role="status"></p>
+    <p class="muted">
+      VYORA zeigt deine Werte nur an und bewertet sie nicht medizinisch.
+      Bei auffälligen oder ungewohnten Werten sprich bitte mit deiner
+      Ärztin oder deinem Arzt.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Dein Messtagebuch</h2>
+    <p class="muted">Letzte 7 Tage</p>
+    <div id="measureList" class="muted">Noch keine Einträge.</div>
+  </div>
+
+  <div class="card" id="bpWeekCard">
+    <h2>🩺 Blutdruck – letzte 7 Tage</h2>
+    <p class="muted">
+      Durchschnitt deiner Messungen aus dem Messtagebuch, getrennt nach
+      morgens und abends – so fragen viele Praxen ein Blutdruckprotokoll ab.
+      Nur eine Zusammenfassung, keine Bewertung.
+    </p>
+    <div id="bpWeek"></div>
+  </div>
+
   <div class="card" id="trendCard">
     <h2>📈 Verläufe</h2>
     <div class="day-picker" id="trendPick" role="radiogroup" aria-label="Wert für den Verlauf"></div>
@@ -1262,40 +1299,125 @@
   </div>
 
   <div class="card">
-    <h2>Dein Messtagebuch</h2>
-    <p class="muted">Letzte 7 Tage</p>
-    <div id="measureList" class="muted">Noch keine Einträge.</div>
+    <h2>Gewichtsverlauf</h2>
+    <p class="muted">Letzte 10 Messungen</p>
+    <div id="weightChart" class="chart"></div>
   </div>
 
-  <div class="stats">
-    <div class="card stat">
-      <div class="stat-icon">⚖</div>
-      <small>Gewicht</small>
-      <strong id="latestWeight">–</strong>
-      <small id="latestWeightDate">Noch keine Daten</small>
-    </div>
-    <div class="card stat">
-      <div class="stat-icon">🩺</div>
-      <small>Blutdruck</small>
-      <strong id="latestBp">–</strong>
-      <small id="latestBpDate">Noch keine Daten</small>
-    </div>
-    <div class="card stat">
-      <div class="stat-icon">♡</div>
-      <small>Puls</small>
-      <strong id="latestPulse">–</strong>
-      <small id="latestPulseDate">Noch keine Daten</small>
+  <div class="card">
+    <h2>Deine Messungen</h2>
+    <div id="healthList" class="muted">
+      Einträge werden geladen ...
     </div>
   </div>
+  </div>
 
-  <div class="card" id="bpWeekCard">
-    <h2>🩺 Blutdruck – letzte 7 Tage</h2>
+  <div class="hpanel hidden" id="hpanel-schlaf" role="tabpanel" aria-labelledby="htab-schlaf">
+  <div class="card" id="manualSleepCard">
+    <h2>😴 Schlaf eintragen</h2>
     <p class="muted">
-      Durchschnitt deiner Messungen aus dem Messtagebuch, getrennt nach
-      morgens und abends – so fragen viele Praxen ein Blutdruckprotokoll ab.
-      Nur eine Zusammenfassung, keine Bewertung.
+      Ohne Tracker? Trag ein, wann du ins Bett gegangen und aufgestanden
+      bist. Die Schlafdauer erscheint dann auf der Startseite.
     </p>
-    <div id="bpWeek"></div>
+    <form id="manualSleepForm">
+      <label for="msDay">Nacht zum</label>
+      <input id="msDay" type="date" required>
+      <div class="form-grid">
+        <div>
+          <label for="msBed">Ins Bett</label>
+          <input id="msBed" type="time" value="23:00" required>
+        </div>
+        <div>
+          <label for="msWake">Aufgestanden</label>
+          <input id="msWake" type="time" value="07:00" required>
+        </div>
+      </div>
+      <label for="msQuality">Wie gut hast du geschlafen?</label>
+      <select id="msQuality">
+        <option value="">keine Angabe</option>
+        <option value="5">sehr gut</option>
+        <option value="4">gut</option>
+        <option value="3">mittel</option>
+        <option value="2">schlecht</option>
+        <option value="1">sehr schlecht</option>
+      </select>
+      <button id="msSave" class="btn full" type="submit">Schlaf speichern</button>
+    </form>
+    <p id="msMessage" class="message" role="status"></p>
+    <div id="metricsList"></div>
+  </div>
+
+  <div class="card">
+    <h2>☾ Schlafanalyse</h2>
+    <p class="muted" id="sleepSource">
+      Verbinde einen Tracker (z. B. Oura Ring), um deine Schlafanalyse zu sehen.
+    </p>
+    <div id="sleepAnalysis"></div>
+  </div>
+
+  <div class="card">
+    <h2>♡ Herzfrequenz (letzte 24 Stunden)</h2>
+    <p class="muted" id="hrSource">Noch keine Herzfrequenzdaten.</p>
+    <div id="hrChart"></div>
+  </div>
+
+  <div class="card">
+    <h2>Schlafscore-Verlauf</h2>
+    <div id="sleepChart" class="chart"></div>
+  </div>
+
+  <div class="card">
+    <h2>Deine letzten Messungen</h2>
+    <div id="sleepList" class="muted">
+      Noch keine Daten geladen.
+    </div>
+  </div>
+  </div>
+
+  <div class="hpanel hidden" id="hpanel-arzt" role="tabpanel" aria-labelledby="htab-arzt">
+  <div class="card" id="symptomCard">
+    <h2>📝 Symptom-Tagebuch</h2>
+    <p class="muted">
+      Halte fest, was dir auffällt – das hilft beim nächsten Arztgespräch.
+      VYORA wertet nichts aus und stellt keine Diagnosen.
+    </p>
+    <form id="symptomForm">
+      <div class="form-grid">
+        <div>
+          <label for="symDay">Datum</label>
+          <input id="symDay" type="date" required>
+        </div>
+        <div>
+          <label for="symName">Was?</label>
+          <input id="symName" list="symSuggest" maxlength="60" required autocomplete="off" placeholder="z. B. Kopfschmerzen">
+        </div>
+      </div>
+      <datalist id="symSuggest">
+        <option value="Kopfschmerzen"><option value="Rückenschmerzen">
+        <option value="Gelenkschmerzen"><option value="Muskelkater">
+        <option value="Müdigkeit"><option value="Schwindel">
+        <option value="Übelkeit"><option value="Bauchschmerzen">
+        <option value="Verdauungsbeschwerden"><option value="Schlafprobleme">
+        <option value="Husten"><option value="Schnupfen">
+        <option value="Halsschmerzen"><option value="Allergie-Beschwerden">
+        <option value="Herzklopfen"><option value="Unruhe">
+      </datalist>
+      <label for="symIntensity">Wie stark empfindest du es?
+        <output id="symIntensityOut" for="symIntensity">5</output> von 10</label>
+      <input id="symIntensity" type="range" min="0" max="10" step="1" value="5"
+        aria-describedby="symScale">
+      <div class="range-scale" id="symScale"><span>0 = kaum</span><span>10 = sehr stark</span></div>
+      <label for="symNote">Notiz (optional)</label>
+      <input id="symNote" maxlength="300" autocomplete="off" placeholder="z. B. seit dem Nachmittag">
+      <button id="symSave" class="btn full" type="submit">Eintragen</button>
+    </form>
+    <p id="symMessage" class="message" role="status"></p>
+    <div id="symRecent"></div>
+    <p class="muted small-note">
+      Bei starken, plötzlichen oder anhaltenden Beschwerden wende dich an
+      deine Ärztin oder deinen Arzt, außerhalb der Sprechzeiten an den
+      ärztlichen Bereitschaftsdienst 116 117 – im Notfall an die 112.
+    </p>
   </div>
 
   <div class="card" id="labCard">
@@ -1374,129 +1496,8 @@
     <button id="reportPrint" class="btn full" type="button">Bericht erstellen</button>
     <p id="reportMessage" class="message" role="status"></p>
   </div>
-
-  <div class="card">
-    <h2>+ Werte eintragen</h2>
-    <p class="muted">
-      Fülle nur aus, was du gemessen hast. Mindestens ein Wert ist nötig.
-    </p>
-    <form id="healthForm">
-      <label for="healthDate">Datum</label>
-      <input id="healthDate" type="date" required>
-
-      <label for="bodyWeight">Gewicht (kg)</label>
-      <input id="bodyWeight" type="number" min="20" max="400"
-        step="0.1" placeholder="z. B. 78,5">
-
-      <div class="form-grid">
-        <div>
-          <label for="systolic">Blutdruck oben (mmHg)</label>
-          <input id="systolic" type="number" min="50" max="260"
-            step="1" placeholder="z. B. 120">
-        </div>
-        <div>
-          <label for="diastolic">Blutdruck unten (mmHg)</label>
-          <input id="diastolic" type="number" min="30" max="180"
-            step="1" placeholder="z. B. 80">
-        </div>
-      </div>
-
-      <label for="pulse">Puls (Schläge/Minute)</label>
-      <input id="pulse" type="number" min="25" max="250"
-        step="1" placeholder="z. B. 65">
-
-      <label for="healthNotes">Notiz (optional)</label>
-      <input id="healthNotes" maxlength="500"
-        placeholder="z. B. morgens nüchtern gemessen">
-
-      <button id="saveHealth" class="btn full" type="submit">
-        Werte speichern
-      </button>
-    </form>
-    <p id="healthMessage" class="message" role="status"></p>
-    <p class="muted">
-      VYORA zeigt deine Werte nur an und bewertet sie nicht medizinisch.
-      Bei auffälligen oder ungewohnten Werten sprich bitte mit deiner
-      Ärztin oder deinem Arzt.
-    </p>
   </div>
 
-  <div class="card">
-    <h2>Gewichtsverlauf</h2>
-    <p class="muted">Letzte 10 Messungen</p>
-    <div id="weightChart" class="chart"></div>
-  </div>
-
-  <div class="card">
-    <h2>Deine Messungen</h2>
-    <div id="healthList" class="muted">
-      Einträge werden geladen ...
-    </div>
-  </div>
-
-  <div class="section-divider"></div>
-
-  <div class="eyebrow">Deine Schlafgesundheit</div>
-  <h1>Schlaf ☾</h1>
-
-  <div class="card" id="manualSleepCard">
-    <h2>😴 Schlaf eintragen</h2>
-    <p class="muted">
-      Ohne Tracker? Trag ein, wann du ins Bett gegangen und aufgestanden
-      bist. Die Schlafdauer erscheint dann auf der Startseite.
-    </p>
-    <form id="manualSleepForm">
-      <label for="msDay">Nacht zum</label>
-      <input id="msDay" type="date" required>
-      <div class="form-grid">
-        <div>
-          <label for="msBed">Ins Bett</label>
-          <input id="msBed" type="time" value="23:00" required>
-        </div>
-        <div>
-          <label for="msWake">Aufgestanden</label>
-          <input id="msWake" type="time" value="07:00" required>
-        </div>
-      </div>
-      <label for="msQuality">Wie gut hast du geschlafen?</label>
-      <select id="msQuality">
-        <option value="">keine Angabe</option>
-        <option value="5">sehr gut</option>
-        <option value="4">gut</option>
-        <option value="3">mittel</option>
-        <option value="2">schlecht</option>
-        <option value="1">sehr schlecht</option>
-      </select>
-      <button id="msSave" class="btn full" type="submit">Schlaf speichern</button>
-    </form>
-    <p id="msMessage" class="message" role="status"></p>
-    <div id="metricsList"></div>
-  </div>
-
-  <div class="card">
-    <h2>☾ Schlafanalyse</h2>
-    <p class="muted" id="sleepSource">
-      Verbinde einen Tracker (z. B. Oura Ring), um deine Schlafanalyse zu sehen.
-    </p>
-    <div id="sleepAnalysis"></div>
-  </div>
-
-  <div class="card">
-    <h2>♡ Herzfrequenz (letzte 24 Stunden)</h2>
-    <p class="muted" id="hrSource">Noch keine Herzfrequenzdaten.</p>
-    <div id="hrChart"></div>
-  </div>
-
-  <div class="card">
-    <h2>Schlafscore-Verlauf</h2>
-    <div id="sleepChart" class="chart"></div>
-  </div>
-  <div class="card">
-    <h2>Deine letzten Messungen</h2>
-    <div id="sleepList" class="muted">
-      Noch keine Daten geladen.
-    </div>
-  </div>
 </section>
 
 <section id="moreView" class="view">
@@ -1855,7 +1856,26 @@
 </footer>
 </div>
 
-<script type="module" src="js/app.js?v=69eefb9024"></script>
+<!-- App-Code: Reihenfolge ist wichtig, siehe js/app/LIESMICH.md -->
+<script type="module" src="js/app/00-supabase.js?v=65f70b2038"></script>
+<script defer src="js/app/01-grundlagen.js?v=0fcffc5616"></script>
+<script defer src="js/app/02-offline-und-erinnerungen.js?v=dcc883eb92"></script>
+<script defer src="js/app/03-schlaf.js?v=0c3c845f31"></script>
+<script defer src="js/app/04-messtagebuch.js?v=f708dfb359"></script>
+<script defer src="js/app/05-calisthenics.js?v=7c0844e259"></script>
+<script defer src="js/app/06-dehnen.js?v=c41ea73ece"></script>
+<script defer src="js/app/07-woche-und-ziele.js?v=471ec3377e"></script>
+<script defer src="js/app/08-alltag.js?v=7d7eed8925"></script>
+<script defer src="js/app/09-lebensmittelsuche.js?v=d3757a9825"></script>
+<script defer src="js/app/10-barcode-scanner.js?v=891a9239a5"></script>
+<script defer src="js/app/11-mahlzeiten.js?v=18cd8a5a28"></script>
+<script defer src="js/app/12-training.js?v=00c28ee4e5"></script>
+<script defer src="js/app/13-gesundheitswerte.js?v=d287cf6106"></script>
+<script defer src="js/app/14-tracker.js?v=e8b51378be"></script>
+<script defer src="js/app/15-trainingsplaene.js?v=23baccc44a"></script>
+<script defer src="js/app/16-einwilligung-und-2fa.js?v=b5479a9c78"></script>
+<script defer src="js/app/17-anmeldung.js?v=770df696e1"></script>
+<script defer src="js/app/18-start.js?v=8fc6e6308e"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
