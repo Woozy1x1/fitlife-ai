@@ -50,18 +50,12 @@ button:disabled{opacity:.5;cursor:wait}
 header{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
 .logo{display:flex;align-items:center;gap:12px}
 .logo-icon{
-  width:42px;height:42px;border-radius:50%;
-  background:radial-gradient(circle at 50% 75%,var(--sun) 0 38%,transparent 39%),
-    linear-gradient(180deg,#3a2d7a,#1c1640);
-  border:1px solid var(--border-strong);
-  color:transparent;font-size:0;
-  box-shadow:0 6px 24px -6px #ff9a6b88
+  width:42px;height:42px;flex:none;border-radius:12px;
+  box-shadow:0 8px 22px -8px #ff8a6b99,0 0 0 1px #ffffff14
 }
-.logo strong{font-size:20px;font-weight:800;letter-spacing:-.02em}
-.logo strong span{
-  background:linear-gradient(90deg,var(--sun-2),var(--sun));
-  -webkit-background-clip:text;background-clip:text;color:transparent
-}
+.logo-icon svg{display:block;width:100%;height:100%}
+.logo strong{font-size:20px;font-weight:800;letter-spacing:.04em}
+.logo strong span{font-weight:500;letter-spacing:.02em;color:var(--sun)}
 .logo small{display:block;color:var(--muted);font-size:12px;letter-spacing:.02em;text-transform:none}
 .avatar{
   border-radius:50%;width:40px;height:40px;
@@ -73,6 +67,10 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 h1{font-size:clamp(30px,6.4vw,46px);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:6px 0 10px}
 h2{font-size:19px;line-height:1.2;letter-spacing:-.015em;font-weight:700;margin:0 0 14px}
 h3{font-size:15px;font-weight:700;margin:0 0 10px}
+/* Linien-Symbole (Sprite oben in index.html) */
+.ico{width:1em;height:1em;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+h2 > .ico{width:20px;height:20px;padding:7px;box-sizing:content-box;border-radius:11px;vertical-align:middle;margin:-4px 10px -2px 0;
+  color:var(--sun);background:#ffb8661a}
 p{line-height:1.55}
 .muted{color:var(--muted);font-size:13.5px}
 .eyebrow{color:var(--muted);font-size:13px;font-weight:500;letter-spacing:0;text-transform:none}
@@ -137,6 +135,7 @@ a{color:var(--sun)}
   width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
   font-size:17px;background:var(--inset);border:1px solid var(--border)
 }
+.stat-icon .ico{width:18px;height:18px}
 .stats .stat:nth-child(1) .stat-icon{color:#b9a8ff}
 .stats .stat:nth-child(2) .stat-icon{color:var(--pulse)}
 .stats .stat:nth-child(3) .stat-icon{color:var(--sun)}
@@ -198,9 +197,10 @@ a{color:var(--sun)}
   background:none;border:0;border-radius:999px;color:var(--muted);
   padding:8px 14px;min-width:72px;font-size:12px;font-weight:600;position:relative
 }
-.bottom-nav button span{display:block;font-size:21px;margin-bottom:3px;filter:grayscale(.4);transition:transform .2s}
+.bottom-nav button span{display:block;font-size:22px;line-height:1;margin:2px 0 4px;transition:transform .2s}
+.bottom-nav button span .ico{width:22px;height:22px;stroke-width:1.7}
 .bottom-nav button.active{color:var(--text);background:#ffffff0d}
-.bottom-nav button.active span{filter:none;transform:translateY(-1px)}
+.bottom-nav button.active span{transform:translateY(-1px);color:var(--sun)}
 .bottom-nav button.active::after{
   content:"";position:absolute;left:50%;bottom:3px;width:5px;height:5px;margin-left:-2.5px;
   border-radius:50%;background:var(--sun);box-shadow:0 0 8px var(--sun)
