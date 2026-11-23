@@ -1,0 +1,39 @@
+# VYORA AI – App-Tests bei jeder Änderung
+# Startet die App in einem Test-Browser mit nachgebauter Datenbank
+# (tests/mock_supabase.js) und klickt die wichtigsten Abläufe durch.
+# Es werden keine echten Daten gelesen oder geschrieben.
+name: App-Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Playwright installieren (nutzt das vorinstallierte Google Chrome)
+        run: pip install "playwright>=1.49"
+      - name: Tests ausführen
+        run: python tests/run_all.py
+      - name: Bildschirmfotos bei Fehlern aufheben
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-bildschirmfotos
+          path: tests/out/
+          retention-days: 7
