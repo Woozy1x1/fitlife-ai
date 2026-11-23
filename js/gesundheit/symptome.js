@@ -1,5 +1,5 @@
-import {state} from "./zustand.js?v=5c0fb232ee";
-import {$,VY,db,delButton,el,errText,fmtDate,fmtDay,msg} from "../lib/basis.js?v=5c0fb232ee";
+import {state} from "./zustand.js";
+import {$,VY,db,delButton,el,errText,fmtDate,fmtDay,msg} from "../lib/basis.js";
 
 // -----------------------------------
 // Symptom-Tagebuch

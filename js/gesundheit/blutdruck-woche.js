@@ -1,4 +1,4 @@
-import {$,VY,avg,dayOf,el} from "../lib/basis.js?v=5c0fb232ee";
+import {$,VY,avg,dayOf,el} from "../lib/basis.js";
 
 // -----------------------------------
 // Blutdruck – letzte 7 Tage

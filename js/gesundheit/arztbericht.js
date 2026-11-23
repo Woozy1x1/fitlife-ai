@@ -1,6 +1,6 @@
-import {bpStats} from "./blutdruck-woche.js?v=5c0fb232ee";
-import {refText} from "./labor.js?v=5c0fb232ee";
-import {$,VY,avg,clockOf,dayOf,db,el,errText,fmtDate,fmtNum,hhmm,msg} from "../lib/basis.js?v=5c0fb232ee";
+import {bpStats} from "./blutdruck-woche.js";
+import {refText} from "./labor.js";
+import {$,VY,avg,clockOf,dayOf,db,el,errText,fmtDate,fmtNum,hhmm,msg} from "../lib/basis.js";
 
 // -----------------------------------
 // Bericht für den Arzttermin (Drucken / PDF)

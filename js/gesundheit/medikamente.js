@@ -1,5 +1,5 @@
-import {state} from "./zustand.js?v=5c0fb232ee";
-import {$,VY,clockOf,db,delButton,el,errText,hhmm,msg,timeZone} from "../lib/basis.js?v=5c0fb232ee";
+import {state} from "./zustand.js";
+import {$,VY,clockOf,db,delButton,el,errText,hhmm,msg,timeZone} from "../lib/basis.js";
 
 // -----------------------------------
 // Medikamente
