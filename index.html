@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=dfadecef1a">
+<link rel="stylesheet" href="css/app.css?v=3ee847086b">
 </head>
 <body>
 <div class="app">
@@ -1831,6 +1831,19 @@
     <div id="spChooser" aria-live="polite"></div>
     <p class="muted small-note" id="spCounts"></p>
     <button type="button" class="btn secondary full" id="spCopy">Woche in die nächste Woche kopieren</button>
+    <button type="button" class="btn secondary full" id="spImportBtn">📥 Dienstplan importieren (.ics)</button>
+    <input type="file" id="spImportFile" accept=".ics,text/calendar" class="hidden" aria-hidden="true" tabindex="-1">
+    <details class="cx-extra">
+      <summary>So holst du deinen Plan aus Supershift</summary>
+      <ol class="shift-list">
+        <li>In Supershift (Pro) den Kalender-Export einschalten – die Dienste landen dann in Google- oder iCloud-Kalender.</li>
+        <li>Google: am Computer auf calendar.google.com → Einstellungen → „Importieren &amp; Exportieren“ → „Exportieren“, ZIP entpacken.
+          iCloud: am Mac in der Kalender-App „Ablage → Exportieren“.</li>
+        <li>Hier auf „Dienstplan importieren“ tippen und die .ics-Datei wählen. Du siehst erst eine Vorschau.</li>
+      </ol>
+      <p class="muted small-note">Die Datei wird nur auf deinem Gerät gelesen. Gespeichert werden nur Datum, Dienstart und Uhrzeiten – keine Titel, Orte oder sonstigen Termine.</p>
+    </details>
+    <div id="spImport" class="hidden" aria-live="polite"></div>
     <p id="spMessage" class="message" role="status"></p>
   </div>
 
@@ -1933,7 +1946,7 @@
 <script defer src="js/app/15-trainingsplaene.js?v=23baccc44a"></script>
 <script defer src="js/app/16-einwilligung-und-2fa.js?v=9b4df1df7e"></script>
 <script defer src="js/app/17-anmeldung.js?v=770df696e1"></script>
-<script defer src="js/app/18-start.js?v=a2dfdec167"></script>
+<script defer src="js/app/18-start.js?v=8aa21b64fc"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
