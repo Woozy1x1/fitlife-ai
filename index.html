@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=9e49f28bfa">
+<link rel="stylesheet" href="css/app.css?v=172a0155fc">
 </head>
 <body>
 <div class="app">
@@ -260,6 +260,26 @@
     <p class="muted small-note" id="wkNote">Kalorien: Durchschnitt der Tage, an denen du etwas eingetragen hast. Zur Orientierung: Die WHO empfiehlt an mindestens 2 Tagen pro Woche Kräftigung; Studien zeigen ab etwa 7.000 Schritten am Tag einen deutlichen Gesundheitsnutzen.</p>
   </div>
 
+  <div class="card" id="tipCard">
+    <h2>💡 Tipp des Tages</h2>
+    <div id="tipBox"></div>
+  </div>
+
+  <div class="card" id="challengeCard">
+    <h2>🎯 Challenges &amp; Erfolge</h2>
+    <div id="challengeBox"></div>
+    <div id="challengeNew">
+      <label for="challengeKind">Neue 30-Tage-Challenge</label>
+      <select id="challengeKind"></select>
+      <button id="challengeStart" class="btn secondary full" type="button">Challenge starten</button>
+    </div>
+    <p id="challengeMessage" class="message" role="status"></p>
+    <details class="cx-extra">
+      <summary>🏅 Deine Erfolge</summary>
+      <div id="milestoneBox"><p class="muted">Wird geladen ...</p></div>
+    </details>
+  </div>
+
   <div class="card hidden" id="trackerCard">
     <div class="eyebrow" id="trackerCardSource">Von deinem Tracker</div>
     <h2 id="trackerCardTitle">⌚ Heute auf einen Blick</h2>
@@ -380,6 +400,7 @@
         <strong id="totalFat">0</strong><small>Fett (g)</small>
       </div>
     </div>
+    <p class="muted" id="fiberInfo"></p>
     <p class="muted">
       Die Tageswerte ergeben sich aus deinen gespeicherten Mahlzeiten.
     </p>
@@ -497,6 +518,10 @@
         </div>
       </div>
 
+      <label for="fiber">Ballaststoffe (g, optional)</label>
+      <input id="fiber" type="number" min="0" max="999" step="0.01"
+        inputmode="decimal" placeholder="leer lassen, wenn unbekannt">
+
       <button id="saveMeal" class="btn full" type="submit">
         Mahlzeit speichern
       </button>
@@ -518,6 +543,105 @@
       Einträge werden geladen ...
     </div>
   </div>
+
+  <div class="card" id="kitchenCard">
+    <h2>🍲 Rezepte, Wochenplan &amp; Einkauf</h2>
+    <div class="seg" id="kitchenTabs" role="tablist" aria-label="Bereich">
+      <button type="button" role="tab" data-tab="recipes" aria-selected="true" aria-controls="recipePanel">Rezepte</button>
+      <button type="button" role="tab" data-tab="plan" aria-selected="false" aria-controls="planPanel">Wochenplan</button>
+      <button type="button" role="tab" data-tab="shop" aria-selected="false" aria-controls="shopPanel">Einkauf</button>
+    </div>
+
+    <div id="recipePanel" role="tabpanel">
+      <label for="kitchenMeal">Ins Tagebuch eintragen als</label>
+      <select id="kitchenMeal">
+        <option value="breakfast">Frühstück</option>
+        <option value="lunch">Mittagessen</option>
+        <option value="dinner">Abendessen</option>
+        <option value="snack">Snack</option>
+      </select>
+      <div id="recipeList"></div>
+      <button id="recipeNew" class="btn secondary full" type="button">+ Neues Rezept</button>
+      <form id="recipeEditor" class="hidden recipe-editor">
+        <h3 id="recipeEditorTitle">Neues Rezept</h3>
+        <div class="form-grid">
+          <div>
+            <label for="recipeName">Name</label>
+            <input id="recipeName" maxlength="100" autocomplete="off" required placeholder="z. B. Linsen-Curry">
+          </div>
+          <div>
+            <label for="recipeServings">Portionen</label>
+            <input id="recipeServings" type="number" min="1" max="20" step="1" value="2" required>
+          </div>
+        </div>
+        <span class="label">Zutaten (Menge in Gramm für das ganze Rezept)</span>
+        <div id="ingList"></div>
+        <p class="muted" id="recipeTotals"></p>
+        <div class="cx-input">
+          <label for="ingSearch" class="sr-only">Zutat suchen</label>
+          <input id="ingSearch" maxlength="80" autocomplete="off" placeholder="Zutat suchen, z. B. rote Linsen">
+          <button id="ingSearchBtn" class="btn secondary" type="button">Suchen</button>
+        </div>
+        <div id="ingResults"></div>
+        <details class="cx-extra" id="ingManual">
+          <summary>Zutat von Hand eintragen (Werte je 100 g)</summary>
+          <div class="settings-grid">
+            <div><label for="ingKcal">kcal</label><input id="ingKcal" type="number" min="0" max="900" step="any" inputmode="decimal"></div>
+            <div><label for="ingProtein">Eiweiß (g)</label><input id="ingProtein" type="number" min="0" max="100" step="any" inputmode="decimal"></div>
+            <div><label for="ingCarbs">KH (g)</label><input id="ingCarbs" type="number" min="0" max="100" step="any" inputmode="decimal"></div>
+            <div><label for="ingFat">Fett (g)</label><input id="ingFat" type="number" min="0" max="100" step="any" inputmode="decimal"></div>
+            <div><label for="ingFiber">Ballaststoffe (g)</label><input id="ingFiber" type="number" min="0" max="100" step="any" inputmode="decimal"></div>
+            <div class="full-span"><button id="ingManualBtn" class="btn secondary full" type="button">Zutat mit dem Namen oben hinzufügen</button></div>
+          </div>
+        </details>
+        <label for="recipeSteps">Zubereitung (optional)</label>
+        <textarea id="recipeSteps" maxlength="4000" rows="4" placeholder="Kurz die Schritte notieren"></textarea>
+        <button id="recipeSave" class="btn full" type="submit">Rezept speichern</button>
+        <button id="recipeCancel" class="btn secondary full" type="button">Abbrechen</button>
+        <button id="recipeDelete" class="btn danger full hidden" type="button">Rezept löschen</button>
+      </form>
+    </div>
+
+    <div id="planPanel" role="tabpanel" class="hidden">
+      <div class="day-nav">
+        <button id="planPrev" class="icon-btn" type="button" aria-label="Vorherige Woche">‹</button>
+        <strong id="planLabel"></strong>
+        <button id="planNext" class="icon-btn" type="button" aria-label="Nächste Woche">›</button>
+      </div>
+      <div id="planWeek"></div>
+      <form id="planForm" class="plan-form">
+        <div class="form-grid">
+          <div><label for="planDay">Tag</label><select id="planDay"></select></div>
+          <div><label for="planMeal">Mahlzeit</label>
+            <select id="planMeal">
+              <option value="breakfast">Frühstück</option>
+              <option value="lunch">Mittagessen</option>
+              <option value="dinner" selected>Abendessen</option>
+              <option value="snack">Snack</option>
+            </select></div>
+        </div>
+        <label for="planRecipe">Rezept</label>
+        <select id="planRecipe"></select>
+        <label for="planTitle">… oder freier Eintrag</label>
+        <input id="planTitle" maxlength="100" autocomplete="off" placeholder="z. B. Essen bei Oma">
+        <button id="planAdd" class="btn full" type="submit">In den Plan</button>
+      </form>
+      <button id="planToShop" class="btn secondary full" type="button">Zutaten dieser Woche auf die Einkaufsliste</button>
+    </div>
+
+    <div id="shopPanel" role="tabpanel" class="hidden">
+      <div id="shopList"></div>
+      <form id="shopForm" class="cx-input">
+        <label for="shopName" class="sr-only">Artikel</label>
+        <input id="shopName" maxlength="100" autocomplete="off" placeholder="Artikel" required>
+        <label for="shopAmount" class="sr-only">Menge</label>
+        <input id="shopAmount" maxlength="40" autocomplete="off" placeholder="Menge" class="shop-amount">
+        <button class="btn secondary" type="submit">+</button>
+      </form>
+      <button id="shopClear" class="btn secondary full hidden" type="button">Erledigte entfernen</button>
+    </div>
+    <p id="kitchenMessage" class="message" role="status"></p>
+  </div>
 </section>
 
 <section id="trainingView" class="view">
@@ -526,6 +650,19 @@
   <p class="muted">
     Übungen mit Sätzen, Wiederholungen und Gewicht eintragen.
   </p>
+
+  <div class="card" id="recoveryCard">
+    <h2>🔋 Erholung heute</h2>
+    <div id="recoveryBox"><p class="muted">Wird geladen ...</p></div>
+  </div>
+
+  <div class="card" id="weekPlanCard">
+    <h2>🗓️ Wochenplanung</h2>
+    <p class="muted" id="weekPlanLabel"></p>
+    <div id="weekPlanBox"></div>
+    <button id="weekPlanSave" class="btn full" type="button">Plan speichern</button>
+    <p id="weekPlanMessage" class="message" role="status"></p>
+  </div>
 
   <div class="card" id="caliCard">
     <h2>🤸 Calisthenics-Programm</h2>
@@ -748,6 +885,15 @@
       Einträge werden geladen ...
     </div>
   </div>
+  <div class="card" id="libCard">
+    <h2>📚 Übungsbibliothek</h2>
+    <p class="muted">Kurze Anleitungen mit leichteren und schwereren Varianten. Bei Schmerzen abbrechen.</p>
+    <label for="libSearch" class="sr-only">Übung suchen</label>
+    <input id="libSearch" type="search" autocomplete="off" placeholder="Übung suchen, z. B. Plank">
+    <div class="chips" id="libCats" role="group" aria-label="Kategorie"></div>
+    <div id="libList"></div>
+  </div>
+
   <div class="card" id="prCard">
     <h2>🏆 Fortschritt &amp; Bestleistungen</h2>
     <p class="muted">
@@ -1357,12 +1503,26 @@
   <div class="eyebrow">VYORA AI</div>
   <h1>Mehr entdecken ✦</h1>
 
-  <div class="card">
+  <div class="card" id="trendsCard">
     <h2>♡ Gesundheitstrends</h2>
     <p class="muted">
-      Schlaf, Ernährung und weitere Gesundheitswerte
-      werden hier später gemeinsam ausgewertet.
+      Was fällt in deinen Einträgen auf? Und was war an einem bestimmten Tag?
     </p>
+    <div class="seg two" id="trendsTabs" role="tablist" aria-label="Ansicht">
+      <button type="button" role="tab" data-tab="links" aria-selected="true" aria-controls="linksPanel">Zusammenhänge</button>
+      <button type="button" role="tab" data-tab="day" aria-selected="false" aria-controls="dayPanel">Tagesansicht</button>
+    </div>
+    <div id="linksPanel" role="tabpanel">
+      <div id="linksBox"><p class="muted">Wird geladen ...</p></div>
+    </div>
+    <div id="dayPanel" role="tabpanel" class="hidden">
+      <div class="day-nav">
+        <button id="dayPrev" class="icon-btn" type="button" aria-label="Vorheriger Tag">‹</button>
+        <input id="dayViewDate" type="date" aria-label="Tag auswählen">
+        <button id="dayNext" class="icon-btn" type="button" aria-label="Nächster Tag">›</button>
+      </div>
+      <div id="dayBox"></div>
+    </div>
   </div>
 
   <div class="card" id="calcCard">
@@ -1695,7 +1855,7 @@
 </footer>
 </div>
 
-<script type="module" src="js/app.js?v=6e2a6c330b"></script>
+<script type="module" src="js/app.js?v=69eefb9024"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
