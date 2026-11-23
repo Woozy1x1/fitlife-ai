@@ -35,25 +35,33 @@ let ouraConnected = false;
 let appleConnected = false;
 
 // Symbol und Name passend zum verbundenen Gerät:
-// Oura Ring 💍, Apple Watch ⌚, beide, oder noch keins.
+// Oura Ring (Ring-Symbol), Apple Watch (Uhr), beide, oder noch keins.
 function trackerIdentity() {
   if(ouraConnected && appleConnected) {
-    return {icon:"💍⌚",title:"Deine Tracker",name:"Oura Ring",short:"vom Oura Ring"};
+    return {icon:"ring",title:"Deine Tracker",name:"Oura Ring",short:"vom Oura Ring"};
   }
   if(ouraConnected) {
-    return {icon:"💍",title:"Dein Oura Ring",name:"Oura Ring",short:"vom Oura Ring"};
+    return {icon:"ring",title:"Dein Oura Ring",name:"Oura Ring",short:"vom Oura Ring"};
   }
   if(appleConnected) {
-    return {icon:"⌚",title:"Deine Apple Watch",name:"Apple Watch",short:"aus Apple Health"};
+    return {icon:"watch",title:"Deine Apple Watch",name:"Apple Watch",short:"aus Apple Health"};
   }
-  return {icon:"🔗",title:"Tracker verbinden",name:"Tracker",short:"vom Tracker"};
+  return {icon:"link",title:"Tracker verbinden",name:"Tracker",short:"vom Tracker"};
+}
+
+// Setzt Text und Symbol einer Überschrift (<h2><svg class="ico">…</svg><span id>…</span>)
+function setTitleWithIcon(id,icon,text) {
+  const span = $(id);
+  span.textContent = text;
+  span.previousElementSibling?.querySelector("use")?.setAttribute("href","#i-"+icon);
 }
 
 function renderTrackerIdentity() {
   const t = trackerIdentity();
-  $("trackerTitle").textContent = t.icon+" "+t.title;
-  $("trackerCardTitle").textContent = (ouraConnected ? "💍" : t.icon)+" Heute auf einen Blick";
-  $("trackerWorkoutTitle").textContent = (ouraConnected ? "💍 Vom Oura Ring" : t.icon+" Vom Tracker")+" erkannte Workouts";
+  setTitleWithIcon("trackerTitle",t.icon,t.title);
+  setTitleWithIcon("trackerCardTitle",ouraConnected ? "ring" : t.icon,"Heute auf einen Blick");
+  setTitleWithIcon("trackerWorkoutTitle",ouraConnected ? "ring" : t.icon,
+    (ouraConnected ? "Vom Oura Ring" : "Vom Tracker")+" erkannte Workouts");
 
   // Woher kommt der Schlafwert auf der Startseite?
   const manualOnly = !ouraConnected && typeof latestSleepMetric==="function" &&
