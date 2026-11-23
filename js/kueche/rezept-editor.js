@@ -1,7 +1,7 @@
-import {de,el,errText,msg,state} from "./kern.js?v=5c0fb232ee";
-import {perServing} from "./rezepte.js?v=5c0fb232ee";
-import {loadAll} from "./start.js?v=5c0fb232ee";
-import {$,VY,db} from "../lib/basis.js?v=5c0fb232ee";
+import {de,el,errText,msg,state} from "./kern.js";
+import {perServing} from "./rezepte.js";
+import {loadAll} from "./start.js";
+import {$,VY,db} from "../lib/basis.js";
 
 // --- Rezept-Editor ---
 

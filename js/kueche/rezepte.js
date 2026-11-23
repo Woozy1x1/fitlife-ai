@@ -1,6 +1,6 @@
-import {MEAL,de,el,errText,msg,shortDate,state} from "./kern.js?v=5c0fb232ee";
-import {openEditor} from "./rezept-editor.js?v=5c0fb232ee";
-import {$,VY} from "../lib/basis.js?v=5c0fb232ee";
+import {MEAL,de,el,errText,msg,shortDate,state} from "./kern.js";
+import {openEditor} from "./rezept-editor.js";
+import {$,VY} from "../lib/basis.js";
 
 // -----------------------------------
 // Rezepte

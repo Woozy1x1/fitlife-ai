@@ -1,4 +1,4 @@
-import {$,VY} from "../lib/basis.js?v=5c0fb232ee";
+import {$,VY} from "../lib/basis.js";
 
 // VYORA AI – Rezepte, Wochenplan und Einkaufsliste
 // Nährwerte je Portion werden aus den Zutaten berechnet, die du einträgst

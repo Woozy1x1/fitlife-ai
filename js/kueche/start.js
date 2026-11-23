@@ -1,9 +1,9 @@
-import {renderShopping,setupShopping} from "./einkauf.js?v=5c0fb232ee";
-import {errText,mondayOf,msg,state} from "./kern.js?v=5c0fb232ee";
-import {closeEditor,setupRecipeEditor} from "./rezept-editor.js?v=5c0fb232ee";
-import {renderRecipes} from "./rezepte.js?v=5c0fb232ee";
-import {loadPlan,setupPlan} from "./wochenplan.js?v=5c0fb232ee";
-import {$,VY,db} from "../lib/basis.js?v=5c0fb232ee";
+import {renderShopping,setupShopping} from "./einkauf.js";
+import {errText,mondayOf,msg,state} from "./kern.js";
+import {closeEditor,setupRecipeEditor} from "./rezept-editor.js";
+import {renderRecipes} from "./rezepte.js";
+import {loadPlan,setupPlan} from "./wochenplan.js";
+import {$,VY,db} from "../lib/basis.js";
 
 export function init(api) {
 
