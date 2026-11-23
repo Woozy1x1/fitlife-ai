@@ -3,7 +3,7 @@
 // Persönliche Daten und alle Anfragen an Supabase/Oura werden NICHT
 // angefasst oder zwischengespeichert.
 
-const CACHE = "vyora-app-v3";
+const CACHE = "vyora-app-v4";
 
 const APP_FILES = [
   "./",
@@ -99,6 +99,24 @@ self.addEventListener("fetch", event => {
           (await caches.match("./")) ||
           Response.error()
         )
+    );
+    return;
+  }
+
+  // Module ohne Versionsnummer (js/<Ordner>/*.js): immer zuerst aus dem Netz
+  // (der Browser fragt nur nach, ob sich die Datei geändert hat), offline aus
+  // dem Speicher. So reicht es, eine einzelne Moduldatei auszutauschen.
+  if (url.pathname.includes("/js/") && url.pathname.endsWith(".js") && !url.searchParams.has("v")) {
+    event.respondWith(
+      fetch(request, { cache: "no-cache" })
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE).then(cache => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(async () => (await caches.match(request)) || Response.error())
     );
     return;
   }
