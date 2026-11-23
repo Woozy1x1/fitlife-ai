@@ -1,5 +1,5 @@
-import {state} from "../gesundheit/zustand.js?v=5c0fb232ee";
-import {$,VY,db,el,errText,fmtDate,fmtNum} from "../lib/basis.js?v=5c0fb232ee";
+import {state} from "../gesundheit/zustand.js";
+import {$,VY,db,el,errText,fmtDate,fmtNum} from "../lib/basis.js";
 
 // -----------------------------------
 // Training: Fortschritt & Bestleistungen
