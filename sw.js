@@ -3,7 +3,7 @@
 // Persönliche Daten und alle Anfragen an Supabase/Oura werden NICHT
 // angefasst oder zwischengespeichert.
 
-const CACHE = "vyora-app-v4";
+const CACHE = "vyora-app-v5";
 
 const APP_FILES = [
   "./",
