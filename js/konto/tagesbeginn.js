@@ -1,4 +1,4 @@
-import {$,VY,db,errText,msg} from "../lib/basis.js?v=5c0fb232ee";
+import {$,VY,db,errText,msg} from "../lib/basis.js";
 
 // -----------------------------------
 // Schichtarbeit: Tagesbeginn

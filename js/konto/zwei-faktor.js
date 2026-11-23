@@ -1,5 +1,5 @@
-import {state} from "../gesundheit/zustand.js?v=5c0fb232ee";
-import {$,db,errText,msg} from "../lib/basis.js?v=5c0fb232ee";
+import {state} from "../gesundheit/zustand.js";
+import {$,db,errText,msg} from "../lib/basis.js";
 
 // -----------------------------------
 // Zwei-Faktor-Anmeldung einrichten
