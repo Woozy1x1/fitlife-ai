@@ -3,7 +3,7 @@
 // Persönliche Daten und alle Anfragen an Supabase/Oura werden NICHT
 // angefasst oder zwischengespeichert.
 
-const CACHE = "vyora-app-v5";
+const CACHE = "vyora-app-v6";
 
 const APP_FILES = [
   "./",
@@ -136,7 +136,9 @@ self.addEventListener("fetch", event => {
   event.respondWith(
     caches.open(CACHE).then(async cache => {
       const cached = await cache.match(request);
-      const network = fetch(request)
+      // "no-cache": nicht die Kopie aus dem Browser-Speicher nehmen, sondern
+      // beim Server nachfragen (sonst kann eine alte Datei hängen bleiben).
+      const network = fetch(request, { cache: "no-cache" })
         .then(response => {
           if (response.ok) cache.put(request, response.clone());
           return response;
