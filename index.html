@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=0739593a74">
+<link rel="stylesheet" href="css/app.css?v=dfadecef1a">
 </head>
 <body>
 <div class="app">
@@ -258,6 +258,11 @@
       </div>
     </div>
     <p class="muted small-note" id="wkNote">Kalorien: Durchschnitt der Tage, an denen du etwas eingetragen hast. Zur Orientierung: Die WHO empfiehlt an mindestens 2 Tagen pro Woche Kräftigung; Studien zeigen ab etwa 7.000 Schritten am Tag einen deutlichen Gesundheitsnutzen.</p>
+  </div>
+
+  <div class="card hidden" id="shiftTodayCard">
+    <h2>🕒 Dein Dienst</h2>
+    <div id="shiftTodayBox"></div>
   </div>
 
   <div class="card" id="tipCard">
@@ -650,6 +655,11 @@
   <p class="muted">
     Übungen mit Sätzen, Wiederholungen und Gewicht eintragen.
   </p>
+
+  <div class="card hidden" id="shiftMoveCard">
+    <h2>🏃 Bewegung &amp; Schicht</h2>
+    <div id="shiftMoveBox"></div>
+  </div>
 
   <div class="card" id="recoveryCard">
     <h2>🔋 Erholung heute</h2>
@@ -1313,14 +1323,26 @@
   </div>
 
   <div class="hpanel hidden" id="hpanel-schlaf" role="tabpanel" aria-labelledby="htab-schlaf">
+  <div class="card hidden" id="shiftSleepCard">
+    <h2>🌙 Schlaf im Schichtdienst</h2>
+    <div id="shiftSleepBox"></div>
+    <p class="muted small-note">
+      Allgemeine Tipps nach den Empfehlungen der Bundesanstalt für Arbeitsschutz und
+      Arbeitsmedizin (BAuA) und der Deutschen Gesellschaft für Schlafforschung (DGSM) –
+      keine medizinische Beratung. Bei anhaltenden Schlafproblemen hilft dein Hausarzt
+      oder der Betriebsarzt weiter.
+    </p>
+  </div>
+
   <div class="card" id="manualSleepCard">
     <h2>😴 Schlaf eintragen</h2>
     <p class="muted">
-      Ohne Tracker? Trag ein, wann du ins Bett gegangen und aufgestanden
-      bist. Die Schlafdauer erscheint dann auf der Startseite.
+      Ohne Tracker? Trag ein, wann du dich hingelegt hast und aufgestanden
+      bist – auch Tagschlaf nach dem Nachtdienst. Die Schlafdauer erscheint
+      dann auf der Startseite.
     </p>
     <form id="manualSleepForm">
-      <label for="msDay">Nacht zum</label>
+      <label for="msDay">Aufgewacht am</label>
       <input id="msDay" type="date" required>
       <div class="form-grid">
         <div>
@@ -1332,6 +1354,9 @@
           <input id="msWake" type="time" value="07:00" required>
         </div>
       </div>
+      <label for="msNap">Zusätzlicher Schlaf in Minuten (optional)</label>
+      <input id="msNap" type="number" min="0" max="300" step="5" inputmode="numeric"
+        placeholder="z. B. 90 für Vorschlaf oder Nickerchen">
       <label for="msQuality">Wie gut hast du geschlafen?</label>
       <select id="msQuality">
         <option value="">keine Angabe</option>
@@ -1756,7 +1781,25 @@
   </div>
 
   <div class="card" id="dayStartCard">
-    <h2>🌙 Schichtarbeit</h2>
+    <h2>🌙 Schichtdienst</h2>
+    <p class="muted">
+      Arbeitest du im Früh-, Spät- oder Nachtdienst? Dann passt VYORA Schlaftipps,
+      Bewegung und Erinnerungen an deinen Dienstplan an.
+    </p>
+    <label class="check"><input type="checkbox" id="shiftMode"><span>Ich arbeite im Schichtdienst</span></label>
+    <div id="shiftDetails" class="hidden">
+      <h3>Meine üblichen Dienstzeiten</h3>
+      <div class="shift-times">
+        <span>🌅 Früh</span><input type="time" id="st-frueh-s" aria-label="Frühdienst Beginn"><span>bis</span><input type="time" id="st-frueh-e" aria-label="Frühdienst Ende">
+        <span>🌆 Spät</span><input type="time" id="st-spaet-s" aria-label="Spätdienst Beginn"><span>bis</span><input type="time" id="st-spaet-e" aria-label="Spätdienst Ende">
+        <span>🌙 Nacht</span><input type="time" id="st-nacht-s" aria-label="Nachtdienst Beginn"><span>bis</span><input type="time" id="st-nacht-e" aria-label="Nachtdienst Ende">
+      </div>
+      <label class="check"><input type="checkbox" id="shiftQuiet" checked><span>Nach dem Nachtdienst keine Erinnerungen, während ich schlafe (8 Stunden nach Dienstende; Medikamenten-Erinnerungen kommen trotzdem)</span></label>
+    </div>
+    <button id="shiftSave" class="btn full" type="button">Schichtdienst speichern</button>
+    <p id="shiftMessage" class="message" role="status"></p>
+
+    <h3>Tageswechsel</h3>
     <p class="muted">
       Arbeitest du nachts? Dann kann dein Tag später beginnen. Alles, was
       du vor dieser Uhrzeit einträgst, zählt noch zum Vortag – auch Wasser,
@@ -1774,6 +1817,21 @@
     </select>
     <button id="dayStartSave" class="btn full" type="button">Übernehmen</button>
     <p id="dayStartMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="card hidden" id="shiftPlanCard">
+    <h2>📅 Dienstplan</h2>
+    <p class="muted">Tippe auf einen Tag und wähle den Dienst. Danach springt die Auswahl zum nächsten Tag.</p>
+    <div class="sp-nav">
+      <button type="button" class="btn secondary" id="spPrev" aria-label="Vorherige 4 Wochen">‹</button>
+      <strong id="spLabel"></strong>
+      <button type="button" class="btn secondary" id="spNext" aria-label="Nächste 4 Wochen">›</button>
+    </div>
+    <div class="sp-grid" id="spGrid"></div>
+    <div id="spChooser" aria-live="polite"></div>
+    <p class="muted small-note" id="spCounts"></p>
+    <button type="button" class="btn secondary full" id="spCopy">Woche in die nächste Woche kopieren</button>
+    <p id="spMessage" class="message" role="status"></p>
   </div>
 
   <div class="card" id="privacyCard">
@@ -1860,7 +1918,7 @@
 <script type="module" src="js/app/00-supabase.js?v=65f70b2038"></script>
 <script defer src="js/app/01-grundlagen.js?v=0fcffc5616"></script>
 <script defer src="js/app/02-offline-und-erinnerungen.js?v=dcc883eb92"></script>
-<script defer src="js/app/03-schlaf.js?v=0c3c845f31"></script>
+<script defer src="js/app/03-schlaf.js?v=4d6c0e3700"></script>
 <script defer src="js/app/04-messtagebuch.js?v=f708dfb359"></script>
 <script defer src="js/app/05-calisthenics.js?v=7c0844e259"></script>
 <script defer src="js/app/06-dehnen.js?v=c41ea73ece"></script>
@@ -1873,9 +1931,9 @@
 <script defer src="js/app/13-gesundheitswerte.js?v=d287cf6106"></script>
 <script defer src="js/app/14-tracker.js?v=e8b51378be"></script>
 <script defer src="js/app/15-trainingsplaene.js?v=23baccc44a"></script>
-<script defer src="js/app/16-einwilligung-und-2fa.js?v=b5479a9c78"></script>
+<script defer src="js/app/16-einwilligung-und-2fa.js?v=9b4df1df7e"></script>
 <script defer src="js/app/17-anmeldung.js?v=770df696e1"></script>
-<script defer src="js/app/18-start.js?v=8fc6e6308e"></script>
+<script defer src="js/app/18-start.js?v=a2dfdec167"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
