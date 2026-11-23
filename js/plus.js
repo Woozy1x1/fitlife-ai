@@ -134,7 +134,7 @@ export function init(api) {
   if(VY.uid) loadAll();
 
   // Weitere Module: Zusammenhänge, Küche, Motivation
-  for(const path of ["./trends.js?v=a22f3ad0a8","./kitchen.js?v=1b1eec2920","./motivation.js?v=0cc42f7492","./shift.js?v=02c067c7e6"]) {
+  for(const path of ["./trends.js?v=a22f3ad0a8","./kitchen.js?v=1b1eec2920","./motivation.js?v=0cc42f7492","./shift.js?v=75ef28a14c"]) {
     import(path).then(mod => mod.init(api)).catch(error => console.error("VYORA-Modul konnte nicht geladen werden",path,error));
   }
 }
@@ -858,6 +858,50 @@ function table(headers,rows) {
     el("tbody",{},rows.map(r => el("tr",{},r.map(c => el("td",{},c==null ? "" : String(c)))))));
 }
 
+// Bericht: Dienstplan im Zeitraum (nur Beschreibung, keine Bewertung)
+async function reportShift(section,none,since,today,uid) {
+  const [plan,sleep] = await Promise.all([
+    db.from("shift_plan").select("day,kind,start_time,end_time").eq("user_id",uid).gte("day",since).lte("day",today).order("day",{ascending:true}).limit(400),
+    db.from("daily_metrics").select("day,source,sleep_minutes").eq("user_id",uid).gte("day",since).limit(400)
+  ]);
+  if(plan.error) throw plan.error;
+  const rows = plan.data || [];
+  if(!rows.length) { section("Schichtdienst",none("Kein Dienstplan im Zeitraum eingetragen.")); return; }
+  const names = {frueh:"Frühdienst",spaet:"Spätdienst",nacht:"Nachtdienst",frei:"frei",sonder:"anderer Dienst"};
+  const by = new Map(rows.map(r => [r.day,r]));
+  const count = k => rows.filter(r => r.kind===k).length;
+  const t = v => v ? String(v).slice(0,5) : "";
+  const next = d => { const x = new Date(d+"T12:00:00"); x.setDate(x.getDate()+1); return VY.dayString(x); };
+  let maxNights = 0, run = 0, quick = 0;
+  for(const r of rows) {
+    run = r.kind==="nacht" ? run+1 : 0; maxNights = Math.max(maxNights,run);
+    const n = by.get(next(r.day));
+    if(r.end_time && n?.start_time && r.kind!=="nacht" && n.kind!=="frei") {
+      let rest = (Number(t(n.start_time).slice(0,2))*60+Number(t(n.start_time).slice(3)))-(Number(t(r.end_time).slice(0,2))*60+Number(t(r.end_time).slice(3)))+1440;
+      if(rest<11*60) quick++;
+    }
+  }
+  // Schlaf nach Diensttyp
+  const sl = new Map();
+  for(const m of sleep.data||[]) if(m.sleep_minutes && (!sl.has(m.day) || m.source==="apple_health")) sl.set(m.day,Number(m.sleep_minutes));
+  const groups = {frueh:[],spaet:[],nacht:[],nachNacht:[],frei:[]};
+  for(const [d,min] of sl) {
+    const prev = new Date(d+"T12:00:00"); prev.setDate(prev.getDate()-1);
+    const y = by.get(VY.dayString(prev)), r = by.get(d);
+    if(y?.kind==="nacht" && r?.kind!=="nacht") groups.nachNacht.push(min);
+    else if(r && groups[r.kind]) groups[r.kind].push(min);
+  }
+  const hmText = m => Math.floor(m/60)+" h "+String(Math.round(m%60)).padStart(2,"0")+" min";
+  const sleepText = [["frueh","Frühdienst"],["spaet","Spätdienst"],["nacht","vor Nachtdienst"],["nachNacht","nach Nachtdienst"],["frei","frei"]]
+    .filter(([k]) => groups[k].length).map(([k,l]) => l+": "+hmText(avg(groups[k]))+" ("+groups[k].length+")");
+  section("Schichtdienst",
+    el("p",{},count("frueh")+"× Frühdienst · "+count("spaet")+"× Spätdienst · "+count("nacht")+"× Nachtdienst · "+
+      count("frei")+"× frei"+(count("sonder") ? " · "+count("sonder")+"× anderer Dienst" : "")+
+      " · längste Folge von Nachtdiensten: "+maxNights+" · Wechsel mit weniger als 11 h Pause: "+quick),
+    sleepText.length ? el("p",{},"Ø Schlafdauer nach Diensttyp: "+sleepText.join(" · ")) : null,
+    table(["Datum","Dienst","Beginn","Ende"],rows.map(r => [fmtDate(r.day),names[r.kind] || r.kind,t(r.start_time),t(r.end_time)])));
+}
+
 async function buildReport() {
   const uid = VY.uid;
   if(!uid) return;
@@ -1002,6 +1046,8 @@ async function buildReport() {
             String(Math.round(mins%60)).padStart(2,"0")+" min")
         : none("Keine Schlafdaten im Zeitraum."));
     }
+
+    if(parts.has("shift")) await reportShift(section,none,since,today,uid);
 
     msg("reportMessage","Fertig. Im Druckfenster kannst du „Als PDF sichern“ wählen.");
     window.print();

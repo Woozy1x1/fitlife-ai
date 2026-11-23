@@ -19,6 +19,9 @@ const WD = ["Mo","Di","Mi","Do","Fr","Sa","So"];
 const state = {
   mode:false,
   quiet:true,
+  autoday:true,
+  quietWork:false,
+  extra:{steps:new Map(),train:new Set(),energy:new Map()},
   times:{},
   plan:new Map(),
   sleep:new Map(),
@@ -94,6 +97,8 @@ export function init(api) {
   $ = api.$;
   setupSettings();
   setupPlan();
+  $("wpShiftSuggest")?.addEventListener("click",suggestTrainDays);
+  $("nutritionDate")?.addEventListener("change",renderFood);
   VY.on("user",loadAll);
   VY.on("reset",resetAll);
   VY.on("refresh",renderAll);
@@ -101,7 +106,9 @@ export function init(api) {
 }
 
 function resetAll() {
-  state.mode = false; state.quiet = true; state.times = {};
+  state.mode = false; state.quiet = true; state.autoday = true; state.quietWork = false; state.times = {};
+  state.extra = {steps:new Map(),train:new Set(),energy:new Map()};
+  writeNightWindows();
   state.plan = new Map(); state.sleep = new Map(); state.selected = null;
   state.load++;
   renderAll();
@@ -113,22 +120,32 @@ async function loadAll() {
   const id = ++state.load;
   const today = VY.localDate();
   const q = p => p.then(r => r.error ? null : r.data).catch(() => null);
-  const [goals,plan,metrics] = await Promise.all([
-    q(db.from("user_goals").select("shift_mode,shift_quiet,shift_times").eq("user_id",uid).maybeSingle()),
+  const [goals,plan,metrics,workouts,well] = await Promise.all([
+    q(db.from("user_goals").select("shift_mode,shift_quiet,shift_times,shift_autoday,shift_quiet_work").eq("user_id",uid).maybeSingle())
+      .then(g => g ?? q(db.from("user_goals").select("shift_mode,shift_quiet,shift_times").eq("user_id",uid).maybeSingle())),
     q(db.from("shift_plan").select("day,kind,start_time,end_time,note").eq("user_id",uid)
       .gte("day",VY.daysAgo(90)).lte("day",addDays(today,70)).limit(400)),
-    q(db.from("daily_metrics").select("day,source,sleep_minutes").eq("user_id",uid).gte("day",VY.daysAgo(90)).limit(400))
+    q(db.from("daily_metrics").select("day,source,sleep_minutes,steps").eq("user_id",uid).gte("day",VY.daysAgo(90)).limit(400)),
+    q(db.from("workout_entries").select("entry_date").eq("user_id",uid).gte("entry_date",VY.daysAgo(90)).limit(2000)),
+    q(db.from("wellbeing_log").select("day,energy").eq("user_id",uid).gte("day",VY.daysAgo(90)).limit(400))
   ]);
   if(id!==state.load || uid!==VY.uid) return;
   state.mode = !!goals?.shift_mode;
   state.quiet = goals?.shift_quiet!==false;
+  state.autoday = goals?.shift_autoday!==false;
+  state.quietWork = !!goals?.shift_quiet_work;
   state.times = goals?.shift_times || {};
   state.plan = new Map((plan||[]).map(r => [r.day,r]));
   state.sleep = new Map();
   for(const m of metrics||[]) {
     if(m.sleep_minutes!=null && (!state.sleep.has(m.day) || m.source==="apple_health")) state.sleep.set(m.day,Number(m.sleep_minutes));
   }
+  const steps = new Map(), energy = new Map();
+  for(const m of metrics||[]) if(m.steps!=null && (!steps.has(m.day) || m.source==="apple_health")) steps.set(m.day,Number(m.steps));
+  for(const w of well||[]) if(w.energy!=null) energy.set(w.day,Number(w.energy));
+  state.extra = {steps,energy,train:new Set((workouts||[]).map(w => w.entry_date))};
   state.start = state.start || mondayOf(today);
+  writeNightWindows();
   renderAll();
 }
 
@@ -138,6 +155,10 @@ function renderAll() {
   renderToday();
   renderSleepPlan();
   renderMove();
+  renderFood();
+  renderRecoveryHint();
+  renderWeekPlanHint();
+  renderMedHint();
 }
 
 // -----------------------------------
@@ -154,6 +175,8 @@ function renderSettings() {
   if(!$("shiftMode")) return;
   $("shiftMode").checked = state.mode;
   $("shiftQuiet").checked = state.quiet;
+  if($("shiftAutoday")) $("shiftAutoday").checked = state.autoday;
+  if($("shiftQuietWork")) $("shiftQuietWork").checked = state.quietWork;
   $("shiftDetails").classList.toggle("hidden",!state.mode);
   for(const kind of ["frueh","spaet","nacht"]) {
     const [s,e] = timesFor(kind);
@@ -175,12 +198,15 @@ async function saveSettings() {
     }
     times[kind] = [s,e];
   }
-  const row = {user_id:uid,shift_mode:$("shiftMode").checked,shift_quiet:$("shiftQuiet").checked,shift_times:times};
+  const row = {user_id:uid,shift_mode:$("shiftMode").checked,shift_quiet:$("shiftQuiet").checked,shift_times:times,
+    shift_autoday:$("shiftAutoday")?.checked!==false,shift_quiet_work:!!$("shiftQuietWork")?.checked};
   $("shiftSave").disabled = true;
   const {error} = await db.from("user_goals").upsert(row,{onConflict:"user_id"});
   $("shiftSave").disabled = false;
   if(error) { msg("shiftMessage","Speichern fehlgeschlagen: "+errText(error)); return; }
   state.mode = row.shift_mode; state.quiet = row.shift_quiet; state.times = times;
+  state.autoday = row.shift_autoday; state.quietWork = row.shift_quiet_work;
+  writeNightWindows();
   msg("shiftMessage",state.mode
     ? "✓ Gespeichert. Trag jetzt unten deinen Dienstplan ein."
     : "✓ Gespeichert. Schichtdienst ist ausgeschaltet.");
@@ -282,6 +308,7 @@ async function setShift(day,kind,start,end) {
   }
   if(error) { msg("spMessage","Speichern fehlgeschlagen: "+errText(error)); return; }
   msg("spMessage","");
+  writeNightWindows();
   // Nach dem Eintragen direkt zum nächsten Tag springen – so geht ein ganzer Plan schnell
   const next = addDays(day,1);
   state.selected = next<=addDays(state.start,27) ? next : null;
@@ -300,6 +327,7 @@ async function copyWeek() {
   const {error} = await db.from("shift_plan").upsert(rows,{onConflict:"user_id,day"});
   if(error) { msg("spMessage","Kopieren fehlgeschlagen: "+errText(error)); return; }
   for(const r of rows) state.plan.set(r.day,r);
+  writeNightWindows();
   msg("spMessage","✓ Woche ab "+shortDate(from)+" in die Woche ab "+shortDate(addDays(from,7))+" kopiert.");
   renderAll();
 }
@@ -385,18 +413,55 @@ function sleepLines(day) {
   return out;
 }
 
-function sleepByShift() {
-  const groups = {frueh:[],spaet:[],nacht:[],afterNight:[],frei:[]};
+// Gruppe eines Tages: Früh/Spät/Nacht/frei – „nach Nachtdienst“ hat Vorrang
+function groupOf(day) {
+  const y = shiftOn(addDays(day,-1)), t = shiftOn(day);
+  if(y?.kind==="nacht" && t?.kind!=="nacht") return "afterNight";
+  return t ? t.kind : null;
+}
+
+const GROUPS = [["frueh","Frühdienst"],["spaet","Spätdienst"],["nacht","Nachtdienst"],["afterNight","Nach Nachtdienst"],["frei","Frei"]];
+
+function valuesByShift() {
   const sleep = new Map([...state.sleep,...VY.sleepMinutesByDay()]);
-  for(const [day,min] of sleep) {
-    if(day<VY.daysAgo(90)) continue;
-    const y = shiftOn(addDays(day,-1)), t = shiftOn(day);
-    if(y?.kind==="nacht") groups.afterNight.push(min);
-    else if(t && groups[t.kind]) groups[t.kind].push(min);
+  const steps = new Map([...state.extra.steps,...VY.stepsByDay()]);
+  const from = VY.daysAgo(90), today = VY.localDate();
+  const g = {};
+  for(const [k] of GROUPS) g[k] = {days:0,sleep:[],steps:[],energy:[],train:0};
+  for(let d=from; d<=today; d=addDays(d,1)) {
+    const k = groupOf(d);
+    if(!k || !g[k]) continue;
+    const x = g[k];
+    x.days++;
+    if(sleep.has(d)) x.sleep.push(sleep.get(d));
+    if(steps.has(d) && d<today) x.steps.push(steps.get(d));
+    if(state.extra.energy.has(d)) x.energy.push(state.extra.energy.get(d));
+    if(state.extra.train.has(d)) x.train++;
   }
-  const avg = l => l.reduce((a,b) => a+b,0)/l.length;
-  return [["frueh","Vor Frühdiensten"],["spaet","An Spätdienst-Tagen"],["nacht","Vor Nachtdiensten"],["afterNight","Nach Nachtdiensten"],["frei","An freien Tagen"]]
-    .filter(([k]) => groups[k].length>=3).map(([k,label]) => ({label,n:groups[k].length,avg:avg(groups[k])}));
+  return g;
+}
+
+function renderShiftTable(box) {
+  const g = valuesByShift();
+  const avg = l => l.length ? l.reduce((a,b) => a+b,0)/l.length : null;
+  const rows = GROUPS.filter(([k]) => g[k].days>=3);
+  if(!rows.length) return;
+  const fmt = (v,f) => v==null ? "–" : f(v);
+  box.append(el("h3",{},"Deine Werte nach Schicht"),
+    el("div",{class:"table-wrap"},el("table",{class:"shift-table"},
+      el("thead",{},el("tr",{},
+        el("th",{scope:"col"},el("span",{class:"sr-only"},"Schicht")),el("th",{scope:"col"},"Schlaf"),el("th",{scope:"col"},"Schritte"),
+        el("th",{scope:"col"},"Energie"),el("th",{scope:"col"},"Sport"))),
+      el("tbody",{},rows.map(([k,label]) => {
+        const x = g[k];
+        return el("tr",{},el("th",{scope:"row"},label,el("small",{},x.days+" Tage")),
+          el("td",{},fmt(avg(x.sleep),hm)),
+          el("td",{},fmt(avg(x.steps),v => Math.round(v).toLocaleString("de-DE"))),
+          el("td",{},fmt(avg(x.energy),v => v.toFixed(1).replace(".",","))),
+          el("td",{},Math.round(x.train/x.days*100)+" %"));
+      })))),
+    el("p",{class:"muted small-note"},"Durchschnitt der letzten 90 Tage, nur Tage mit eingetragenem Dienst. Sport = Anteil der Tage mit eingetragenem Training. "+
+      "Energie = deine Einschätzung im Check-in (1–5). Nur eine Übersicht, keine Bewertung."));
 }
 
 function renderSleepPlan() {
@@ -410,13 +475,11 @@ function renderSleepPlan() {
   box.replaceChildren(
     el("p",{class:"muted"},"Heute: "+shiftText(t)+" · Morgen: "+shiftText(shiftOn(addDays(today,1)))),
     el("ul",{class:"shift-list"},sleepLines(today).map(l => el("li",{},l))));
-  const stats = sleepByShift();
-  box.append(el("h3",{},"Dein Schlaf nach Schicht (letzte 90 Tage)"));
-  if(stats.length) {
-    box.append(el("div",{class:"kv-grid"},stats.map(s => el("div",{class:"kv"},el("strong",{},hm(s.avg)),el("small",{},s.label+" · "+s.n+" Tage")))));
-    box.append(el("p",{class:"muted small-note"},"Durchschnitt deiner eingetragenen oder übertragenen Schlafdauer (inklusive Vorschlaf und Nickerchen). Nur eine Übersicht, keine Bewertung."));
-  } else {
-    box.append(el("p",{class:"muted"},"Sobald du an mindestens 3 Tagen pro Schichtart Schlaf eingetragen hast, siehst du hier, wie viel du vor Früh-, Spät- und Nachtdiensten schläfst."));
+  const before = box.childNodes.length;
+  renderShiftTable(box);
+  if(box.childNodes.length===before) {
+    box.append(el("h3",{},"Deine Werte nach Schicht"),
+      el("p",{class:"muted"},"Sobald für eine Schichtart mindestens 3 Tage im Dienstplan stehen, siehst du hier Schlaf, Schritte, Energie und Training je Schicht."));
   }
 }
 
@@ -651,7 +714,179 @@ async function saveImport() {
     for(const r of rows.slice(i,i+200)) state.plan.set(r.day,r);
   }
   closeImport();
+  writeNightWindows();
   state.start = mondayOf(rows.find(r => r.day>=VY.localDate())?.day || rows[0].day);
   msg("spMessage","✓ "+rows.length+" Dienste importiert.");
   renderAll();
+}
+
+// -----------------------------------
+// Tageswechsel im Nachtdienst
+// Während des Dienstes und bis 2 Stunden nach Dienstende zählt alles
+// (Essen, Wasser, Häkchen) zum Tag, an dem der Dienst begonnen hat.
+// Die Zeitfenster liegen nur auf diesem Gerät (localStorage).
+// -----------------------------------
+
+function writeNightWindows() {
+  const before = VY.localDate();
+  const list = [];
+  if(state.mode && state.autoday && VY.uid) {
+    const today = VY.dayString(new Date());
+    for(let i=-2;i<=28;i++) {
+      const day = addDays(today,i);
+      const s = shiftOn(day);
+      if(s?.kind!=="nacht" || !s.start || !s.end) continue;
+      const a = toMin(s.start), e = toMin(s.end);
+      if(e>a) continue; // endet vor Mitternacht: kein Sonderfall
+      const next = addDays(day,1);
+      const from = new Date(next+"T00:00:00").getTime();
+      const until = new Date(next+"T00:00:00").getTime()+(e+120)*60000;
+      list.push({day,from,until});
+    }
+  }
+  try {
+    if(list.length) localStorage.setItem("vyora_night_days",JSON.stringify(list));
+    else localStorage.removeItem("vyora_night_days");
+  } catch(_e) {}
+  // Hat sich dadurch der aktuelle Tag geändert? Dann Anzeigen neu laden.
+  if(VY.localDate()!==before) {
+    if($("nutritionDate")) $("nutritionDate").value = VY.localDate();
+    setTimeout(() => VY.refresh(),0);
+  }
+}
+
+// -----------------------------------
+// Ernährung: Essen & Koffein passend zur Schicht
+// -----------------------------------
+
+// Geplante Schlafenszeit (Minuten ab Mitternacht) für die Nacht nach „day“, oder null
+function bedtimeAfter(day) {
+  const t = shiftOn(day), m = shiftOn(addDays(day,1));
+  if(t?.kind==="nacht") return null;
+  if(m?.kind==="frueh" && m.start) {
+    const bed = toMin(m.start)-75-450;
+    const endT = t && t.kind!=="frei" && t.end ? toMin(t.end) : null;
+    if(endT!=null && endT>=12*60 && endT+45>((bed%1440)+1440)%1440) return endT+45;
+    return ((bed%1440)+1440)%1440;
+  }
+  if(t?.kind==="spaet" && t.end) return toMin(t.end)+60;
+  return 23*60;
+}
+
+function foodLines(day) {
+  const t = shiftOn(day);
+  const out = [];
+  if(t?.kind==="nacht" && t.start && t.end) {
+    const a = toMin(t.start), e = toMin(t.end);
+    out.push("Vor dem Dienst: warme Hauptmahlzeit etwa um "+fromMin(a-120)+" Uhr.");
+    out.push("Im Dienst: eine kleine, leichte Mahlzeit gegen Mitternacht. Zwischen etwa 2 und 6 Uhr nur Kleinigkeiten (z. B. Obst, Joghurt, Nüsse, Gemüsesticks) – nachts verdaut der Körper schlechter.");
+    out.push("Koffein: letzter Kaffee oder Energy-Drink etwa um "+fromMin(e+45-360)+" Uhr, damit du nach dem Dienst gut einschläfst.");
+    out.push("Nach dem Dienst: nur ein kleines Frühstück, dann schlafen.");
+  } else if(t?.kind==="frueh" && t.start) {
+    out.push("Vor dem Dienst: kleines Frühstück oder etwas zum Mitnehmen (z. B. Brot, Joghurt, Obst).");
+    out.push("In der Pause eine richtige Mahlzeit, am Nachmittag Hauptmahlzeit – abends eher leicht.");
+  } else if(t?.kind==="spaet" && t.start) {
+    out.push("Hauptmahlzeit mittags vor dem Dienst, etwa um "+fromMin(toMin(t.start)-90)+" Uhr.");
+    out.push("In der Pause eher leicht essen. Nach Dienstende keine schwere Mahlzeit mehr – lieber ein kleiner Snack.");
+  } else {
+    out.push("Freier Tag: Mahlzeiten zu ähnlichen Zeiten wie sonst helfen deinem inneren Rhythmus.");
+  }
+  const bed = bedtimeAfter(day);
+  if(bed!=null && t?.kind!=="nacht") {
+    out.push("Koffein: letzter Kaffee etwa um "+fromMin(bed-360)+" Uhr – geplantes Schlafengehen gegen "+fromMin(bed)+" Uhr.");
+  }
+  if(t && t.kind!=="frei") out.push("Im Dienst regelmäßig trinken – am besten Wasser oder ungesüßten Tee.");
+  return out;
+}
+
+function renderFood() {
+  const card = $("shiftFoodCard");
+  if(!card) return;
+  card.classList.toggle("hidden",!state.mode || !VY.uid);
+  if(!state.mode) return;
+  const day = $("nutritionDate")?.value || VY.localDate();
+  $("shiftFoodBox").replaceChildren(
+    el("p",{class:"muted"},(day===VY.localDate() ? "Heute" : WD[weekdayOf(day)]+", "+shortDate(day))+": "+shiftText(shiftOn(day))),
+    el("ul",{class:"shift-list"},foodLines(day).map(l => el("li",{},l))));
+}
+
+// -----------------------------------
+// Training: Erholung und Wochenplanung
+// -----------------------------------
+
+function nightsInRow(day) {
+  let n = 0;
+  for(let d=day; shiftOn(d)?.kind==="nacht"; d=addDays(d,-1)) n++;
+  return n;
+}
+
+function renderRecoveryHint() {
+  const box = $("recoveryShift");
+  if(!box) return;
+  box.replaceChildren();
+  if(!state.mode || !VY.uid) return;
+  const today = VY.localDate();
+  const y = shiftOn(addDays(today,-1)), t = shiftOn(today);
+  let text = null;
+  if(y?.kind==="nacht" && t?.kind!=="nacht") text = "Nach dem Nachtdienst ist der Körper noch im Nachtrhythmus. Heute eher locker: Spaziergang an der frischen Luft oder Mobility statt hartem Training.";
+  else if(t?.kind==="nacht" && nightsInRow(today)>=3) text = "Du bist im "+nightsInRow(today)+". Nachtdienst in Folge. Hartes Training lieber auf freie Tage legen – kurze, leichte Einheiten reichen jetzt.";
+  else if(t?.kind==="nacht") text = "Heute Nachtdienst: Wenn du trainierst, dann nach dem Tagschlaf und mit etwas Abstand zum Dienst.";
+  else if(y?.kind==="spaet" && t?.kind==="frueh") text = "Kurzer Wechsel von Spät auf Früh – der Schlaf war vermutlich kurz. Heute lieber locker trainieren oder pausieren.";
+  if(text) box.append(el("p",{class:"tip"},el("strong",{},"Schichtdienst: "),text));
+}
+
+function weekDays() {
+  const mon = mondayOf(VY.localDate());
+  return Array.from({length:7},(_,i) => addDays(mon,i));
+}
+
+// Wie gut passt ein Tag zum Training? (höher = besser, 0 = lieber nicht)
+function trainScore(day) {
+  const y = shiftOn(addDays(day,-1)), t = shiftOn(day);
+  if(t?.kind==="nacht") return 0;
+  if(y?.kind==="nacht") return 0;
+  if(!t) return 2;
+  return {frei:4,frueh:3,spaet:2,sonder:2}[t.kind] ?? 1;
+}
+
+function renderWeekPlanHint() {
+  const box = $("wpShiftBox");
+  if(!box) return;
+  box.classList.toggle("hidden",!state.mode || !VY.uid);
+  if(!state.mode) return;
+  const days = weekDays();
+  const row = el("div",{class:"shift-week","aria-label":"Deine Dienste in dieser Woche"});
+  for(const d of days) {
+    const s = shiftOn(d);
+    row.append(el("div",{class:"sw-day"+(s ? " k-"+s.kind : "")},el("small",{},WD[weekdayOf(d)]),el("strong",{},s ? KINDS[s.kind].short : "·")));
+  }
+  $("wpShiftRow").replaceChildren(row);
+}
+
+function suggestTrainDays() {
+  const days = weekDays();
+  const boxes = [...document.querySelectorAll("input[name=wpDay]")];
+  if(boxes.length!==7) return;
+  const want = Math.max(2,Math.min(4,boxes.filter(b => b.checked).length || 3));
+  const order = days.map((d,i) => ({i,score:trainScore(d)})).filter(x => x.score>0)
+    .sort((a,b) => b.score-a.score || a.i-b.i);
+  const picked = [];
+  for(const x of order) {
+    if(picked.length>=want) break;
+    if(picked.some(p => Math.abs(p-x.i)===1) && order.length>want+1) continue;
+    picked.push(x.i);
+  }
+  for(const x of order) { if(picked.length>=want) break; if(!picked.includes(x.i)) picked.push(x.i); }
+  boxes.forEach((b,i) => { b.checked = picked.includes(i); });
+  msg("wpShiftMessage",picked.length
+    ? "Vorschlag: "+picked.sort((a,b) => a-b).map(i => WD[i]).join(", ")+" – an freien Tagen oder nach Frühdiensten, nicht im oder direkt nach dem Nachtdienst. Zum Übernehmen „Plan speichern“ tippen."
+    : "In dieser Woche passt laut Dienstplan kaum ein Tag – vielleicht eine kurze, lockere Einheit?");
+}
+
+// -----------------------------------
+// Medikamente: Hinweis im Schichtdienst
+// -----------------------------------
+
+function renderMedHint() {
+  $("medShiftNote")?.classList.toggle("hidden",!state.mode || !VY.uid);
 }
