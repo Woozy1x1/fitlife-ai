@@ -242,7 +242,10 @@ $("exportButton").addEventListener("click",async () => {
       ["push_geraete","push_subscriptions"],
       ["gesundheitswerte","health_entries"],
       ["einwilligungen","user_consents"],
-      ["oura_verbindung","oura_connections"]
+      ["oura_verbindung","oura_connections"],
+      ["profil","profiles"],
+      ["oura_tageswerte","oura_daily_metrics"],
+      ["oura_rohdaten","oura_records"]
     ];
 
     const result = {
