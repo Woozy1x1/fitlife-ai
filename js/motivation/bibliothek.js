@@ -1,5 +1,5 @@
-import {$} from "../lib/basis.js?v=5c0fb232ee";
-import {el,state} from "./kern.js?v=5c0fb232ee";
+import {$} from "../lib/basis.js";
+import {el,state} from "./kern.js";
 
 // -----------------------------------
 // Übungsbibliothek (Text, ohne fremde Videos oder Bilder)

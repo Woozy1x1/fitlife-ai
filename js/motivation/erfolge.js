@@ -1,5 +1,5 @@
-import {$,VY,db} from "../lib/basis.js?v=5c0fb232ee";
-import {daysBetween,el,shortDate,state} from "./kern.js?v=5c0fb232ee";
+import {$,VY,db} from "../lib/basis.js";
+import {daysBetween,el,shortDate,state} from "./kern.js";
 
 // -----------------------------------
 // Erfolge (aus deinen Einträgen berechnet)

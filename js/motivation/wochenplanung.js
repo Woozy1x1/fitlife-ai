@@ -1,5 +1,5 @@
-import {$,VY,db} from "../lib/basis.js?v=5c0fb232ee";
-import {addDays,el,errText,msg,shortDate,state} from "./kern.js?v=5c0fb232ee";
+import {$,VY,db} from "../lib/basis.js";
+import {addDays,el,errText,msg,shortDate,state} from "./kern.js";
 
 // -----------------------------------
 // Wochenplanung

@@ -1,9 +1,9 @@
-import {$,VY,db} from "../lib/basis.js?v=5c0fb232ee";
-import {setupLibrary} from "./bibliothek.js?v=5c0fb232ee";
-import {renderChallenges,setupChallenges} from "./challenges.js?v=5c0fb232ee";
-import {loadMilestones} from "./erfolge.js?v=5c0fb232ee";
-import {mondayOf,state} from "./kern.js?v=5c0fb232ee";
-import {renderWeekPlan,setupWeekPlan} from "./wochenplanung.js?v=5c0fb232ee";
+import {$,VY,db} from "../lib/basis.js";
+import {setupLibrary} from "./bibliothek.js";
+import {renderChallenges,setupChallenges} from "./challenges.js";
+import {loadMilestones} from "./erfolge.js";
+import {mondayOf,state} from "./kern.js";
+import {renderWeekPlan,setupWeekPlan} from "./wochenplanung.js";
 
 export function init(api) {
 

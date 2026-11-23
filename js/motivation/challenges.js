@@ -1,6 +1,6 @@
-import {$,VY,db} from "../lib/basis.js?v=5c0fb232ee";
-import {addDays,daysBetween,el,errText,msg,state} from "./kern.js?v=5c0fb232ee";
-import {loadAll} from "./start.js?v=5c0fb232ee";
+import {$,VY,db} from "../lib/basis.js";
+import {addDays,daysBetween,el,errText,msg,state} from "./kern.js";
+import {loadAll} from "./start.js";
 
 // -----------------------------------
 // 30-Tage-Challenges
