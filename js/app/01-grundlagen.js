@@ -99,7 +99,23 @@ const mealNames = {
 let dayStartHour = Math.min(6,Math.max(0,
   Math.round(Number(localStorage.getItem("vyora_day_start"))||0)));
 
+// Schichtdienst: Während eines Nachtdienstes (und kurz danach) zählt alles
+// noch zum Tag, an dem der Dienst begonnen hat. Die Zeitfenster berechnet
+// js/shift.js aus dem Dienstplan und legt sie auf diesem Gerät ab.
+function nightShiftDay() {
+  try {
+    const list = JSON.parse(localStorage.getItem("vyora_night_days") || "[]");
+    const now = Date.now();
+    for(const w of Array.isArray(list) ? list : []) {
+      if(w && now>=w.from && now<w.until && /^\d{4}-\d{2}-\d{2}$/.test(w.day)) return w.day;
+    }
+  } catch(_e) {}
+  return null;
+}
+
 function shiftedNow() {
+  const night = nightShiftDay();
+  if(night) return new Date(night+"T23:00:00");
   return new Date(Date.now()-dayStartHour*3600000);
 }
 
