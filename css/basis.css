@@ -1,0 +1,207 @@
+/* ===================================================
+   VYORA AI – Design "Morgendämmerung"
+   Idee: Erholung ist wie ein Sonnenaufgang. Je besser
+   du geschlafen hast, desto höher steht die Sonne.
+   =================================================== */
+@font-face{
+  font-family:"Bricolage";
+  src:url("../vendor/fonts/bricolage-grotesque-latin-wght-normal.woff2") format("woff2-variations"),
+      url("../vendor/fonts/bricolage-grotesque-latin-wght-normal.woff2") format("woff2");
+  font-weight:200 800;font-style:normal;font-display:swap
+}
+:root{
+  /* Nacht */
+  --bg:#100d26;--bg-deep:#0b0920;
+  --card:#1a1636;--card-2:#211c44;--inset:#14112d;
+  --border:#2e2856;--border-strong:#433b78;
+  /* Licht */
+  --text:#f3f0ff;--muted:#a6a0c8;--soft:#cfc9ea;
+  /* Morgen (Hauptakzent) */
+  --sun:#ffb866;--sun-2:#ff8a6b;--sun-ink:#2a1405;
+  /* Bedeutungsfarben */
+  --green:#7ce8d4;--green-bg:#173b3c;
+  --pulse:#ff6f91;--danger-bg:#4a1d33;
+  --warn:#ffd27a;
+  --radius-xl:30px;--radius:22px;--radius-sm:14px;
+  --font:"Bricolage",ui-rounded,"SF Pro Rounded",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;min-height:100vh;color:var(--text);
+  font-family:var(--font);font-size:15px;
+  font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(120% 60% at 50% -10%,#2a1f5c 0%,transparent 60%),
+    radial-gradient(80% 40% at 100% 0%,#3b1f4a55 0%,transparent 70%),
+    var(--bg);
+  background-attachment:fixed
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+:focus-visible{outline:2px solid var(--sun);outline-offset:3px;border-radius:10px}
+.hidden{display:none!important}
+.app{max-width:1060px;margin:auto;padding:max(18px,env(safe-area-inset-top)) 16px 120px}
+
+/* ---------- Kopfzeile ---------- */
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{
+  width:42px;height:42px;border-radius:50%;
+  background:radial-gradient(circle at 50% 75%,var(--sun) 0 38%,transparent 39%),
+    linear-gradient(180deg,#3a2d7a,#1c1640);
+  border:1px solid var(--border-strong);
+  color:transparent;font-size:0;
+  box-shadow:0 6px 24px -6px #ff9a6b88
+}
+.logo strong{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.logo strong span{
+  background:linear-gradient(90deg,var(--sun-2),var(--sun));
+  -webkit-background-clip:text;background-clip:text;color:transparent
+}
+.logo small{display:block;color:var(--muted);font-size:12px;letter-spacing:.02em;text-transform:none}
+.avatar{
+  border-radius:50%;width:40px;height:40px;
+  background:var(--card-2);border:1px solid var(--border-strong);
+  display:grid;place-items:center;color:var(--sun);font-weight:800
+}
+
+/* ---------- Typografie ---------- */
+h1{font-size:clamp(30px,6.4vw,46px);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:6px 0 10px}
+h2{font-size:19px;line-height:1.2;letter-spacing:-.015em;font-weight:700;margin:0 0 14px}
+h3{font-size:15px;font-weight:700;margin:0 0 10px}
+p{line-height:1.55}
+.muted{color:var(--muted);font-size:13.5px}
+.eyebrow{color:var(--muted);font-size:13px;font-weight:500;letter-spacing:0;text-transform:none}
+a{color:var(--sun)}
+
+/* ---------- Flächen ---------- */
+.card{
+  background:linear-gradient(180deg,var(--card-2),var(--card) 70%);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;margin-bottom:14px;position:relative
+}
+.view > .card,.view > .grid > .card{box-shadow:0 1px 0 #ffffff08 inset}
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px}
+
+/* ---------- Startseite: Sonnenaufgang ---------- */
+.hero{
+  --score:0;
+  border-radius:var(--radius-xl);overflow:hidden;isolation:isolate;
+  border-color:#3d3470;
+  background:linear-gradient(180deg,#221a52 0%,#2c1e55 55%,#3b2250 100%);
+  padding:26px 24px 24px
+}
+/* Horizont: untere Zone der Karte etwas dunkler */
+.hero::after{
+  content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;height:34%;
+  background:linear-gradient(180deg,transparent,#110d2ae6 75%);
+  pointer-events:none
+}
+.hero h1{max-width:12ch}
+.hero-content{display:flex;align-items:center;gap:24px;margin-top:22px}
+.score-ring{width:168px;height:168px;position:relative;display:grid;place-items:center;flex-shrink:0}
+.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg);overflow:visible}
+/* Die Sonne hinter dem Ring steigt mit dem Score */
+.score-ring::before{
+  content:"";position:absolute;z-index:-1;inset:-34%;border-radius:50%;
+  background:radial-gradient(circle,#ffe6b8 0%,#ffc070 16%,#ff8a6bb0 32%,#c45cff40 50%,transparent 66%);
+  transform:translateY(calc((100 - var(--score)) * .55%));
+  opacity:calc(.35 + var(--score) / 110);
+  transition:transform 1.6s cubic-bezier(.2,.8,.2,1),opacity 1.6s
+}
+.score-ring circle{fill:none;stroke-width:10}
+.ring-track{stroke:#ffffff14}
+.ring-progress{
+  stroke:url(#sunGradient);stroke-linecap:round;
+  stroke-dasharray:452.39;stroke-dashoffset:452.39;
+  filter:drop-shadow(0 0 10px #ff9a6b66);
+  transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)
+}
+.score-center{text-align:center}
+.score-center strong{display:block;text-shadow:0 2px 18px #2a14054d;font-size:58px;line-height:.95;font-weight:800;letter-spacing:-.05em}
+.score-center small{color:var(--soft);font-size:12px}
+.score-info .eyebrow{color:var(--soft)}
+.score-info strong{display:block;color:var(--sun);font-size:24px;font-weight:800;letter-spacing:-.02em;margin:6px 0}
+.score-info p{color:var(--soft);font-size:13px;margin:0}
+
+/* Kennzahlen */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.stat{min-height:132px;padding:18px;border-radius:var(--radius)}
+.stat strong{display:block;font-size:30px;font-weight:800;letter-spacing:-.03em;margin:10px 0 2px}
+.stat small{color:var(--muted);font-size:12px}
+.stat-icon{
+  width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-size:17px;background:var(--inset);border:1px solid var(--border)
+}
+.stats .stat:nth-child(1) .stat-icon{color:#b9a8ff}
+.stats .stat:nth-child(2) .stat-icon{color:var(--pulse)}
+.stats .stat:nth-child(3) .stat-icon{color:var(--sun)}
+
+/* ---------- Knöpfe ---------- */
+.btn{
+  border:0;border-radius:999px;padding:13px 20px;
+  background:linear-gradient(90deg,var(--sun-2),var(--sun));
+  color:var(--sun-ink);font-size:14px;font-weight:700;
+  margin:5px 5px 5px 0;
+  box-shadow:0 8px 22px -10px #ff8a6bcc;
+  transition:transform .12s ease,filter .12s ease
+}
+.btn:active{transform:scale(.97)}
+.btn:hover{filter:brightness(1.06)}
+.btn.secondary{background:var(--card-2);color:var(--text);border:1px solid var(--border-strong);box-shadow:none}
+.btn.full{width:100%}
+.btn.social{background:#f6f4ff;color:#14112d;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:none}
+.btn.danger{background:var(--danger-bg);color:#ffd3de;border:1px solid #7a2f50;box-shadow:none}
+.social-icon{font-weight:900;font-size:16px}
+/* Sanfter Knopf ("Nochmal", "Starten") */
+.soft-btn,.meal-row button.soft-btn{background:var(--green-bg);color:var(--green)}
+
+/* ---------- Status ---------- */
+.status-row{display:flex;align-items:center;gap:10px;margin:16px 0}
+.dot{width:10px;height:10px;border-radius:50%;background:#6d6795}
+.dot.connected{background:var(--green);box-shadow:0 0 0 4px #7ce8d422,0 0 14px var(--green)}
+.message{color:var(--warn);font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.remind-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.remind-row:last-child{border-bottom:0}
+.remind-row label{flex:1;display:flex;align-items:center;gap:10px;margin:0;color:var(--text);font-size:14.5px}
+.remind-row input[type=checkbox]{width:22px;height:22px;accent-color:var(--sun);margin:0}
+.remind-row input[type=time]{width:auto;min-width:108px;margin:0}
+.offline-banner{margin:0 0 14px;border-color:#5ab8ff55;background:#5ab8ff14}
+.notice{background:var(--inset);border:1px solid var(--border);padding:15px;border-radius:var(--radius-sm);color:var(--soft);font-size:13px;line-height:1.6}
+.pill{display:inline-block;padding:5px 10px;border-radius:30px;background:var(--green-bg);color:var(--green);font-size:12px}
+
+/* ---------- Diagramme ---------- */
+.chart{display:flex;align-items:end;gap:8px;min-height:185px}
+.chart-column{flex:1;height:185px;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:7px;min-width:0}
+.chart-value{font-size:12px;font-weight:700}
+.chart-track{height:125px;width:min(100%,40px);border-radius:999px;background:var(--inset);display:flex;align-items:end;overflow:hidden}
+.chart-bar{width:100%;border-radius:999px;background:linear-gradient(180deg,var(--sun),var(--sun-2) 60%,#9b5cff)}
+.chart-label{font-size:12px;color:var(--muted)}
+#hrChart svg{width:100%;height:150px;display:block}
+
+/* ---------- Navigation ---------- */
+.view{display:none}
+.view.active{display:block;animation:viewIn .35s ease both}
+@keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bottom-nav{
+  position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  display:flex;gap:2px;padding:6px;border-radius:999px;
+  background:#1a1636e6;backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);
+  border:1px solid var(--border-strong);z-index:10;
+  box-shadow:0 18px 40px -14px #000c
+}
+.bottom-nav button{
+  background:none;border:0;border-radius:999px;color:var(--muted);
+  padding:8px 14px;min-width:72px;font-size:12px;font-weight:600;position:relative
+}
+.bottom-nav button span{display:block;font-size:21px;margin-bottom:3px;filter:grayscale(.4);transition:transform .2s}
+.bottom-nav button.active{color:var(--text);background:#ffffff0d}
+.bottom-nav button.active span{filter:none;transform:translateY(-1px)}
+.bottom-nav button.active::after{
+  content:"";position:absolute;left:50%;bottom:3px;width:5px;height:5px;margin-left:-2.5px;
+  border-radius:50%;background:var(--sun);box-shadow:0 0 8px var(--sun)
+}
