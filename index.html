@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>VYORA AI – Deine Gesundheit</title>
-<link rel="stylesheet" href="css/app.css?v=e529ce6f49">
+<link rel="stylesheet" href="css/app.css?v=9e49f28bfa">
 </head>
 <body>
 <div class="app">
@@ -79,12 +79,30 @@
   </div>
 </section>
 
+<section id="mfaCard" class="card auth hidden">
+  <div class="eyebrow">Zwei-Faktor-Anmeldung</div>
+  <h1>Code eingeben</h1>
+  <p>Dein Konto ist zusätzlich geschützt. Gib den 6-stelligen Code aus
+    deiner Authenticator-App ein.</p>
+  <form id="mfaForm">
+    <label for="mfaCode">Code</label>
+    <input id="mfaCode" inputmode="numeric" autocomplete="one-time-code"
+      maxlength="7" required placeholder="123456">
+    <button id="mfaButton" class="btn full" type="submit">Bestätigen</button>
+  </form>
+  <p id="mfaMessage" class="message" role="status"></p>
+  <button id="mfaLogout" class="btn secondary full" type="button">Abmelden</button>
+  <p class="muted small-note">Kein Zugriff mehr auf deine Authenticator-App?
+    Schreib uns über das <a href="impressum.html">Impressum</a>. Nach einer
+    Identitätsprüfung entfernen wir den zweiten Faktor.</p>
+</section>
+
 <section id="consentCard" class="card auth consent hidden">
   <div class="eyebrow">Bevor es losgeht</div>
   <h1>Deine Einwilligung</h1>
   <p class="notice hidden" id="consentUpdateNote">
-    Neu in VYORA: Schlaf selbst eintragen, Apple Health, Blutzucker, Insulin,
-    Tagesziele und ein Trainingsprogramm.
+    Neu in VYORA: Medikamentenplan, Symptom-Tagebuch, Laborwerte und ein
+    Bericht für den Arzttermin.
     Weil dabei weitere Gesundheitsdaten gespeichert werden können, bitten
     wir dich, deine Einwilligung zu erneuern.
   </p>
@@ -97,7 +115,10 @@
     <li><strong>Welche Daten:</strong> Mahlzeiten und Nährwerte, Trainings
       und Trainingsfortschritt, Tagesziele, Gewicht, Blutdruck, Puls,
       Blutzucker, Insulin-Einträge (Einheiten, Art, Name, KE) und Notizen,
-      Schlafzeiten und Notizen, die du selbst einträgst. Wenn du
+      Schlafzeiten, Wohlbefinden (Stimmung, Energie, Stress), Obst- und
+      Gemüse-Portionen, Medikamente mit Einnahmezeiten und abgehakten
+      Einnahmen, Symptome mit deiner Einschätzung der Stärke, Laborwerte
+      von deinen Befunden und Notizen, die du selbst einträgst. Wenn du
       einen Oura Ring verbindest, außerdem Schlaf-, Erholungs-, Aktivitäts-,
       Herzfrequenz- und Workout-Daten aus deinem Oura-Konto. Wenn du Apple
       Health per Kurzbefehl verbindest, die übermittelten Tageswerte
@@ -727,6 +748,16 @@
       Einträge werden geladen ...
     </div>
   </div>
+  <div class="card" id="prCard">
+    <h2>🏆 Fortschritt &amp; Bestleistungen</h2>
+    <p class="muted">
+      Aus deinem Trainingstagebuch der letzten 12 Monate. Das Maximalgewicht
+      für eine Wiederholung (1RM) ist nur geschätzt (Epley-Formel) – teste es
+      nicht ohne Aufwärmen und Sicherung.
+    </p>
+    <div id="prWeeks"></div>
+    <div id="prList">Noch keine Trainings eingetragen.</div>
+  </div>
 </section>
 
 <section id="healthView" class="view">
@@ -735,6 +766,17 @@
   <p class="muted">
     Wohlbefinden, Gewicht, Blutdruck, Blutzucker, Insulin und Schlaf an einem Ort.
   </p>
+
+  <div class="subnav" id="healthSubnav" role="navigation" aria-label="Bereiche auf dieser Seite">
+    <button type="button" data-target="wellCard">Check-in</button>
+    <button type="button" data-target="medCard">Medikamente</button>
+    <button type="button" data-target="symptomCard">Symptome</button>
+    <button type="button" data-target="measureCard">Messtagebuch</button>
+    <button type="button" data-target="bpWeekCard">Blutdruck-Woche</button>
+    <button type="button" data-target="labCard">Labor</button>
+    <button type="button" data-target="reportCard">Arztbericht</button>
+    <button type="button" data-target="manualSleepCard">Schlaf</button>
+  </div>
 
   <div class="card" id="wellCard">
     <h2>🌿 Wie geht's dir heute?</h2>
@@ -781,6 +823,91 @@
       vertraust, oder mit deiner Hausarztpraxis. Kostenlos und rund um die Uhr:
       TelefonSeelsorge <a href="tel:08001110111">0800 111 0 111</a> oder
       <a href="tel:08001110222">0800 111 0 222</a>. Im Notfall: <a href="tel:112">112</a>.
+    </p>
+  </div>
+
+  <div class="card" id="medCard">
+    <h2>💊 Medikamente</h2>
+    <p class="muted">
+      Dein Einnahmeplan – so, wie er auf deinem Medikationsplan oder dem
+      Beipackzettel steht. Hake ab, was du genommen hast. VYORA rechnet
+      keine Dosis aus und gibt keine Empfehlungen.
+    </p>
+    <div id="medToday"></div>
+    <details class="cx-extra" id="medManage">
+      <summary>Medikamente verwalten</summary>
+      <div id="medList"></div>
+      <form id="medForm">
+        <h3 id="medFormTitle">Medikament hinzufügen</h3>
+        <label for="medName">Name</label>
+        <input id="medName" maxlength="80" required autocomplete="off" placeholder="z. B. Ramipril 5 mg">
+        <label for="medAmount">Menge laut deinem Plan (optional)</label>
+        <input id="medAmount" maxlength="40" autocomplete="off" placeholder="z. B. 1 Tablette">
+        <span class="label" id="medTimesLabel">Uhrzeiten</span>
+        <div id="medTimes" class="time-list" role="group" aria-labelledby="medTimesLabel"></div>
+        <button id="medAddTime" class="btn secondary" type="button">+ Uhrzeit</button>
+        <label class="check">
+          <input type="checkbox" id="medRemind">
+          <span>Zu diesen Uhrzeiten per Benachrichtigung erinnern</span>
+        </label>
+        <label for="medNote">Notiz (optional)</label>
+        <input id="medNote" maxlength="300" autocomplete="off" placeholder="z. B. zum Frühstück">
+        <button id="medSave" class="btn full" type="submit">Speichern</button>
+        <button id="medCancel" class="btn secondary full hidden" type="button">Abbrechen</button>
+      </form>
+      <p class="muted small-note">
+        Die Benachrichtigung zeigt nur „Zeit für deine Medikamente“ – ohne
+        Namen, damit auf dem Sperrbildschirm nichts Persönliches steht.
+        Benachrichtigungen erlaubst du unter „Mehr → Erinnerungen“.
+        Ändert sich dein Plan, sprich das bitte immer mit deiner Ärztin,
+        deinem Arzt oder deiner Apotheke ab.
+      </p>
+    </details>
+    <p id="medMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="card" id="symptomCard">
+    <h2>📝 Symptom-Tagebuch</h2>
+    <p class="muted">
+      Halte fest, was dir auffällt – das hilft beim nächsten Arztgespräch.
+      VYORA wertet nichts aus und stellt keine Diagnosen.
+    </p>
+    <form id="symptomForm">
+      <div class="form-grid">
+        <div>
+          <label for="symDay">Datum</label>
+          <input id="symDay" type="date" required>
+        </div>
+        <div>
+          <label for="symName">Was?</label>
+          <input id="symName" list="symSuggest" maxlength="60" required autocomplete="off" placeholder="z. B. Kopfschmerzen">
+        </div>
+      </div>
+      <datalist id="symSuggest">
+        <option value="Kopfschmerzen"><option value="Rückenschmerzen">
+        <option value="Gelenkschmerzen"><option value="Muskelkater">
+        <option value="Müdigkeit"><option value="Schwindel">
+        <option value="Übelkeit"><option value="Bauchschmerzen">
+        <option value="Verdauungsbeschwerden"><option value="Schlafprobleme">
+        <option value="Husten"><option value="Schnupfen">
+        <option value="Halsschmerzen"><option value="Allergie-Beschwerden">
+        <option value="Herzklopfen"><option value="Unruhe">
+      </datalist>
+      <label for="symIntensity">Wie stark empfindest du es?
+        <output id="symIntensityOut" for="symIntensity">5</output> von 10</label>
+      <input id="symIntensity" type="range" min="0" max="10" step="1" value="5"
+        aria-describedby="symScale">
+      <div class="range-scale" id="symScale"><span>0 = kaum</span><span>10 = sehr stark</span></div>
+      <label for="symNote">Notiz (optional)</label>
+      <input id="symNote" maxlength="300" autocomplete="off" placeholder="z. B. seit dem Nachmittag">
+      <button id="symSave" class="btn full" type="submit">Eintragen</button>
+    </form>
+    <p id="symMessage" class="message" role="status"></p>
+    <div id="symRecent"></div>
+    <p class="muted small-note">
+      Bei starken, plötzlichen oder anhaltenden Beschwerden wende dich an
+      deine Ärztin oder deinen Arzt, außerhalb der Sprechzeiten an den
+      ärztlichen Bereitschaftsdienst 116 117 – im Notfall an die 112.
     </p>
   </div>
 
@@ -1013,6 +1140,93 @@
       <strong id="latestPulse">–</strong>
       <small id="latestPulseDate">Noch keine Daten</small>
     </div>
+  </div>
+
+  <div class="card" id="bpWeekCard">
+    <h2>🩺 Blutdruck – letzte 7 Tage</h2>
+    <p class="muted">
+      Durchschnitt deiner Messungen aus dem Messtagebuch, getrennt nach
+      morgens und abends – so fragen viele Praxen ein Blutdruckprotokoll ab.
+      Nur eine Zusammenfassung, keine Bewertung.
+    </p>
+    <div id="bpWeek"></div>
+  </div>
+
+  <div class="card" id="labCard">
+    <h2>🧪 Laborwerte</h2>
+    <p class="muted">
+      Übertrag Werte von deinem Laborbefund und sieh den Verlauf über die
+      Zeit. VYORA zeigt die Werte nur an – die Einordnung gehört zu deiner
+      Ärztin oder deinem Arzt.
+    </p>
+    <details class="cx-extra" id="labAdd">
+      <summary>Laborwert eintragen</summary>
+      <form id="labForm">
+        <div class="form-grid">
+          <div>
+            <label for="labDay">Datum der Blutabnahme</label>
+            <input id="labDay" type="date" required>
+          </div>
+          <div>
+            <label for="labName">Wert</label>
+            <input id="labName" list="labSuggest" maxlength="60" required autocomplete="off" placeholder="z. B. HbA1c">
+          </div>
+        </div>
+        <datalist id="labSuggest"></datalist>
+        <div class="form-grid">
+          <div>
+            <label for="labValue">Ergebnis</label>
+            <input id="labValue" type="number" step="any" inputmode="decimal" required placeholder="z. B. 5,6">
+          </div>
+          <div>
+            <label for="labUnit">Einheit</label>
+            <input id="labUnit" maxlength="20" autocomplete="off" placeholder="wie auf dem Befund">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div>
+            <label for="labLow">Referenz von (optional)</label>
+            <input id="labLow" type="number" step="any" inputmode="decimal">
+          </div>
+          <div>
+            <label for="labHigh">Referenz bis (optional)</label>
+            <input id="labHigh" type="number" step="any" inputmode="decimal">
+          </div>
+        </div>
+        <p class="muted small-note">Referenzbereiche unterscheiden sich je nach
+          Labor. Übernimm sie deshalb genau so, wie sie auf deinem Befund stehen.</p>
+        <button id="labSave" class="btn full" type="submit">Speichern</button>
+      </form>
+    </details>
+    <p id="labMessage" class="message" role="status"></p>
+    <div id="labList"></div>
+  </div>
+
+  <div class="card" id="reportCard">
+    <h2>📄 Bericht für den Arzttermin</h2>
+    <p class="muted">
+      Fasst deine Einträge auf wenigen Seiten zusammen – zum Ausdrucken
+      oder als PDF (im Druckfenster „Als PDF sichern“ wählen). Du
+      entscheidest, was drinsteht.
+    </p>
+    <div class="day-picker pill-picker" role="radiogroup" aria-label="Zeitraum">
+      <label><input type="radio" name="reportDays" value="14"><span>14 Tage</span></label>
+      <label><input type="radio" name="reportDays" value="30" checked><span>30 Tage</span></label>
+      <label><input type="radio" name="reportDays" value="90"><span>90 Tage</span></label>
+    </div>
+    <fieldset class="report-parts">
+      <legend>Inhalt</legend>
+      <label class="check"><input type="checkbox" name="reportPart" value="bp" checked><span>Blutdruck &amp; Puls</span></label>
+      <label class="check"><input type="checkbox" name="reportPart" value="glucose" checked><span>Blutzucker &amp; Insulin</span></label>
+      <label class="check"><input type="checkbox" name="reportPart" value="weight" checked><span>Gewicht</span></label>
+      <label class="check"><input type="checkbox" name="reportPart" value="meds" checked><span>Medikamente &amp; Einnahmen</span></label>
+      <label class="check"><input type="checkbox" name="reportPart" value="symptoms" checked><span>Symptome</span></label>
+      <label class="check"><input type="checkbox" name="reportPart" value="labs" checked><span>Laborwerte</span></label>
+      <label class="check"><input type="checkbox" name="reportPart" value="wellbeing"><span>Wohlbefinden</span></label>
+      <label class="check"><input type="checkbox" name="reportPart" value="sleep"><span>Schlaf</span></label>
+    </fieldset>
+    <button id="reportPrint" class="btn full" type="button">Bericht erstellen</button>
+    <p id="reportMessage" class="message" role="status"></p>
   </div>
 
   <div class="card">
@@ -1352,6 +1566,55 @@
     </p>
   </div>
 
+  <div class="card" id="securityCard">
+    <h2>🔐 Anmeldung absichern</h2>
+    <p class="muted">
+      Mit der Zwei-Faktor-Anmeldung brauchst du beim Anmelden zusätzlich
+      einen Code aus einer Authenticator-App (z. B. Google Authenticator,
+      Microsoft Authenticator, 2FAS oder die Passwörter-App auf dem iPhone).
+      Deine Gesundheitsdaten sind dann auch geschützt, wenn jemand dein
+      Passwort kennt.
+    </p>
+    <p class="muted" id="mfaStatus">Wird geprüft ...</p>
+    <div id="mfaSetup" class="notice hidden">
+      <p><strong>1.</strong> Scanne den QR-Code mit deiner Authenticator-App.</p>
+      <img id="mfaQr" alt="QR-Code für die Authenticator-App" width="180" height="180">
+      <p class="muted small-note">Scannen nicht möglich? Gib diesen Schlüssel
+        von Hand ein:</p>
+      <input id="mfaSecret" readonly aria-label="Schlüssel für die Authenticator-App">
+      <form id="mfaVerifyForm">
+        <label for="mfaVerifyCode"><strong>2.</strong> Code aus der App eingeben</label>
+        <input id="mfaVerifyCode" inputmode="numeric" autocomplete="one-time-code" maxlength="7" required placeholder="123456">
+        <button id="mfaVerifyButton" class="btn full" type="submit">Aktivieren</button>
+      </form>
+      <button id="mfaCancel" class="btn secondary full" type="button">Abbrechen</button>
+    </div>
+    <button id="mfaEnable" class="btn full hidden" type="button">Zwei-Faktor-Anmeldung einrichten</button>
+    <button id="mfaDisable" class="btn danger full hidden" type="button">Zwei-Faktor-Anmeldung ausschalten</button>
+    <p id="mfaSetupMessage" class="message" role="status"></p>
+  </div>
+
+  <div class="card" id="dayStartCard">
+    <h2>🌙 Schichtarbeit</h2>
+    <p class="muted">
+      Arbeitest du nachts? Dann kann dein Tag später beginnen. Alles, was
+      du vor dieser Uhrzeit einträgst, zählt noch zum Vortag – auch Wasser,
+      Mahlzeiten und Häkchen.
+    </p>
+    <label for="dayStartSelect">Mein Tag beginnt um</label>
+    <select id="dayStartSelect">
+      <option value="0">0 Uhr (Mitternacht, Standard)</option>
+      <option value="1">1 Uhr</option>
+      <option value="2">2 Uhr</option>
+      <option value="3">3 Uhr</option>
+      <option value="4">4 Uhr</option>
+      <option value="5">5 Uhr</option>
+      <option value="6">6 Uhr</option>
+    </select>
+    <button id="dayStartSave" class="btn full" type="button">Übernehmen</button>
+    <p id="dayStartMessage" class="message" role="status"></p>
+  </div>
+
   <div class="card" id="privacyCard">
     <h2>🔒 Datenschutz &amp; Konto</h2>
     <p class="muted" id="consentStatus">Einwilligung wird geprüft ...</p>
@@ -1360,8 +1623,8 @@
     <p class="muted">
       Du bekommst alle in VYORA gespeicherten Daten zu deinem Konto als
       Datei (JSON): Mahlzeiten, Trainings, Pläne, Trainingsprogramm,
-      Gesundheitswerte, Messtagebuch, Schlaf- und Tageswerte, Tagesziele
-      und Einwilligungen.
+      Gesundheitswerte, Messtagebuch, Medikamente, Symptome, Laborwerte,
+      Schlaf- und Tageswerte, Tagesziele und Einwilligungen.
     </p>
     <button id="exportButton" class="btn secondary full" type="button">
       Daten exportieren ⬇
@@ -1432,7 +1695,7 @@
 </footer>
 </div>
 
-<script type="module" src="js/app.js?v=c4755937ec"></script>
+<script type="module" src="js/app.js?v=6e2a6c330b"></script>
 <dialog id="tourDialog" aria-labelledby="tourTitle">
   <div class="tour-body">
     <div class="tour-icon" id="tourIcon" aria-hidden="true"></div>
@@ -1445,5 +1708,6 @@
     </div>
   </div>
 </dialog>
+<div id="printReport"></div>
 </body>
 </html>
