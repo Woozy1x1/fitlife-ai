@@ -82,7 +82,8 @@ function renderMetricsList() {
     const small = document.createElement("small");
     small.textContent = (m.source==="apple_health" ? "Apple Health" : "Selbst eingetragen")+
       (m.sleep_quality ? " · "+SLEEP_QUALITY[m.sleep_quality] : "")+
-      (m.bedtime && m.waketime ? " · "+clock(m.bedtime)+"–"+clock(m.waketime) : "");
+      (m.bedtime && m.waketime ? " · "+clock(m.bedtime)+"–"+clock(m.waketime) : "")+
+      (m.nap_minutes ? " · davon "+hoursText(m.nap_minutes)+" Vorschlaf/Nickerchen" : "");
     info.append(title,small);
     row.append(info,deleteButton(
       "Tageswert löschen vom "+formatDate(m.day),
@@ -130,7 +131,7 @@ async function loadMetrics() {
 
   const {data,error} = await supabase
     .from("daily_metrics")
-    .select("day,source,sleep_minutes,sleep_quality,bedtime,waketime,steps,resting_hr,active_kcal")
+    .select("day,source,sleep_minutes,sleep_quality,bedtime,waketime,steps,resting_hr,active_kcal,nap_minutes")
     .eq("user_id",userId)
     .gte("day",dayString(since))
     .order("day",{ascending:false})
@@ -177,10 +178,14 @@ $("manualSleepForm").addEventListener("submit",async event => {
     const wake = new Date(day+"T"+$("msWake").value);
     let bed = new Date(day+"T"+$("msBed").value);
     if(bed>=wake) bed = new Date(bed.getTime()-24*3600*1000);
-    const minutes = Math.round((wake-bed)/60000);
-    if(!Number.isFinite(minutes) || minutes<30 || minutes>1080) {
+    const main = Math.round((wake-bed)/60000);
+    if(!Number.isFinite(main) || main<30 || main>1080) {
       throw new Error("Bitte prüfe die Uhrzeiten (zwischen 30 Minuten und 18 Stunden).");
     }
+    // Zusätzlicher Schlaf, z. B. Vorschlaf vor dem Nachtdienst oder Nickerchen
+    const nap = Math.round(Number($("msNap")?.value)||0);
+    if(nap<0 || nap>300) throw new Error("Zusätzlicher Schlaf: bitte 0 bis 300 Minuten.");
+    const minutes = main+nap;
 
     const quality = $("msQuality").value;
     const saved = await saveOrQueue("daily_metrics",{
@@ -188,6 +193,7 @@ $("manualSleepForm").addEventListener("submit",async event => {
         day,
         source:"manual",
         sleep_minutes:minutes,
+        nap_minutes:nap || null,
         sleep_quality:quality ? Number(quality) : null,
         bedtime:bed.toISOString(),
         waketime:wake.toISOString(),

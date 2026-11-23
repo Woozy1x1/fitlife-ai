@@ -233,6 +233,7 @@ $("exportButton").addEventListener("click",async () => {
       ["einkaufsliste","shopping_items"],
       ["challenges","user_challenges"],
       ["wochenplanung","week_plans"],
+      ["dienstplan","shift_plan"],
       ["trainingsprogramm","training_program"],
       ["messtagebuch","measurements"],
       ["tageswerte","daily_metrics"],
