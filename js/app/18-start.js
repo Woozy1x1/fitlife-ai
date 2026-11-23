@@ -366,6 +366,6 @@ const VY = {
 $("measureTime").value = nowForInput();
 setTimeout(openViewFromHash,0);
 
-import("../plus.js?v=5c0fb232ee")
+import("../plus.js?v=56461b4f1e")
   .then(mod => mod.init(VY))
   .catch(error => console.error("VYORA-Erweiterung konnte nicht geladen werden",error));
