@@ -1,5 +1,5 @@
 // VYORA AI – Automatisch aktualisieren, Passwort, App-Installation, Erweiterungen
-// Teil 18 von 18. Alle Teile teilen sich einen gemeinsamen Bereich
+// Alle Teile teilen sich einen gemeinsamen Bereich
 // und werden in index.html der Reihe nach geladen (siehe js/app/LIESMICH.md).
 "use strict";
 
@@ -366,6 +366,6 @@ const VY = {
 $("measureTime").value = nowForInput();
 setTimeout(openViewFromHash,0);
 
-import("../plus.js?v=7202eb474e")
+import("../plus.js?v=5c0fb232ee")
   .then(mod => mod.init(VY))
   .catch(error => console.error("VYORA-Erweiterung konnte nicht geladen werden",error));

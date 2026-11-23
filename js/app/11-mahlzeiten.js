@@ -1,5 +1,5 @@
 // VYORA AI – Ernährung: Mahlzeiten speichern und anzeigen
-// Teil 11 von 18. Alle Teile teilen sich einen gemeinsamen Bereich
+// Alle Teile teilen sich einen gemeinsamen Bereich
 // und werden in index.html der Reihe nach geladen (siehe js/app/LIESMICH.md).
 "use strict";
 

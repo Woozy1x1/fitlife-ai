@@ -1,5 +1,5 @@
 // VYORA AI – Tracker: Oura Ring und Apple Health
-// Teil 14 von 18. Alle Teile teilen sich einen gemeinsamen Bereich
+// Alle Teile teilen sich einen gemeinsamen Bereich
 // und werden in index.html der Reihe nach geladen (siehe js/app/LIESMICH.md).
 "use strict";
 

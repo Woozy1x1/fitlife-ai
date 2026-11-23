@@ -6,15 +6,19 @@ um einen Bereich der App. `index.html` lädt sie **in dieser Reihenfolge**:
 | Datei | Inhalt |
 |---|---|
 | `00-supabase.js` | lädt die Supabase-Bibliothek (Modul) |
-| `01-grundlagen.js` | Verbindung, Hilfsfunktionen, Datum, Navigation zwischen den Bereichen |
+| `01-grundlagen.js` | Verbindung, Hilfsfunktionen, Datum (inkl. Nachtdienst-Tag), Navigation |
+| `01b-anzeige.js` | Datumsanzeige, Diagramme, Schlaf- und Ernährungsübersicht |
 | `02-offline-und-erinnerungen.js` | Offline-Speicher, Push-Erinnerungen |
 | `03-schlaf.js` | Schlaf selbst eintragen, Apple-Health-Import |
 | `04-messtagebuch.js` | Tages-Checkliste, Blutdruck, Blutzucker, Insulin |
-| `05-calisthenics.js` | Calisthenics-Programm |
+| `05-calisthenics.js` | Calisthenics: Programm, Schwierigkeit, Wochentage |
+| `05b-calisthenics-training.js` | Calisthenics: Übungen, Speichern, Laden, Pausen-Timer |
 | `06-dehnen.js` | Dehnen & Beweglichkeit |
-| `07-woche-und-ziele.js` | Wochenrückblick, Verläufe, Tagesziele, Bedarfsrechner |
+| `07-woche-und-ziele.js` | Wochenrückblick, Verläufe |
+| `07b-tagesziele-und-bedarf.js` | Tagesziele, Bedarfsrechner |
 | `08-alltag.js` | Einführung, Wasser, 5 am Tag, Wohlbefinden, Atemübung |
-| `09-lebensmittelsuche.js` | „Oft gegessen“ und Lebensmittelsuche |
+| `09-lebensmittelsuche.js` | „Oft gegessen“, Mahlzeiten des Tages laden |
+| `09b-lebensmittelsuche.js` | Lebensmittelsuche |
 | `10-barcode-scanner.js` | Barcode-Scanner |
 | `11-mahlzeiten.js` | Mahlzeiten speichern und anzeigen |
 | `12-training.js` | Trainingstagebuch |
@@ -25,11 +29,8 @@ um einen Bereich der App. `index.html` lädt sie **in dieser Reihenfolge**:
 | `17-anmeldung.js` | Anmelden, Abmelden, alle Daten laden |
 | `18-start.js` | automatisch aktualisieren, Passwort, App-Installation, Erweiterungen |
 
-Die neueren Funktionen liegen als eigene Module daneben in `js/`:
-`plus.js` (Medikamente, Symptome, Labor, Arztbericht, 2FA, Schichtarbeit,
-Bestleistungen, Gesundheit-Reiter), `trends.js` (Zusammenhänge, Tagesansicht,
-Erholung, Tipp des Tages), `kitchen.js` (Rezepte, Wochenplan, Einkauf) und
-`motivation.js` (Challenges, Erfolge, Wochenplanung, Übungsbibliothek).
+Die neueren Funktionen liegen als ES-Module in den Ordnern von `js/`
+(Übersicht: `js/LIESMICH.md`). `18-start.js` lädt `js/plus.js`, das alle Module startet.
 
 ## Wichtig beim Bearbeiten
 
