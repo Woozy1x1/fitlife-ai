@@ -1,5 +1,5 @@
-import {addDays,de,el,fmtDate,hm,state} from "./kern.js?v=5c0fb232ee";
-import {$,VY,db} from "../lib/basis.js?v=5c0fb232ee";
+import {addDays,de,el,fmtDate,hm,state} from "./kern.js";
+import {$,VY,db} from "../lib/basis.js";
 
 // -----------------------------------
 // Tagesansicht

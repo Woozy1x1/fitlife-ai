@@ -1,4 +1,4 @@
-import {VY} from "../lib/basis.js?v=5c0fb232ee";
+import {VY} from "../lib/basis.js";
 
 // VYORA AI – Zusammenhänge, Tagesansicht, Erholung und Tipp des Tages
 //

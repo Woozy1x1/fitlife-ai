@@ -1,8 +1,8 @@
-import {renderRecovery} from "./erholung.js?v=5c0fb232ee";
-import {state} from "./kern.js?v=5c0fb232ee";
-import {renderTip} from "./tipp.js?v=5c0fb232ee";
-import {renderLinks} from "./zusammenhaenge.js?v=5c0fb232ee";
-import {VY,db} from "../lib/basis.js?v=5c0fb232ee";
+import {renderRecovery} from "./erholung.js";
+import {state} from "./kern.js";
+import {renderTip} from "./tipp.js";
+import {renderLinks} from "./zusammenhaenge.js";
+import {VY,db} from "../lib/basis.js";
 
 // -----------------------------------
 // Daten (letzte 90 Tage)

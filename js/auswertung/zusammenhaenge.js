@@ -1,6 +1,6 @@
-import {addDays,avg,de,el,hm,state} from "./kern.js?v=5c0fb232ee";
-import {loadDay} from "./tagesansicht.js?v=5c0fb232ee";
-import {$,VY} from "../lib/basis.js?v=5c0fb232ee";
+import {addDays,avg,de,el,hm,state} from "./kern.js";
+import {loadDay} from "./tagesansicht.js";
+import {$,VY} from "../lib/basis.js";
 
 // -----------------------------------
 // Zusammenhänge

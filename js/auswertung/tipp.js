@@ -1,5 +1,5 @@
-import {addDays,el,state} from "./kern.js?v=5c0fb232ee";
-import {$,VY} from "../lib/basis.js?v=5c0fb232ee";
+import {addDays,el,state} from "./kern.js";
+import {$,VY} from "../lib/basis.js";
 
 // -----------------------------------
 // Tipp des Tages (Heute)

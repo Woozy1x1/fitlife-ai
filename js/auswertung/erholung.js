@@ -1,5 +1,5 @@
-import {addDays,avg,el,hm,state} from "./kern.js?v=5c0fb232ee";
-import {$,VY} from "../lib/basis.js?v=5c0fb232ee";
+import {addDays,avg,el,hm,state} from "./kern.js";
+import {$,VY} from "../lib/basis.js";
 
 // -----------------------------------
 // Erholung heute (Training)
