@@ -717,3 +717,10 @@ input[type=range]{padding:0;height:36px;accent-color:var(--sun);background:none;
 .sw-day small{display:block;font-size:10.5px;color:var(--muted)}
 .sw-day strong{font-size:15px}
 @media (max-width:360px){.shift-times{grid-template-columns:auto 1fr;}.shift-times span:nth-child(4n+3){display:none}}
+.sp-import-list{max-height:360px;overflow:auto;margin:10px 0;display:flex;flex-direction:column;gap:6px}
+.sp-import-row{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;border:1px solid var(--border);cursor:pointer}
+.sp-import-row input{width:20px;height:20px;margin:2px 0 0;flex-shrink:0}
+.sp-import-row span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sp-import-row strong{font-size:14px}
+.sp-import-row small{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+#spImport .btn{margin-top:8px}
