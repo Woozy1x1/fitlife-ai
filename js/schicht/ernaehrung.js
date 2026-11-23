@@ -1,5 +1,5 @@
-import {$,VY,el} from "../lib/basis.js?v=5c0fb232ee";
-import {WD,addDays,fromMin,shiftOn,shiftText,shortDate,state,toMin,weekdayOf} from "./kern.js?v=5c0fb232ee";
+import {$,VY,el} from "../lib/basis.js";
+import {WD,addDays,fromMin,shiftOn,shiftText,shortDate,state,toMin,weekdayOf} from "./kern.js";
 
 // -----------------------------------
 // Ernährung: Essen & Koffein passend zur Schicht

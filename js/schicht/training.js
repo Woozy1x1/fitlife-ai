@@ -1,5 +1,5 @@
-import {$,VY,el,msg} from "../lib/basis.js?v=5c0fb232ee";
-import {KINDS,WD,addDays,fromMin,mondayOf,shiftOn,state,toMin,weekdayOf} from "./kern.js?v=5c0fb232ee";
+import {$,VY,el,msg} from "../lib/basis.js";
+import {KINDS,WD,addDays,fromMin,mondayOf,shiftOn,state,toMin,weekdayOf} from "./kern.js";
 
 // -----------------------------------
 // Bewegung passend zur Schicht (Training)

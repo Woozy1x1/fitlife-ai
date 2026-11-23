@@ -1,14 +1,14 @@
 // VYORA AI – Schichtdienst: Start, Laden und Anzeigen aller Schicht-Karten
 
-import {$,VY,db} from "../lib/basis.js?v=5c0fb232ee";
-import {renderPlan,setupPlan} from "./dienstplan.js?v=5c0fb232ee";
-import {renderSettings,setupSettings} from "./einstellungen.js?v=5c0fb232ee";
-import {renderFood} from "./ernaehrung.js?v=5c0fb232ee";
-import {renderMedHint,renderToday} from "./heute.js?v=5c0fb232ee";
-import {addDays,mondayOf,state} from "./kern.js?v=5c0fb232ee";
-import {renderSleepPlan} from "./schlaf.js?v=5c0fb232ee";
-import {writeNightWindows} from "./tageswechsel.js?v=5c0fb232ee";
-import {renderMove,renderRecoveryHint,renderWeekPlanHint,suggestTrainDays} from "./training.js?v=5c0fb232ee";
+import {$,VY,db} from "../lib/basis.js";
+import {renderPlan,setupPlan} from "./dienstplan.js";
+import {renderSettings,setupSettings} from "./einstellungen.js";
+import {renderFood} from "./ernaehrung.js";
+import {renderMedHint,renderToday} from "./heute.js";
+import {addDays,mondayOf,state} from "./kern.js";
+import {renderSleepPlan} from "./schlaf.js";
+import {writeNightWindows} from "./tageswechsel.js";
+import {renderMove,renderRecoveryHint,renderWeekPlanHint,suggestTrainDays} from "./training.js";
 
 // -----------------------------------
 // Start

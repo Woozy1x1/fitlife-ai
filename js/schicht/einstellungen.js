@@ -1,7 +1,7 @@
-import {$,VY,db,errText,msg} from "../lib/basis.js?v=5c0fb232ee";
-import {KINDS,state,timesFor} from "./kern.js?v=5c0fb232ee";
-import {renderAll} from "./start.js?v=5c0fb232ee";
-import {writeNightWindows} from "./tageswechsel.js?v=5c0fb232ee";
+import {$,VY,db,errText,msg} from "../lib/basis.js";
+import {KINDS,state,timesFor} from "./kern.js";
+import {renderAll} from "./start.js";
+import {writeNightWindows} from "./tageswechsel.js";
 
 // -----------------------------------
 // Einstellungen (Mehr)

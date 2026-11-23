@@ -1,8 +1,8 @@
-import {$,VY,db,el,errText,msg} from "../lib/basis.js?v=5c0fb232ee";
-import {guessKind} from "./dienstplan.js?v=5c0fb232ee";
-import {KINDS,WD,addDays,fromMin,mondayOf,shortDate,state,timesFor,toMin,weekdayOf} from "./kern.js?v=5c0fb232ee";
-import {renderAll} from "./start.js?v=5c0fb232ee";
-import {writeNightWindows} from "./tageswechsel.js?v=5c0fb232ee";
+import {$,VY,db,el,errText,msg} from "../lib/basis.js";
+import {guessKind} from "./dienstplan.js";
+import {KINDS,WD,addDays,fromMin,mondayOf,shortDate,state,timesFor,toMin,weekdayOf} from "./kern.js";
+import {renderAll} from "./start.js";
+import {writeNightWindows} from "./tageswechsel.js";
 
 // -----------------------------------
 // Import aus einer Kalenderdatei (.ics), z. B. Supershift → Google/iCloud-Kalender

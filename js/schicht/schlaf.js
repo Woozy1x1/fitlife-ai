@@ -1,5 +1,5 @@
-import {$,VY,el} from "../lib/basis.js?v=5c0fb232ee";
-import {addDays,fromMin,hm,shiftOn,shiftText,state,toMin} from "./kern.js?v=5c0fb232ee";
+import {$,VY,el} from "../lib/basis.js";
+import {addDays,fromMin,hm,shiftOn,shiftText,state,toMin} from "./kern.js";
 
 // -----------------------------------
 // Schlaf passend zur Schicht

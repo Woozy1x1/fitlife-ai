@@ -1,6 +1,6 @@
-import {$,VY,el} from "../lib/basis.js?v=5c0fb232ee";
-import {KINDS,addDays,shiftOn,state} from "./kern.js?v=5c0fb232ee";
-import {sleepLines} from "./schlaf.js?v=5c0fb232ee";
+import {$,VY,el} from "../lib/basis.js";
+import {KINDS,addDays,shiftOn,state} from "./kern.js";
+import {sleepLines} from "./schlaf.js";
 
 // -----------------------------------
 // Heute: Dienst und Schlafhinweis

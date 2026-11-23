@@ -1,8 +1,8 @@
-import {$,VY,db,el,errText,msg} from "../lib/basis.js?v=5c0fb232ee";
-import {onImportFile} from "./import-ics.js?v=5c0fb232ee";
-import {KINDS,WD,addDays,mondayOf,shiftOn,shiftText,shortDate,state,timesFor,toMin,weekdayOf} from "./kern.js?v=5c0fb232ee";
-import {renderAll} from "./start.js?v=5c0fb232ee";
-import {writeNightWindows} from "./tageswechsel.js?v=5c0fb232ee";
+import {$,VY,db,el,errText,msg} from "../lib/basis.js";
+import {onImportFile} from "./import-ics.js";
+import {KINDS,WD,addDays,mondayOf,shiftOn,shiftText,shortDate,state,timesFor,toMin,weekdayOf} from "./kern.js";
+import {renderAll} from "./start.js";
+import {writeNightWindows} from "./tageswechsel.js";
 
 // -----------------------------------
 // Dienstplan (4 Wochen)
@@ -10,8 +10,9 @@ import {writeNightWindows} from "./tageswechsel.js?v=5c0fb232ee";
 
 export function setupPlan() {
   if(!$("shiftPlanCard")) return;
-  $("spPrev").addEventListener("click",() => { state.start = addDays(state.start,-28); state.selected = null; renderPlan(); });
-  $("spNext").addEventListener("click",() => { state.start = addDays(state.start,28); state.selected = null; renderPlan(); });
+  const move = days => { state.start = addDays(state.start || mondayOf(VY.localDate()),days); state.selected = null; renderPlan(); };
+  $("spPrev").addEventListener("click",() => move(-28));
+  $("spNext").addEventListener("click",() => move(28));
   $("spCopy").addEventListener("click",copyWeek);
   $("spImportBtn")?.addEventListener("click",() => $("spImportFile").click());
   $("spImportFile")?.addEventListener("change",onImportFile);
