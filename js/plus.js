@@ -10,17 +10,17 @@
 // was du selbst einträgst. Es wird nichts bewertet, eingestuft oder
 // vorhergesagt und keine Dosis berechnet.
 
-import {setupReport} from "./gesundheit/arztbericht.js?v=5c0fb232ee";
-import {renderBpWeek} from "./gesundheit/blutdruck-woche.js?v=5c0fb232ee";
-import {loadLabs,setupLabs} from "./gesundheit/labor.js?v=5c0fb232ee";
-import {loadIntakes,loadMeds,resetMedForm,setupMeds} from "./gesundheit/medikamente.js?v=5c0fb232ee";
-import {setupSubnav} from "./gesundheit/reiter.js?v=5c0fb232ee";
-import {loadSymptoms,setupSymptoms} from "./gesundheit/symptome.js?v=5c0fb232ee";
-import {state} from "./gesundheit/zustand.js?v=5c0fb232ee";
-import {setupDayStart,syncDayStart} from "./konto/tagesbeginn.js?v=5c0fb232ee";
-import {loadSecurity,setupSecurity} from "./konto/zwei-faktor.js?v=5c0fb232ee";
-import {$,VY,bind,msg} from "./lib/basis.js?v=5c0fb232ee";
-import {loadPrs,schedulePrs} from "./training/bestleistungen.js?v=5c0fb232ee";
+import {setupReport} from "./gesundheit/arztbericht.js";
+import {renderBpWeek} from "./gesundheit/blutdruck-woche.js";
+import {loadLabs,setupLabs} from "./gesundheit/labor.js";
+import {loadIntakes,loadMeds,resetMedForm,setupMeds} from "./gesundheit/medikamente.js";
+import {setupSubnav} from "./gesundheit/reiter.js";
+import {loadSymptoms,setupSymptoms} from "./gesundheit/symptome.js";
+import {state} from "./gesundheit/zustand.js";
+import {setupDayStart,syncDayStart} from "./konto/tagesbeginn.js";
+import {loadSecurity,setupSecurity} from "./konto/zwei-faktor.js";
+import {$,VY,bind,msg} from "./lib/basis.js";
+import {loadPrs,schedulePrs} from "./training/bestleistungen.js";
 
 // -----------------------------------
 // Start
@@ -46,7 +46,7 @@ export function init(api) {
   if(VY.uid) loadAll();
 
   // Weitere Module: Zusammenhänge, Küche, Motivation
-  for(const path of ["./auswertung/start.js?v=5c0fb232ee","./kueche/start.js?v=5c0fb232ee","./motivation/start.js?v=5c0fb232ee","./schicht/start.js?v=5c0fb232ee"]) {
+  for(const path of ["./auswertung/start.js","./kueche/start.js","./motivation/start.js","./schicht/start.js"]) {
     import(path).then(mod => mod.init(api)).catch(error => console.error("VYORA-Modul konnte nicht geladen werden",path,error));
   }
 }

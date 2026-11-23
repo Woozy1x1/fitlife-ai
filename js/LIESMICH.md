@@ -28,7 +28,8 @@ In jedem Ordner gilt: `kern.js` = gemeinsame Daten und Hilfsfunktionen,
 
 ## Beim Bearbeiten
 
-- Ein Modul holt sich, was es braucht, mit `import {…} from "./datei.js?v=…"`.
+- Ein Modul holt sich, was es braucht, mit `import {…} from "./datei.js"`.
   Was andere Dateien brauchen, steht dort mit `export`.
-- Nach jeder Änderung `python3 stamp.py` ausführen. Es setzt eine gemeinsame
-  Versionsnummer in alle `?v=` der Module, damit Handys immer zusammenpassende Dateien laden.
+- Eine geänderte Moduldatei kann einfach ausgetauscht werden: Der Service Worker
+  (`sw.js`) lädt Module ohne `?v=` immer frisch aus dem Netz (offline aus dem Speicher).
+- Nur wenn sich `plus.js` ändert, `python3 stamp.py` ausführen (neue Prüfsumme in `18-start.js`).
